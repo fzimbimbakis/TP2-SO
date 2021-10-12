@@ -16,5 +16,7 @@ void cleanBuffer();
 void printHex(int num);
 char getChar();
 char* scanf();
+void initial();
+void* alloc();
 unsigned long int hexToDec(char* num);
 #endif
