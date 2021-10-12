@@ -1,17 +1,29 @@
 #include <naiveConsole.h>
 #include <interrupts.h>
 #include <keyboard.h>
+#include "../memoryManager.h"
 #define RED 4
 typedef int (*EntryPoint)(unsigned int, unsigned int, unsigned int);
 
 void write(unsigned int fd, const char * buffer, unsigned int count);
 void read(unsigned int fd, char * buffer, unsigned int count);
 int accessClock(unsigned int mode);
-EntryPoint functionPtrs[] = {&write, &read, &accessClock};
+void memoryFree(void * ptr);
+void * memoryAlloc(unsigned size);
+
+EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree};
 
 int int_80(unsigned int arg1, unsigned int arg2, unsigned int arg3, int sysCall){
     functionPtrs[sysCall](arg1, arg2, arg3);
     return;
+}
+
+void * memoryAlloc(unsigned size){
+    return alloc(size);
+}
+
+void memoryFree(void * ptr){
+    free(ptr);
 }
 
 void write(unsigned int fd, const char * buffer, unsigned int count){       

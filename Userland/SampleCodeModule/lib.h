@@ -17,6 +17,7 @@ void printHex(int num);
 char getChar();
 char* scanf();
 void initial();
-void* alloc();
+void* alloc(unsigned size);
+void free(void * ptr);
 unsigned long int hexToDec(char* num);
 #endif

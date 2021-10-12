@@ -5,6 +5,7 @@
 #include <naiveConsole.h>
 #include <interrupts.h>
 #include <keyboard.h>
+#include "memoryManager.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -102,9 +103,9 @@ int main()
 	ncNewline();
 
 	ncPrint("[Finished]");
-
+	init();
 	ncClear();
 	((EntryPoint)sampleCodeModuleAddress)();	// Aca se llama a userland
-
+	
 	return 0;
 }
