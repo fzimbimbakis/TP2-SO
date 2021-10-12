@@ -82,7 +82,67 @@ header * resizeFreeBlock(header * Header, unsigned size){
 // 	return current;
 // }
 
-void free(void * ptr){}
+void free(void * ptr){
+	header * Fptr = ((header *)ptr) - 1;		// Limite inferior
+	void * limSuperior = (size_t)Fptr + Fptr->size + sizeof(header);
+
+	if(limSuperior <= firstHeader){		// Va al principio
+		if(limSuperior == firstHeader){
+			Fptr->ptr = firstHeader->ptr;
+			Fptr->size += firstHeader->size + sizeof(header);
+			firstHeader = Fptr;
+			return;
+		}else{
+			Fptr->ptr=firstHeader;
+			firstHeader = Fptr;
+			return;
+		}
+	}
+	header * Hpointer = firstHeader;
+	while(Hpointer!=NULL){
+
+		if(Hpointer->ptr==NULL){		// Va al final
+			if( ((size_t)Hpointer)+Hpointer->size+sizeof(header) == Fptr){
+				Hpointer->size += Fptr->size + sizeof(header);
+			} else {
+				Hpointer->ptr = Fptr;
+				Fptr->ptr = NULL;
+			}
+			return;
+		}
+
+		if(Hpointer->ptr <= Fptr){		// Va antes del siguiente header
+			if( ((size_t)Hpointer)+Hpointer->size+sizeof(header) == Fptr){		// Junto bloque inferior
+				Hpointer->size += Fptr->size + sizeof(header);
+				// Check bloque superior también
+				if(
+					((size_t) Hpointer)+Hpointer->size+sizeof(header) == Hpointer->ptr
+				){
+					Hpointer->size += Hpointer->ptr->size + sizeof(header);
+					Hpointer->ptr = Hpointer->ptr->ptr;
+				}
+				return;
+			}
+
+			if(																	// Junto SOLO con bloque superior
+				((size_t)Fptr) + Fptr->size + sizeof(header) == Hpointer->ptr
+			) {
+				Fptr->size += Hpointer->ptr->size + sizeof(header);
+				Fptr->ptr = Hpointer->ptr->ptr;
+				Hpointer->ptr = Fptr;
+				return;
+			}
+			// No junto con nada
+			Fptr->ptr=Hpointer->ptr;
+			Hpointer->ptr = Fptr;
+			
+			return;
+		}
+
+	}
+	
+	// ERROR
+}
 
 
 
