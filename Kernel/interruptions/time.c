@@ -2,9 +2,9 @@
 #include <naiveConsole.h>
 static unsigned long ticks = 0;
 
-void timer_handler() {
-	ticks++;
-}
+//void timer_handler() {
+//	ticks++;
+//}
 
 int ticks_elapsed() {
 	return ticks;
@@ -22,6 +22,6 @@ void waiting(int seconds){
 		ncPrintChar(' ');
 		ncPrintDec(seconds-i);
 	}
-	
+
 	return;
 }

@@ -16,6 +16,8 @@ GLOBAL _irq05Handler
 GLOBAL _exception0Handler
 GLOBAL _exception6Handler
 
+GLOBAL timer_handler
+
 EXTERN printEOE
 EXTERN waiting
 EXTERN getStackBase
@@ -27,6 +29,7 @@ EXTERN int_80
 EXTERN printRegName
 EXTERN ncPrintHex
 EXTERN ncNewline
+EXTERN handler
 SECTION .text
 
 %macro pushState 0
@@ -110,6 +113,7 @@ SECTION .text
 %endmacro
 
 
+
 printRegs:
 	mov rbx, 0
 	mov rcx, rsp
@@ -161,6 +165,17 @@ picSlaveMask:
     pop     rbp
     retn
 
+timer_handler:
+        pushState
+
+        mov rdi, rsp
+        call handler
+        mov rsp, rax
+        mov al,20h
+        out 20h, al
+        popState
+
+        iretq
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:

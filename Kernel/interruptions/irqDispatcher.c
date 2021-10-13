@@ -5,6 +5,7 @@
 static void int_20();
 static void int_21();
 typedef void (*EntryPoint)();
+extern void timer_handler();
 EntryPoint functionPtr[] = {&int_20, &int_21};
 
 void irqDispatcher(uint64_t irq) {
