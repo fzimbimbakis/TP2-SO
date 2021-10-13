@@ -1,5 +1,5 @@
 #include "lib.h"
-#include<stddef.h>
+#include <stddef.h>
 #include "sysCall.h"
 #include <stdarg.h>
 
@@ -146,6 +146,15 @@ char* scanf(){
 		buffer[(idx)++]=0;
 	return buffer;
 }
+
+void * alloc(unsigned size){
+	return sysAlloc(size);
+}
+
+void free(void * ptr){
+	sysFree(ptr);
+}
+
 /*
 
 typedef long Align;
