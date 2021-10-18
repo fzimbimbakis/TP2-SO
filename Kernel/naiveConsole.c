@@ -57,12 +57,10 @@ void ncScroll(){
 
 		if(currentVideo-video == height*width*2)
 			ncNewline();
-		
-	
 }
 
 void ncNewline(){
-
+	currentVideo[1]=GREY;
 	for(int i =0 ; i<height; i++){
 		for (int j=0; j<2*width; j++)
 			video[width*2*i + j] = video[width*2*(i+1) + j];
@@ -73,7 +71,6 @@ void ncNewline(){
 		else
 			video[height*2*width-i] =GREY; //restauro color de celda
 	}
-	
 	currentVideo = video + (height-1)*width*2;
 	currentVideo[1]=0xf0;
 }
