@@ -15,6 +15,8 @@ void commandSelector(char* buffer){
         exceptionTestCommando(buffer);
     }else if(isCommand("cpuid", buffer)){
         cpuidCommand();
+    }else if(isCommandWithArg("testmm", buffer)){
+        testMMCommand(buffer);
     }
     else{
         printer("Command not found");

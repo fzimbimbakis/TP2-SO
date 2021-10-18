@@ -4,6 +4,7 @@
 #include "exceptionTests.h"
 #include "readMemory.h"
 #include "cpu.h"
+#include "testMM.h"
 
 #define SECONDS 0
 #define MINUTES 2
@@ -62,14 +63,15 @@ void getArguments(char* buffer, char* arg){
     }
 }
 
-#define commandsQuantity 5
+#define commandsQuantity 6
 void helpCommand(){
     static char * strings[][2] = {
         {"help: display every command available\n","&> help\n"},
         {"inforeg: print every register with its value\n","&> inforeg\n"},
         {"printmem: 32bytes from the direction passed by argument\n","&> printmem [DIRECTION](hexa)\n"},
         {"date: show real time live\n","&> date\n"},
-        {"exceptiontest: Test exception routines. 0: Division by 0. 6: Invalid operation code.\n","&> exceptiontest [Exception ID]\n"}
+        {"exceptiontest: Test exception routines. 0: Division by 0. 6: Invalid operation code.\n","&> exceptiontest [Exception ID]\n"},
+        {"testmm: Run Memory Manager functions tests. 0: Set all memory and check it.\n1: Basic test for free.\n2: Set and check ten blocks of size 1000.\n3: Set 10 blocks-> Free even blocks-> Ask for 5 more blocks-> Check 10 blocks.\n", "&> testmm [Test ID]\n"}
     };
     static int i;
     for (i = 0; i < commandsQuantity; i++)
@@ -168,4 +170,31 @@ void exceptionTestCommando(char * buffer){
 
 void cpuidCommand(){
     cpuFun();
+}
+
+void testMMCommand(char * buffer){
+    char arg[MAX_BUFFER];
+
+    getArguments(buffer,arg);
+    int num=strToNum(arg);
+    switch (num){
+        case 0:   ;  // Set all memory and check it.
+            testmm0();
+            break;
+        case 1:;            // Test free
+            testmm1();
+            break;
+        case 2:;    //  Blocks test
+            testmm2();
+            break;
+        case 3:;    //  Blocks test
+            testmm3();
+            break;
+
+        default:
+            printer("Test ID is not valid");
+            printf("\n");
+            break;
+    }
+
 }
