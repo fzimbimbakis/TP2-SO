@@ -42,7 +42,6 @@ void testmm1(){
     free(ptr);
 }
 void testmm2(){
-    printf("Set 10 blocks of size 1000\n");
     char * ptrsA[10];
     for (int i = 0; i < 10; ++i) {
         ptrsA[i] = alloc(1000);
@@ -52,7 +51,6 @@ void testmm2(){
             ptrsA[i][j] = 'a'+i;
         }
     }
-    printf("Check 10 blocks\n");
     for (int i = 0; i < 10; ++i) {
         for (int j = 0; j < 1000; ++j) {
             if(ptrsA[i][j]!=('a'+i)){
@@ -64,7 +62,7 @@ void testmm2(){
             }
         }
     }
-    printf("Free blocks\n");
+
     for (int k = 0; k < 10; ++k) {
         free(ptrsA[k]);
     }
@@ -72,7 +70,7 @@ void testmm2(){
     return;
 }
 void testmm3(){
-    printf("Set 10 blocks of size 1000\n");
+
     char * ptrs[10];
     for (int i = 0; i < 10; ++i) {
         ptrs[i] = alloc(1000);
@@ -82,7 +80,7 @@ void testmm3(){
             ptrs[i][j] = 'a'+i;
         }
     }
-    printf("Check 10 blocks\n");
+
     for (int i = 0; i < 10; ++i) {
         for (int j = 0; j < 1000; ++j) {
             if(ptrs[i][j]!=('a'+i)){
@@ -94,20 +92,20 @@ void testmm3(){
             }
         }
     }
-    printf("Free blocks 0, 2, 4, 6 and 8\n");
+
     free(ptrs[0]);
     free(ptrs[2]);
     free(ptrs[4]);
     free(ptrs[6]);
     free(ptrs[8]);
-    printf("Ask ans set even blocks again backwards\n");
+
     for (int i = 8; i >= 0; i=i-2) {
         ptrs[i] = alloc(1000);
         for (int j = 0; j < 1000; ++j) {
             ptrs[i][j] = 'a'+i;
         }
     }
-    printf("Check 10 blocks\n");
+
     for (int i = 0; i < 10; ++i) {
         for (int j = 0; j < 1000; ++j) {
             if(ptrs[i][j]!=('a'+i)){
@@ -119,7 +117,7 @@ void testmm3(){
             }
         }
     }
-    printf("Free blocks\n");
+
     for (int k = 0; k < 10; ++k) {
         free(ptrs[k]);
     }

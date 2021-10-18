@@ -5,7 +5,7 @@ struct header{
 	unsigned size;
 }typedef header;
 
-static header * firstHeader = BEGIN_MEM;
+static header * firstHeader = (header *)BEGIN_MEM;
 
 header * resizeFreeBlock(header * Header, unsigned size);
 
@@ -162,6 +162,22 @@ void free(void * ptr){
 	}
 	
 	// ERROR
+}
+
+unsigned * memoryInfoMM(){
+    unsigned * array = alloc(sizeof(unsigned ) * 3);
+    unsigned totalMem = END_MEM - BEGIN_MEM;
+    unsigned freeMem = 0;
+    header * aux = firstHeader;
+    while (aux!=NULL){
+        freeMem += aux->size;
+        aux = aux->ptr;
+    }
+    unsigned takenMem = totalMem - freeMem;
+    array[0] = totalMem;
+    array[1] = takenMem;
+    array[2] = freeMem;
+    return array;
 }
 
 

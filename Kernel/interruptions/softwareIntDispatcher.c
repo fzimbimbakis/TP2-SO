@@ -1,4 +1,4 @@
-#include <naiveConsole.h>
+#include "../include/naiveConsole.h"
 #include <interrupts.h>
 #include <keyboard.h>
 #include "../memoryManager.h"
@@ -10,8 +10,9 @@ void read(unsigned int fd, char * buffer, unsigned int count);
 int accessClock(unsigned int mode);
 void memoryFree(void * ptr);
 void * memoryAlloc(unsigned size);
+unsigned * memoryInfo();
 
-EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree};
+EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo};
 
 int int_80(unsigned int arg1, unsigned int arg2, unsigned int arg3, int sysCall){
     functionPtrs[sysCall](arg1, arg2, arg3);
@@ -24,6 +25,11 @@ void * memoryAlloc(unsigned size){
 
 void memoryFree(void * ptr){
     free(ptr);
+}
+
+unsigned * memoryInfo(){
+    unsigned * array = memoryInfoMM();
+    return array;
 }
 
 void write(unsigned int fd, const char * buffer, unsigned int count){       

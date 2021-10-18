@@ -17,6 +17,8 @@ void commandSelector(char* buffer){
         cpuidCommand();
     }else if(isCommandWithArg("testmm", buffer)){
         testMMCommand(buffer);
+    } else if(isCommand("meminfo", buffer)){
+        memInfoCommand();
     }
     else{
         printer("Command not found");

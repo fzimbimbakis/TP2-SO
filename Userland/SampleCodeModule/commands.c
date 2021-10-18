@@ -71,7 +71,8 @@ void helpCommand(){
         {"printmem: 32bytes from the direction passed by argument\n","&> printmem [DIRECTION](hexa)\n"},
         {"date: show real time live\n","&> date\n"},
         {"exceptiontest: Test exception routines. 0: Division by 0. 6: Invalid operation code.\n","&> exceptiontest [Exception ID]\n"},
-        {"testmm: Run Memory Manager functions tests. 0: Set all memory and check it.\n1: Basic test for free.\n2: Set and check ten blocks of size 1000.\n3: Set 10 blocks-> Free even blocks-> Ask for 5 more blocks-> Check 10 blocks.\n", "&> testmm [Test ID]\n"}
+        {"testmm: Run Memory Manager functions tests. 0: Set all memory and check it.\n1: Basic test for free.\n2: Set and check ten blocks of size 1000.\n3: Set 10 blocks-> Free even blocks-> Ask for 5 more blocks-> Check 10 blocks.\n", "&> testmm [Test ID]\n"},
+        {"meminfo: Shows (Units: Bytes):\n- Total memory\n- Taken memory\n- Free memory\n", "&> meminfo"}
     };
     static int i;
     for (i = 0; i < commandsQuantity; i++)
@@ -172,22 +173,34 @@ void cpuidCommand(){
     cpuFun();
 }
 
+void memInfoCommand(){
+    unsigned * array = memInfo();
+    printf("Total memory: %d.\nTaken memory: %d.\nFree memory: %d.\n", array[0], array[1], array[2]);
+    free(array);
+}
+
 void testMMCommand(char * buffer){
     char arg[MAX_BUFFER];
 
     getArguments(buffer,arg);
     int num=strToNum(arg);
     switch (num){
-        case 0:   ;  // Set all memory and check it.
+        case 0:;
+            testmm0();
+            testmm1();
+            testmm2();
+            testmm3();
+            break;
+        case 1:   ;  // Set all memory and check it.
             testmm0();
             break;
-        case 1:;            // Test free
+        case 2:;            // Test free
             testmm1();
             break;
-        case 2:;    //  Blocks test
+        case 3:;    //  Blocks test
             testmm2();
             break;
-        case 3:;    //  Blocks test
+        case 4:;    //  Blocks test
             testmm3();
             break;
 
