@@ -10,25 +10,25 @@ char * v = (char*)0xB8000 + 79 * 2;
 
 int main() {
 	
-	char* ptr = (char*) alloc(1000*sizeof(char));
-	printf("ptr: %d\n", ptr);
-	for (int i = 0; i < 15; i++)
-	{
-		ptr[i]='a';
-	}
-	putChar('\n');
-	for (int i = 0; i < 10; i++)
-	{
-		putChar(ptr[i]);
-		// putChar('x');
-	}
-	ptr = (char*) alloc(20*sizeof(char));
-	printf("ptr: %d\n", ptr);
-	for (int i = 0; i < 15; i++)
-	{
-		ptr[i]='a';
-	}
-	putChar('\n');
+//	char* ptr = (char*) alloc(1000*sizeof(char));
+//	printf("ptr: %d\n", ptr);
+//	for (int i = 0; i < 15; i++)
+//	{
+//		ptr[i]='a';
+//	}
+//	putChar('\n');
+//	for (int i = 0; i < 10; i++)
+//	{
+//		putChar(ptr[i]);
+//		// putChar('x');
+//	}
+//	ptr = (char*) alloc(20*sizeof(char));
+//	printf("ptr: %d\n", ptr);
+//	for (int i = 0; i < 15; i++)
+//	{
+//		ptr[i]='a';
+//	}
+//	putChar('\n');
 	
 	
 	printf("Bienvenido! Que comando desea correr?\n");

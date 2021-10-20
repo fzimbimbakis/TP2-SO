@@ -11,7 +11,7 @@ proces rr[256];
 int pCount = 0, pCurrent=0;
 
 int64_t handler(int64_t newRSP){
-    ncPrintChar('X'); //para chequear que este interrumpiendo bien
+    //ncPrintChar('X'); //para chequear que este interrumpiendo bien
     proces newP;
     newP.returnValue=newRSP;
     newP.state=0;
