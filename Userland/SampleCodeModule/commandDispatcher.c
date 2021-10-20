@@ -13,8 +13,6 @@ void commandSelector(char* buffer){
         dateCommand();
     }else if(isCommandWithArg("exceptiontest",buffer)){
         exceptionTestCommando(buffer);
-    }else if(isCommand("cpuid", buffer)){
-        cpuidCommand();
     }else if(isCommandWithArg("testmm", buffer)){
         testMMCommand(buffer);
     } else if(isCommand("mem", buffer)){
