@@ -126,6 +126,10 @@ char getChar(){
 	return ret;
 }
 
+int newP(void* fPtr){
+	return sysNewP(fPtr);
+}
+
 char* scanf(){
 	buffer[0]=0;
 	static int idx = 0;

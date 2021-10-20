@@ -6,6 +6,6 @@
 #define READY 0
 #define BLOCKED 1
 #define DEAD 2
-int64_t handler(int64_t newRIP);
-void newProcess();
+int64_t* handler(int64_t* newRIP);
+uint64_t* newProcess(void* fPtr);
 #endif

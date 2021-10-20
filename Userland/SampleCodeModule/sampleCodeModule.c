@@ -6,9 +6,20 @@ char * v = (char*)0xB8000 + 79 * 2;
 	static char buffer[MAX_BUFFER]={0};
 	static int idx = 0;
 
+void imprimir(){
+	while(1)
+	putChar('X');
+}
 
 int main() {
+
 	printf("Bienvenido! Que comando desea correr?\n");
+	newP(&imprimir);
+	// while (1)
+	// {
+	// 	putChar('A');
+	// }
+	
     while(1){
 		while((c=getChar())!='\n'){
 			putChar(c);

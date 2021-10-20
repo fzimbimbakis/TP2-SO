@@ -4,6 +4,7 @@ GLOBAL sysTime
 GLOBAL sysFree
 GLOBAL sysAlloc
 GLOBAL sysMemInfo
+GLOBAL sysNewP
 section .text
 
 %macro pushState 0
@@ -55,6 +56,13 @@ sysRead:
 	int 80h
 	popState
     ret
+
+sysNewP:
+	pushState
+	mov rax, 6
+	int 80h
+	popState
+	ret
 
 sysTime:
 	; No pusheo y popeo el rax. Lo uso para retornar.

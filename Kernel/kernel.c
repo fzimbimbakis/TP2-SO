@@ -6,6 +6,8 @@
 #include <interrupts.h>
 #include <keyboard.h>
 #include "memoryManager.h"
+#include "./interruptions/process.h"
+#include "./interruptions/contextHandler.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -105,7 +107,9 @@ int main()
 	ncPrint("[Finished]");
 	init();
 	ncClear();
+	//uint64_t * sp = newProcess(sampleCodeModuleAddress);
+	//startFirstP(sp);
 	((EntryPoint)sampleCodeModuleAddress)();	// Aca se llama a userland
-	
+	ncPrint("si llego aca es porque esta mal :(");
 	return 0;
 }
