@@ -71,7 +71,7 @@ void helpCommand(){
         {"printmem: 32bytes from the direction passed by argument\n","&> printmem [DIRECTION](hexa)\n"},
         {"date: show real time live\n","&> date\n"},
         {"exceptiontest: Test exception routines. 0: Division by 0. 6: Invalid operation code.\n","&> exceptiontest [Exception ID]\n"},
-        {"testmm: Run Memory Manager functions tests. 0: Set all memory and check it.\n1: Basic test for free.\n2: Set and check ten blocks of size 1000.\n3: Set 10 blocks-> Free even blocks-> Ask for 5 more blocks-> Check 10 blocks.\n", "&> testmm [Test ID]\n"},
+        {"testmm: Run Memory Manager functions tests. \n0: Runs all tests. \n1: Runs given test. \n2: Set all memory and check it.\n3: Basic test for free.\n4: Set and check ten blocks of size 1000.\n5: Set 10 blocks-> Free even blocks-> Ask for 5 more blocks-> Check 10 blocks.\n", "&> testmm [Test ID]\n"},
         {"mem: Shows (Units: Bytes):\n- Total memory\n- Taken memory\n- Free memory\n", "&> meminfo"}
     };
     static int i;
@@ -190,18 +190,22 @@ void testMMCommand(char * buffer){
             testmm1();
             testmm2();
             testmm3();
+            test_mm();
             break;
         case 1:   ;  // Set all memory and check it.
-            testmm0();
+            test_mm();
             break;
         case 2:;            // Test free
-            testmm1();
+            testmm0();
             break;
         case 3:;    //  Blocks test
-            testmm2();
+            testmm1();
             break;
         case 4:;    //  Blocks test
-            testmm3();
+            testmm2();
+            break;
+        case 5: ;
+        testmm3();
             break;
 
         default:
