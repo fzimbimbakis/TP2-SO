@@ -34,7 +34,7 @@ void load_idt() {
 
 
 	// Habilita solo teclado
-	picMasterMask(0xFD);  // 1111 1101
+	picMasterMask(0xFC);  // 1111 1101
 	picSlaveMask(0xFF);
 
 	_sti();
