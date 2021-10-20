@@ -155,6 +155,10 @@ void free(void * ptr){
 	sysFree(ptr);
 }
 
+unsigned * memInfo(){
+    return sysMemInfo();
+}
+
 /*
 
 typedef long Align;

@@ -19,5 +19,6 @@ char* scanf();
 void initial();
 void* alloc(unsigned size);
 void free(void * ptr);
+unsigned * memInfo();
 unsigned long int hexToDec(char* num);
 #endif

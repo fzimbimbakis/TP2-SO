@@ -1,11 +1,11 @@
 #include "memoryManager.h"
-
+#include "./include/naiveConsole.h"
 struct header{
 	struct header * ptr;
 	unsigned size;
 }typedef header;
 
-static header * firstHeader = BEGIN_MEM;
+static header * firstHeader = (header *)BEGIN_MEM;
 
 header * resizeFreeBlock(header * Header, unsigned size);
 
@@ -83,8 +83,11 @@ header * resizeFreeBlock(header * Header, unsigned size){
 // }
 
 void free(void * ptr){
+    int debug = 0;
+    if(debug)
+    ncPrint("Free\n");
 	header * Fptr = ((header *)ptr) - 1;		// Limite inferior
-	void * limSuperior = (size_t)Fptr + Fptr->size + sizeof(header);
+	header * limSuperior = (header *)((size_t)Fptr + Fptr->size + sizeof(header));
 
 	if(limSuperior <= firstHeader){		// Va al principio
 		if(limSuperior == firstHeader){
@@ -102,22 +105,34 @@ void free(void * ptr){
 	while(Hpointer!=NULL){
 
 		if(Hpointer->ptr==NULL){		// Va al final
+            if(debug)
+            ncPrint("Va al final\n");
 			if( ((size_t)Hpointer)+Hpointer->size+sizeof(header) == Fptr){
+                if(debug)
+				ncPrint("Los pega\n");
 				Hpointer->size += Fptr->size + sizeof(header);
 			} else {
+                if(debug)
+				ncPrint("Estan separados\n");
 				Hpointer->ptr = Fptr;
 				Fptr->ptr = NULL;
 			}
 			return;
 		}
 
-		if(Hpointer->ptr <= Fptr){		// Va antes del siguiente header
+		if(Hpointer->ptr >= Fptr){		// Va antes del siguiente header
+            if(debug)
+			ncPrint("Va antes del siguiente header\n");
 			if( ((size_t)Hpointer)+Hpointer->size+sizeof(header) == Fptr){		// Junto bloque inferior
+                if(debug)
+				ncPrint("Junto bloque inferior\n");
 				Hpointer->size += Fptr->size + sizeof(header);
 				// Check bloque superior también
 				if(
 					((size_t) Hpointer)+Hpointer->size+sizeof(header) == Hpointer->ptr
 				){
+                    if(debug)
+					ncPrint("Junto bloque inferior y superior\n");
 					Hpointer->size += Hpointer->ptr->size + sizeof(header);
 					Hpointer->ptr = Hpointer->ptr->ptr;
 				}
@@ -125,23 +140,44 @@ void free(void * ptr){
 			}
 
 			if(																	// Junto SOLO con bloque superior
-				((size_t)Fptr) + Fptr->size + sizeof(header) == Hpointer->ptr
+					(header*)(((size_t)Fptr) + Fptr->size + sizeof(header)) == Hpointer->ptr
 			) {
+                if(debug)
+				ncPrint("Junto SOLO bloque superior\n");
 				Fptr->size += Hpointer->ptr->size + sizeof(header);
 				Fptr->ptr = Hpointer->ptr->ptr;
 				Hpointer->ptr = Fptr;
 				return;
 			}
 			// No junto con nada
+            if(debug)
+			ncPrint("No junto\n");
 			Fptr->ptr=Hpointer->ptr;
 			Hpointer->ptr = Fptr;
 			
 			return;
 		}
+		Hpointer = Hpointer->ptr;
 
 	}
 	
 	// ERROR
+}
+
+unsigned * memoryInfoMM(){
+    unsigned * array = alloc(sizeof(unsigned ) * 3);
+    unsigned totalMem = END_MEM - BEGIN_MEM;
+    unsigned freeMem = 0;
+    header * aux = firstHeader;
+    while (aux!=NULL){
+        freeMem += aux->size;
+        aux = aux->ptr;
+    }
+    unsigned takenMem = totalMem - freeMem;
+    array[0] = totalMem;
+    array[1] = takenMem;
+    array[2] = freeMem;
+    return array;
 }
 
 
