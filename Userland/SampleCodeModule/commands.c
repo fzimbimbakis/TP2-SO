@@ -72,7 +72,7 @@ void helpCommand(){
         {"date: show real time live\n","&> date\n"},
         {"exceptiontest: Test exception routines. 0: Division by 0. 6: Invalid operation code.\n","&> exceptiontest [Exception ID]\n"},
         {"testmm: Run Memory Manager functions tests. 0: Set all memory and check it.\n1: Basic test for free.\n2: Set and check ten blocks of size 1000.\n3: Set 10 blocks-> Free even blocks-> Ask for 5 more blocks-> Check 10 blocks.\n", "&> testmm [Test ID]\n"},
-        {"meminfo: Shows (Units: Bytes):\n- Total memory\n- Taken memory\n- Free memory\n", "&> meminfo"}
+        {"mem: Shows (Units: Bytes):\n- Total memory\n- Taken memory\n- Free memory\n", "&> meminfo"}
     };
     static int i;
     for (i = 0; i < commandsQuantity; i++)
