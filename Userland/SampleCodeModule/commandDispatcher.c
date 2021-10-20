@@ -13,10 +13,7 @@ void commandSelector(char* buffer){
         dateCommand();
     }else if(isCommandWithArg("exceptiontest",buffer)){
         exceptionTestCommando(buffer);
-    }else if(isCommand("cpuid", buffer)){
-        cpuidCommand();
-    }
-    else{
+    }else{
         printer("Command not found");
         printf("\n");
     }

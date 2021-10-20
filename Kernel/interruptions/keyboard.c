@@ -35,9 +35,6 @@ void keyboard_handler(){
     else if(idx == 0x0E){   //code del delete
         currentBuffer[(bufferIdx)++]='\b';
     }
-    else if(idx == 0xF){    //code del TAB
-        currentBuffer[(bufferIdx)++]='\t';
-    }
     else{
         char toPrint = keyTable[idx];
         currentBuffer[(bufferIdx)++]=(capsLock && IS_LETTER(toPrint))?toPrint-'a'+'A':toPrint;
