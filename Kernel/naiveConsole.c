@@ -35,10 +35,8 @@ void ncPrintChar(char character)
 	if(character=='\n') {			// Enter
 		ncNewline();
 		return;
-	}else if(character=='\t'){		// Tab (switch shell)
-		ncSwitchShell();
-		return;
-	}else if(character=='\b'){		// Backspace
+	}
+	else if(character=='\b'){		// Backspace
 		ncBackspace();
 		return;
 	}
@@ -56,46 +54,14 @@ void ncPrintColorChar(char character,int color)
 }
 
 void ncScroll(){
-	if(shellSelector){
-		if(currentVideo-video == (height/2)*width*2){
-			ncNewline();
-		}
-	}else{
-		if(currentVideo-video == height*width*2){
-			ncNewline();
-		}
-	}
-}
 
-void ncSwitchShell(){
-	uint8_t* aux = currentVideo;
-	currentVideo[1]=GREY;
-	currentVideo = previousVideo;
-	currentVideo[1]=0xf0;
-	previousVideo = aux;
-	shellSelector=1-shellSelector;
+		if(currentVideo-video == height*width*2)
+			ncNewline();
 }
 
 void ncNewline(){
 	currentVideo[1]=GREY;
-	if(shellSelector){
-		for(int i = 0; i<(height/2)-1; i++){
-			for (int j=0; j<2*width-1; j++)
-				video[width*2*i + j] = video[width*2*(i+1) + j];
-		}
-		for(int i=0; i<2*width; i++){
-			if(i%2==0)
-				video[(height-2)/2*width*2+i] = ' ';
-			else
-				video[(height-2)/2*width*2+i]=GREY;//restauro color de celda
-		}
-		
-		currentVideo = video+(height-2)/2*width*2;
-		currentVideo[1]=0xf0;
-		return;
-	}
-
-	for(int i = (height+1)/2; i<height; i++){
+	for(int i =0 ; i<height; i++){
 		for (int j=0; j<2*width; j++)
 			video[width*2*i + j] = video[width*2*(i+1) + j];
 	}
@@ -105,7 +71,6 @@ void ncNewline(){
 		else
 			video[height*2*width-i] =GREY; //restauro color de celda
 	}
-	
 	currentVideo = video + (height-1)*width*2;
 	currentVideo[1]=0xf0;
 }
@@ -146,10 +111,7 @@ void ncClear(){
 		video[i * 2] = ' ';
 		video[i*2 + 1]=GREY;
 	}
-	for(i=0; i<width*2; i+=2){
-		video[24*width+i] = '-';
-	}
-	currentVideo = (shellSelector)?video+ ((height/2)-1)*width*2:video + (height-1)*width*2;
+	currentVideo = video + (height-1)*width*2;
 }
 
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base)

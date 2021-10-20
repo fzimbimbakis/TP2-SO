@@ -3,7 +3,7 @@
 #include "sysCall.h"
 #include "exceptionTests.h"
 #include "readMemory.h"
-#include "cpu.h"
+
 #include "testMM.h"
 
 #define SECONDS 0
@@ -169,10 +169,6 @@ void exceptionTestCommando(char * buffer){
     
 }
 
-void cpuidCommand(){
-    cpuFun();
-}
-
 void memInfoCommand(){
     unsigned * array = memInfo();
     printf("Total memory: %d.\nTaken memory: %d.\nFree memory: %d.\n", array[0], array[1], array[2]);
@@ -192,16 +188,16 @@ void testMMCommand(char * buffer){
             testmm3();
             test_mm();
             break;
-        case 1:   ;  // Set all memory and check it.
+        case 1:   ;  
             test_mm();
             break;
-        case 2:;            // Test free
+        case 2:;      
             testmm0();
             break;
-        case 3:;    //  Blocks test
+        case 3:;    
             testmm1();
             break;
-        case 4:;    //  Blocks test
+        case 4:;   
             testmm2();
             break;
         case 5: ;
