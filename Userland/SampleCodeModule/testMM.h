@@ -9,5 +9,5 @@ void testmm2();
 void testmm3();
 void testmm0();
 #define BEGIN_MEM 0x600000
-#define END_MEM 0x700000
+#define END_MEM 0xFFFFFF
 #endif //TP2_SO_TESTMM_H
