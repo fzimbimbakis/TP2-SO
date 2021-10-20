@@ -4,6 +4,8 @@
 #include "exceptionTests.h"
 #include "readMemory.h"
 
+#include "testMM.h"
+
 #define SECONDS 0
 #define MINUTES 2
 #define HOURS 4
@@ -61,14 +63,16 @@ void getArguments(char* buffer, char* arg){
     }
 }
 
-#define commandsQuantity 5
+#define commandsQuantity 6
 void helpCommand(){
     static char * strings[][2] = {
         {"help: display every command available\n","&> help\n"},
         {"inforeg: print every register with its value\n","&> inforeg\n"},
         {"printmem: 32bytes from the direction passed by argument\n","&> printmem [DIRECTION](hexa)\n"},
         {"date: show real time live\n","&> date\n"},
-        {"exceptiontest: Test exception routines. 0: Division by 0. 6: Invalid operation code.\n","&> exceptiontest [Exception ID]\n"}
+        {"exceptiontest: Test exception routines. 0: Division by 0. 6: Invalid operation code.\n","&> exceptiontest [Exception ID]\n"},
+        {"testmm: Run Memory Manager functions tests. \n0: Runs all tests. \n1: Runs given test. \n2: Set all memory and check it.\n3: Basic test for free.\n4: Set and check ten blocks of size 1000.\n5: Set 10 blocks-> Free even blocks-> Ask for 5 more blocks-> Check 10 blocks.\n", "&> testmm [Test ID]\n"},
+        {"mem: Shows (Units: Bytes):\n- Total memory\n- Taken memory\n- Free memory\n", "&> meminfo"}
     };
     static int i;
     for (i = 0; i < commandsQuantity; i++)
@@ -165,3 +169,45 @@ void exceptionTestCommando(char * buffer){
     
 }
 
+void memInfoCommand(){
+    unsigned * array = memInfo();
+    printf("Total memory: %d.\nTaken memory: %d.\nFree memory: %d.\n", array[0], array[1], array[2]);
+    free(array);
+}
+
+void testMMCommand(char * buffer){
+    char arg[MAX_BUFFER];
+
+    getArguments(buffer,arg);
+    int num=strToNum(arg);
+    switch (num){
+        case 0:;
+            testmm0();
+            testmm1();
+            testmm2();
+            testmm3();
+            test_mm();
+            break;
+        case 1:   ;  
+            test_mm();
+            break;
+        case 2:;      
+            testmm0();
+            break;
+        case 3:;    
+            testmm1();
+            break;
+        case 4:;   
+            testmm2();
+            break;
+        case 5: ;
+        testmm3();
+            break;
+
+        default:
+            printer("Test ID is not valid");
+            printf("\n");
+            break;
+    }
+
+}

@@ -1,7 +1,8 @@
 #ifndef COMMMANDS_H
 #define COMMMANDS_H
 
-
+void testMMCommand();
+void memInfoCommand();
 int isCommand(char* command, char* buffer);
 int isCommandWithArg(char* command, char* buffer);
 void helpCommand();

@@ -1,6 +1,12 @@
 #include "lib.h"
+#include <stddef.h>
 #include "sysCall.h"
 #include <stdarg.h>
+
+
+#define BEGIN_MEM 0x60000
+#define END_MEM 0xFFFFFFFFFFFFFFFF
+
 char buffer[MAX_BUFFER] = {0};
 
 
@@ -140,3 +146,74 @@ char* scanf(){
 		buffer[(idx)++]=0;
 	return buffer;
 }
+
+void * alloc(unsigned size){
+	return sysAlloc(size);
+}
+
+void free(void * ptr){
+	sysFree(ptr);
+}
+
+unsigned * memInfo(){
+    return sysMemInfo();
+}
+
+/*
+
+typedef long Align;
+// For alignment for long values ???????
+
+union header {
+    struct
+    {
+        union header * ptr;
+        unsigned size;
+    } s;
+    Align x;
+} ;
+typedef union header Header;
+
+static Header * freeList = 0x600000;
+
+void initial(){
+    Header base;
+    base.s.ptr = 0;
+    base.s.size = ((unsigned long int)0xFFFFFFF - (unsigned long int) 6291456);
+    *freeList = base;
+}
+
+void * alloc( unsigned nbytes){
+    Header * Hpointer, * prevHpointer;
+    unsigned nunits;
+
+    nunits = (nbytes+sizeof(Header)-1)+ 1;
+    Hpointer = freeList;
+    prevHpointer = freeList;
+
+	if(freeList == NULL)
+	{
+		return 0;
+	}
+	
+    do
+    {
+        if(Hpointer->s.size >= nunits){
+            if(Hpointer->s.size == nunits){
+                if(prevHpointer != freeList)
+                prevHpointer->s.ptr = Hpointer->s.ptr;
+                else freeList = Hpointer->s.ptr;
+            } else {
+                Hpointer->s.size -= nunits;
+                Hpointer += Hpointer->s.size;            // No entiendo estas dos lineas
+                Hpointer->s.size = nunits;
+            }
+            return (void *) (Hpointer+1);
+        }
+        if(Hpointer->s.ptr==0)
+            return 0;
+        prevHpointer = Hpointer;
+        Hpointer = Hpointer->s.ptr;
+    } while (1);
+
+}*/

@@ -9,7 +9,6 @@ char * v = (char*)0xB8000 + 79 * 2;
 	
 
 int main() {
-
 	printf("Bienvenido! Que comando desea correr?\n");
 	while(1){
 		while((c=getChar())!='\n'){
