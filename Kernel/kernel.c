@@ -87,7 +87,6 @@ void * initializeKernelBinary()
 
 int main()
 {	
-	load_idt();
 	ncPrint("[Kernel Main]");
 	ncNewline();
 	ncPrint("  Sample code module at 0x");
@@ -107,9 +106,12 @@ int main()
 	ncPrint("[Finished]");
 	init();
 	ncClear();
-	//uint64_t * sp = newProcess(sampleCodeModuleAddress);
-	//startFirstP(sp);
-	((EntryPoint)sampleCodeModuleAddress)();	// Aca se llama a userland
+    _cli();
+    load_idt();
+
+    firstProcess((uint64_t)sampleCodeModuleAddress);
+    ncPrint("si llego aca es porque esta mal :( ");
+//	((EntryPoint)sampleCodeModuleAddress)();	// Aca se llama a userland
 	ncPrint("si llego aca es porque esta mal :(");
 	return 0;
 }

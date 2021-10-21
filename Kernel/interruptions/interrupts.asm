@@ -26,6 +26,9 @@ EXTERN ncClear
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 EXTERN int_80
+EXTERN getCurrentSP
+EXTERN updateRSP
+EXTERN irqDispatcher
 EXTERN printRegName
 EXTERN ncPrintHex
 EXTERN ncNewline
@@ -173,7 +176,12 @@ _irq00Handler:
      pushState
 
      mov rdi, rsp
-     call handler
+     call updateRSP
+
+     mov rdi, 0
+     call irqDispatcher   ;actualizao RoundRobin
+
+     call getCurrentSP  ;cambio contexto
      mov rsp, rax
      mov al,20h
      out 20h, al

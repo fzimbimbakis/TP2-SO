@@ -1,8 +1,13 @@
 
-GLOBAL _createStack
+GLOBAL createStackContext
 GLOBAL startFirstP
 
 extern alloc
+extern getCurrentSP
+EXTERN irqDispatcher
+extern ncPrintChar
+extern ncPrintHex
+
 section .text
 
 %macro pushState 0
@@ -23,9 +28,26 @@ section .text
 	push r15
 %endmacro
 
+%macro popState 0
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop r11
+	pop r10
+	pop r9
+	pop r8
+	pop rsi
+	pop rdi
+	pop rbp
+	pop rdx
+	pop rcx
+	pop rbx
+	pop rax
+%endmacro
 
 
-_createStack:
+createStackContext:
     push rbp
     mov rbp, rsp
 
@@ -45,7 +67,20 @@ _createStack:
     ret
 
 startFirstP:
-    mov rsp, rdi
-    popState
+    mov rdi, 0 ; pasaje de parametro
+    	call irqDispatcher
+        ;mov rdi, 65; A
+        ;call ncPrintChar
 
-    ;iretq
+    	call getCurrentSP;
+    	mov rsp , rax ;; cambio de contexto.
+    	;mov rdi, rax
+    	;call ncPrintHex
+        ;mov rdi, 66; B
+        ;call ncPrintChar
+    	popState
+    	;pop rdi
+        ;call ncPrintHex
+    	;sti ;;set interrupts
+    	iretq
+

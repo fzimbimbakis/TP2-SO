@@ -5,6 +5,7 @@ GLOBAL sysFree
 GLOBAL sysAlloc
 GLOBAL sysMemInfo
 GLOBAL sysNewP
+GLOBAL exit
 section .text
 
 %macro pushState 0
@@ -63,6 +64,13 @@ sysNewP:
 	int 80h
 	popState
 	ret
+
+exit:
+    pushState
+    mov rax, 7
+    int 80h
+    popState ;no deberia llegar a ejecutarse esta linea
+    ret
 
 sysTime:
 	; No pusheo y popeo el rax. Lo uso para retornar.

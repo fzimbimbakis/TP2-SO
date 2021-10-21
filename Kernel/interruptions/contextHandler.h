@@ -6,6 +6,20 @@
 #define READY 0
 #define BLOCKED 1
 #define DEAD 2
-int64_t* handler(int64_t* newRIP);
-uint64_t* newProcess(void* fPtr);
+
+typedef struct PCB{
+    char pid;
+    char state;
+    uint64_t* rsp;
+    char priority; //TODO implementar las prioridades
+    char times;
+    struct PCB* next;
+}PCB;
+
+void handler();
+uint64_t * getCurrentSP();
+char newProcess(uint64_t fPtr);
+void exit(int n);
+uint64_t * firstProcess(uint64_t fPtr);
+extern uint64_t * createStackContext(uint64_t sp, uint64_t fPtr);
 #endif

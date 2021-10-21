@@ -20,6 +20,7 @@ void initial();
 void* alloc(unsigned size);
 void free(void * ptr);
 int newP(void * fPtr);
+void exit(int n);
 unsigned * memInfo();
 unsigned long int hexToDec(char* num);
 #endif

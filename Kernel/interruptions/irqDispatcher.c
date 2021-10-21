@@ -1,6 +1,7 @@
 #include <time.h>
 #include <keyboard.h>
 #include <stdint.h>
+#include "contextHandler.h"
 
 static void int_20();
 static void int_21();
@@ -14,7 +15,7 @@ void irqDispatcher(uint64_t irq) {
 }
 
 void int_20() {
-	timer_handler();
+	handler();
 }
 
 void int_21(){
