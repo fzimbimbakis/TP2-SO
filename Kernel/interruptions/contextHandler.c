@@ -10,44 +10,64 @@ void startFirstP();
 //    int pid
 //}typedef process;
 
+extern void updateStack();
 static PCB* currentProcess = NULL;
 static PCB* firstP = NULL;
 static char lastPID = 0;
-static int pidCount=0, pCount=0, pCurrent=0;
 
 void updateRSP(uint64_t* sp){
     currentProcess->rsp=sp;
 }
 
+void exit(){
+//    ncPrint("\nEXITT\nnext:");
+//    ncPrintHex(currentProcess->next);
+//    ncPrint("\nnextPID:");
+//    ncPrintHex(currentProcess->next->pid);
+//    ncPrint("\nnextRSP:");
+//    ncPrintHex(currentProcess->next->rsp);
+//    ncPrint("\nprev (deberia ser 0): ");
+//    ncPrintHex(currentProcess->prev);
 
-void handler(){
+    if (currentProcess->prev!=0){
+        currentProcess->prev->next=currentProcess->next;
+    }
+    else{
+        firstP=currentProcess->next;
+    }
+    if (currentProcess->next!=0){
+        currentProcess->next->prev=currentProcess->prev;
+        PCB * auxP = currentProcess->next;
+        free(currentProcess->rbp);
+        free(currentProcess);
+        currentProcess=auxP;
+    }
+    else{
+        free(currentProcess->rbp);
+        free(currentProcess);
+    }
+//    ncPrint("prehandl\n");
+    updateStack();
+}
+
+void handler() {
 //    ncPrintChar('5');
-    currentProcess = ((currentProcess->next==0)? firstP : currentProcess->next);
-//    ncPrint("handler:\n");
+    currentProcess = ((currentProcess->next == 0) ? firstP : currentProcess->next);
+//    ncPrint("\npid: ");
+//    ncPrintDec(currentProcess->pid);
+//    ncPrint("\nrsp: ");
 //    ncPrintHex(currentProcess->rsp);
-//    ncPrintChar('\n');
-
-//    ncPrintChar('X'); //para chequear que este interrumpiendo bien
-//    process newP;
-//    newP.rsp=newRSP;
-//    newP.state=0;
-//    newP.pid=pidCount;
-//    rr[pCount++]=newP;
-//    pCount=pCount%256;
-//    int64_t* output = rr[pCurrent++].rsp;
-//    pCurrent=pCurrent%256;
-//    return output;
 }
 void addProcessToList(PCB* newP){
     if(firstP==NULL){
         newP->next=0;
+        newP->prev=0;
         firstP=newP;
         currentProcess = newP;
-
-        //ncPrintChar('3');
         return;
     }
     newP->next=firstP;
+    newP->prev=0;
     firstP=newP;
     return;
 }
@@ -55,7 +75,9 @@ void addProcessToList(PCB* newP){
 char newProcess(uint64_t fPtr) {
     uint64_t *rbp = alloc(1024 * sizeof(uint64_t));
     PCB *newP = alloc(sizeof(PCB));
+    newP->rbp=rbp;
     newP->pid = lastPID++;
+    newP->prev=0;
     newP->rsp = createStackContext(((uint64_t) & rbp[1023]), fPtr);
     newP->next = NULL;
     addProcessToList(newP);
@@ -63,9 +85,10 @@ char newProcess(uint64_t fPtr) {
 }
 
 uint64_t * firstProcess(uint64_t fPtr){
-    ncPrintChar('1');
+//    ncPrintChar('1');
     uint64_t * rbp = alloc(1024*sizeof (uint64_t));
     PCB* first = alloc(sizeof (PCB));
+    first->rbp=rbp;
     first->pid=lastPID++;
     first->rsp= createStackContext((uint64_t) &rbp[1023], fPtr);
 //    ncPrintChar('\n');
@@ -77,6 +100,7 @@ uint64_t * firstProcess(uint64_t fPtr){
 //
 //    ncPrintHex(fPtr);
     first->next=0;
+    first->prev=0;
 //    ncPrintChar('2');
 
     addProcessToList(first);
@@ -87,7 +111,6 @@ uint64_t * firstProcess(uint64_t fPtr){
 };
 
 uint64_t * getCurrentSP(){
-//    ncPrintChar('6');
     return currentProcess->rsp;
 }
 

@@ -7,15 +7,16 @@ char * v = (char*)0xB8000 + 79 * 2;
 	static int idx = 0;
 
 void imprimir(){
-    while (1)
-	putChar('X');
-    exit(0);
+//    while (1)
+//	putChar('X');
+    printf("Esto lo imprime el proceso 2 y muere\n");
+    exit();
 }
 
 int main() {
 
 	printf("Bienvenido! Que comando desea correr?\n");
-//	newP(&imprimir);
+	newP(&imprimir);
 	// while (1)
 	// {
 	// 	putChar('A');

@@ -1,4 +1,4 @@
-
+GLOBAL updateStack
 GLOBAL _cli
 GLOBAL _sti
 GLOBAL picMasterMask
@@ -181,10 +181,17 @@ _irq00Handler:
      mov rdi, 0
      call irqDispatcher   ;actualizao RoundRobin
 
-     call getCurrentSP  ;cambio contexto
+    call getCurrentSP  ;cambio contexto
      mov rsp, rax
      mov al,20h
      out 20h, al
+     popState
+
+     iretq
+
+updateStack:
+     call getCurrentSP  ;cambio contexto
+     mov rsp, rax
      popState
 
      iretq

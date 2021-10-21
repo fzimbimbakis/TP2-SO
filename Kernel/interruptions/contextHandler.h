@@ -11,15 +11,17 @@ typedef struct PCB{
     char pid;
     char state;
     uint64_t* rsp;
+    uint64_t* rbp;
     char priority; //TODO implementar las prioridades
     char times;
     struct PCB* next;
+    struct PCB* prev;
 }PCB;
 
 void handler();
 uint64_t * getCurrentSP();
 char newProcess(uint64_t fPtr);
-void exit(int n);
+void exit();
 uint64_t * firstProcess(uint64_t fPtr);
 extern uint64_t * createStackContext(uint64_t sp, uint64_t fPtr);
 #endif
