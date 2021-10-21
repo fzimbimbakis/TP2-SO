@@ -15,8 +15,8 @@ unsigned * memoryInfo();
 EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo};
 
 int int_80(unsigned int arg1, unsigned int arg2, unsigned int arg3, int sysCall){
-    functionPtrs[sysCall](arg1, arg2, arg3);
-    return;
+    int ret=(functionPtrs[sysCall])(arg1, arg2, arg3);
+    return ret;
 }
 
 void * memoryAlloc(unsigned size){

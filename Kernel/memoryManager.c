@@ -107,7 +107,7 @@ void free(void * ptr){
 		if(Hpointer->ptr==NULL){		// Va al final
             if(debug)
             ncPrint("Va al final\n");
-			if( ((size_t)Hpointer)+Hpointer->size+sizeof(header) == Fptr){
+			if( ((size_t)Hpointer)+Hpointer->size+sizeof(header) == (size_t)Fptr){
                 if(debug)
 				ncPrint("Los pega\n");
 				Hpointer->size += Fptr->size + sizeof(header);
@@ -123,13 +123,13 @@ void free(void * ptr){
 		if(Hpointer->ptr >= Fptr){		// Va antes del siguiente header
             if(debug)
 			ncPrint("Va antes del siguiente header\n");
-			if( ((size_t)Hpointer)+Hpointer->size+sizeof(header) == Fptr){		// Junto bloque inferior
+			if( ((size_t)Hpointer)+Hpointer->size+sizeof(header) == (size_t)Fptr){		// Junto bloque inferior
                 if(debug)
 				ncPrint("Junto bloque inferior\n");
 				Hpointer->size += Fptr->size + sizeof(header);
 				// Check bloque superior también
 				if(
-					((size_t) Hpointer)+Hpointer->size+sizeof(header) == Hpointer->ptr
+					((size_t) Hpointer)+Hpointer->size+sizeof(header) == (size_t)Hpointer->ptr
 				){
                     if(debug)
 					ncPrint("Junto bloque inferior y superior\n");
@@ -140,7 +140,7 @@ void free(void * ptr){
 			}
 
 			if(																	// Junto SOLO con bloque superior
-					(header*)(((size_t)Fptr) + Fptr->size + sizeof(header)) == Hpointer->ptr
+					(header*)(((size_t)Fptr) + Fptr->size + sizeof(header)) ==Hpointer->ptr
 			) {
                 if(debug)
 				ncPrint("Junto SOLO bloque superior\n");

@@ -1,4 +1,4 @@
-#include <naiveConsole.h>
+#include "include/naiveConsole.h"
 #include <keyboard.h>
 
 #define GREY 7
@@ -10,8 +10,6 @@ static uint8_t * const video = (uint8_t*)0xB8000;
 static uint8_t * currentVideo = (uint8_t*)0xB8000;
 static const uint32_t width = 80;
 static const uint32_t height = 25 ;
-static uint8_t shellSelector = 1;
-static uint8_t * previousVideo = 0xB8F00;
 //static uint8_t * previousVideo = video + (height-1)*width*2;
 
 void ncPrint(const char * string)
@@ -40,10 +38,24 @@ void ncPrintChar(char character)
 		ncBackspace();
 		return;
 	}
+	else if(character=='\t'){
+		ncTab();
+		return;
+
+	}
 	currentVideo[1]=GREY;
 	*currentVideo = character;
 	currentVideo += 2;
 	currentVideo[1]=0xf0;
+}
+
+void ncTab(){
+	for (int i = 0; i < 5; i++){
+		currentVideo[1]=GREY;
+		*currentVideo = ' ';
+		currentVideo += 2;
+		currentVideo[1]=0xf0;
+	}
 }
 
 void ncPrintColorChar(char character,int color)
@@ -106,7 +118,7 @@ void ncBackspace(){
 }
 
 void ncClear(){
-	int i, mid = width;
+	int i;
 	for (i = 0; i < height * width; i++){
 		video[i * 2] = ' ';
 		video[i*2 + 1]=GREY;
