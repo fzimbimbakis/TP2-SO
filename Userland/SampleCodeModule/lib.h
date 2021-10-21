@@ -19,7 +19,7 @@ char* scanf();
 void initial();
 void* alloc(unsigned size);
 void free(void * ptr);
-int newP(void * fPtr);
+int newP(void * fPtr, char priority);
 void exit();
 unsigned * memInfo();
 unsigned long int hexToDec(char* num);

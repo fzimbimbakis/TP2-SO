@@ -6,6 +6,7 @@ GLOBAL sysAlloc
 GLOBAL sysMemInfo
 GLOBAL sysNewP
 GLOBAL exit
+GLOBAL sysWait
 section .text
 
 %macro pushState 0
@@ -183,3 +184,9 @@ sysAlloc:
         	pop rcx
         	pop rbx
     	ret
+sysWait:
+	pushState
+    mov rax, 8
+    int 80h
+    popState
+    ret

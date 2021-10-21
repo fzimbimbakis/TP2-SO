@@ -6,6 +6,7 @@
 #define READY 0
 #define BLOCKED 1
 #define DEAD 2
+#define MAX_PRIORITY 2
 
 typedef struct PCB{
     char pid;
@@ -20,7 +21,7 @@ typedef struct PCB{
 
 void handler();
 uint64_t * getCurrentSP();
-char newProcess(uint64_t fPtr);
+char newProcess(uint64_t fPtr, char priority);
 void exit();
 uint64_t * firstProcess(uint64_t fPtr);
 extern uint64_t * createStackContext(uint64_t sp, uint64_t fPtr);

@@ -126,8 +126,8 @@ char getChar(){
 	return ret;
 }
 
-int newP(void* fPtr){
-	return sysNewP(fPtr);
+int newP(void* fPtr, char priority){
+	return sysNewP(fPtr , priority);
 }
 
 char* scanf(){

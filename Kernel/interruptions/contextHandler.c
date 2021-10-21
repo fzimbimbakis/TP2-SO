@@ -52,11 +52,27 @@ void exit(){
 
 void handler() {
 //    ncPrintChar('5');
-    currentProcess = ((currentProcess->next == 0) ? firstP : currentProcess->next);
-//    ncPrint("\npid: ");
-//    ncPrintDec(currentProcess->pid);
-//    ncPrint("\nrsp: ");
+
+    if(currentProcess->times == currentProcess->priority){
+        currentProcess->times=0;
+        currentProcess = ((currentProcess->next==0)? firstP : currentProcess->next);
+    }else{
+        currentProcess->times++;
+    }
+//    ncPrint("handler:\n");
 //    ncPrintHex(currentProcess->rsp);
+//    ncPrintChar('\n');
+
+//    ncPrintChar('X'); //para chequear que este interrumpiendo bien
+//    process newP;
+//    newP.rsp=newRSP;
+//    newP.state=0;
+//    newP.pid=pidCount;
+//    rr[pCount++]=newP;
+//    pCount=pCount%256;
+//    int64_t* output = rr[pCurrent++].rsp;
+//    pCurrent=pCurrent%256;
+//    return output;
 }
 void addProcessToList(PCB* newP){
     if(firstP==NULL){
@@ -64,6 +80,8 @@ void addProcessToList(PCB* newP){
         newP->prev=0;
         firstP=newP;
         currentProcess = newP;
+
+        //ncPrintChar('3');
         return;
     }
     newP->next=firstP;
@@ -72,20 +90,22 @@ void addProcessToList(PCB* newP){
     return;
 }
 
-char newProcess(uint64_t fPtr) {
+char newProcess(uint64_t fPtr, char priority) {
     uint64_t *rbp = alloc(1024 * sizeof(uint64_t));
     PCB *newP = alloc(sizeof(PCB));
     newP->rbp=rbp;
     newP->pid = lastPID++;
     newP->prev=0;
     newP->rsp = createStackContext(((uint64_t) & rbp[1023]), fPtr);
+    newP->priority=priority;
+    newP->times=0;
     newP->next = NULL;
     addProcessToList(newP);
     return (newP->pid);
 }
 
 uint64_t * firstProcess(uint64_t fPtr){
-//    ncPrintChar('1');
+    //ncPrintChar('1');
     uint64_t * rbp = alloc(1024*sizeof (uint64_t));
     PCB* first = alloc(sizeof (PCB));
     first->rbp=rbp;
@@ -99,6 +119,7 @@ uint64_t * firstProcess(uint64_t fPtr){
 //    ncPrintChar('\n');
 //
 //    ncPrintHex(fPtr);
+    first->priority=MAX_PRIORITY;
     first->next=0;
     first->prev=0;
 //    ncPrintChar('2');
