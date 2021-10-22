@@ -134,6 +134,9 @@ uint64_t * firstProcess(uint64_t fPtr){
 uint64_t * getCurrentSP(){
     return currentProcess->rsp;
 }
+PCB * getCurrentPCB(){
+    return currentProcess;
+}
 
   /*  uint64_t* bp = alloc(1000 * sizeof(uint64_t));
     uint64_t * sp = _createStack((uint64_t)&sp[999], fPtr);
