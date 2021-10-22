@@ -4,7 +4,11 @@
 
 uint64_t* _createStack( uint64_t sp, void* fPtr);
 
-void startFirstP(uint64_t * sp);
+void startFirstP();
+
+void haltP();
+
+void int20();
 
 
 #endif

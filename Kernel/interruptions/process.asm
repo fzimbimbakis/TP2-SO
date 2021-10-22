@@ -1,6 +1,8 @@
 
 GLOBAL createStackContext
 GLOBAL startFirstP
+GLOBAL haltP
+GLOBAL int20
 
 extern alloc
 extern getCurrentSP
@@ -58,7 +60,6 @@ createStackContext:
     push 0x202 ; RFLAGS
     push 0x8 ; CS
     push rsi; RIP
-     
     pushState
     mov rax, rsp
     mov rsp, rbp
@@ -84,3 +85,14 @@ startFirstP:
     	;sti ;;set interrupts
     	iretq
 
+haltP:
+	;mov rdi, 65; A
+    ;call ncPrintChar
+	sti
+	hlt
+	jmp haltP
+	ret
+
+int20:
+	int 20h
+	ret
