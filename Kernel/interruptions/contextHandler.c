@@ -75,7 +75,7 @@ void exit(){
 void handler() {
 //    ncPrintChar('5');
 
-    if(currentProcess->times == currentProcess->priority){
+    if(currentProcess->times == currentProcess->priority || currentProcess->state==BLOCKED){
         currentProcess->times=0;
         do{
             currentProcess = ((currentProcess->next==0)? firstP : currentProcess->next);
