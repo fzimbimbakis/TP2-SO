@@ -147,6 +147,9 @@ uint64_t * firstProcess(uint64_t fPtr){
 uint64_t * getCurrentSP(){
     return currentProcess->rsp;
 }
+PCB * getCurrentPCB(){
+    return currentProcess;
+}
 
 PCB * getCurrentPCB(){
     return currentProcess;
