@@ -15,7 +15,7 @@ static const char keyTable[] = {
     'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '-', 
     0, '*', 0, ' ',0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '7','↑', '9', '-', '←', '5', '→', '+', '1', '↓', '3', 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0
 };
-static char* currentBuffer[64]={0};
+static char currentBuffer[64]={0};
 static int bufferIdx=0;
 static int endBuffer = 0;
 void keyboard_handler(){

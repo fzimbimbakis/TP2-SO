@@ -5,7 +5,7 @@
 #include "lib.h"
 #include "testMM.h"
 void testmm0(){
-    int nroA = END_MEM - (BEGIN_MEM+100);
+    int nroA = END_MEM - (BEGIN_MEM+10000);
     char * ptrA = (char *)alloc(nroA);
     if(alloc(nroA) != NULL){
         printf("ERROR: alloc sin espacio no dio null.\n");
@@ -26,7 +26,7 @@ void testmm0(){
     free(ptrA);
 }
 void testmm1(){
-    int nro = END_MEM - (BEGIN_MEM+100);
+    int nro = END_MEM - (BEGIN_MEM+10000);
     char * ptr = (char *)alloc(nro);
     if(alloc(nro) != NULL){
         printf("ERROR: alloc sin espacio no dio null.\n");

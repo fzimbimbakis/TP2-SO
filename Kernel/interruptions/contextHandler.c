@@ -21,6 +21,12 @@ void updateRSP(uint64_t* sp){
     currentProcess->rsp=sp;
 }
 
+void yield(){
+    currentProcess->times = currentProcess->priority;
+    int20();
+    return;
+}
+
 void unblockShell(){
     PCB* aux=currentProcess;
     while(aux->pid!=0){
@@ -29,6 +35,31 @@ void unblockShell(){
     }
     ncPrint("Desbloqueo shell\n");
     aux->state=READY;
+}
+
+int blockProcess(char pid){
+    PCB * aux = firstP;
+    while(aux!=NULL){
+        if(aux->pid==pid){
+            aux->state=BLOCKED;
+            if(currentProcess==aux)
+                int20();
+            return 0;
+        }
+        aux = aux->next;
+    }
+    return -1;
+}
+int unblockProcess(char pid){
+    PCB * aux = firstP;
+    while(aux!=NULL){
+        if(aux->pid==pid){
+            aux->state=READY;
+            return 0;
+        }
+        aux = aux->next;
+    }
+    return -1;
 }
 
 void blockProcess(){
@@ -147,8 +178,8 @@ uint64_t * firstProcess(uint64_t fPtr){
 uint64_t * getCurrentSP(){
     return currentProcess->rsp;
 }
-PCB * getCurrentPCB(){
-    return currentProcess;
+char getCurrentPID(){
+    return currentProcess->pid;
 }
 
 PCB * getCurrentPCB(){

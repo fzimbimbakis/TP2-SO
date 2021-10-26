@@ -22,7 +22,10 @@ typedef struct PCB{
 void handler();
 uint64_t * getCurrentSP();
 PCB * getCurrentPCB();
-
+char getCurrentPID();
+int blockProcess(char pid);
+int unblockProcess(char pid);
+void yield();
 void blockProcess();
 void unblockShell();
 
