@@ -22,6 +22,10 @@ typedef struct PCB{
 void handler();
 uint64_t * getCurrentSP();
 PCB * getCurrentPCB();
+
+void blockProcess();
+void unblockShell();
+
 char newProcess(uint64_t fPtr, char priority);
 void exit();
 uint64_t * firstProcess(uint64_t fPtr);

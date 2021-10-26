@@ -2,7 +2,9 @@
 #include <stdint.h>
 #include "../include/naiveConsole.h"
 #include "../memoryManager.h"
-void startFirstP();
+#include "interrupts.h"
+#include "process.h"
+
 //struct process{
 //    char state;
 //    uint64_t* rbp;
@@ -17,6 +19,26 @@ static char lastPID = 0;
 
 void updateRSP(uint64_t* sp){
     currentProcess->rsp=sp;
+}
+
+void unblockShell(){
+    PCB* aux=currentProcess;
+    while(aux->pid!=0){
+        aux=aux->next;
+        //ncPrintDec(aux->pid);
+    }
+    ncPrint("Desbloqueo shell\n");
+    aux->state=READY;
+}
+
+void blockProcess(){
+    currentProcess->state=BLOCKED;
+    ncPrint("Bloqueo shell\n");
+    //ncPrintDec(currentProcess->pid);
+    //ncPrint("\n");
+    
+    int20();
+    return;
 }
 
 void exit(){
@@ -53,27 +75,16 @@ void exit(){
 void handler() {
 //    ncPrintChar('5');
 
-    if(currentProcess->times == currentProcess->priority){
+    if(currentProcess->times == currentProcess->priority || currentProcess->state==BLOCKED){
         currentProcess->times=0;
-        currentProcess = ((currentProcess->next==0)? firstP : currentProcess->next);
+        do{
+            currentProcess = ((currentProcess->next==0)? firstP : currentProcess->next);
+        }while(currentProcess->state==BLOCKED);
     }else{
         currentProcess->times++;
     }
-//    ncPrint("handler:\n");
-//    ncPrintHex(currentProcess->rsp);
-//    ncPrintChar('\n');
-
-//    ncPrintChar('X'); //para chequear que este interrumpiendo bien
-//    process newP;
-//    newP.rsp=newRSP;
-//    newP.state=0;
-//    newP.pid=pidCount;
-//    rr[pCount++]=newP;
-//    pCount=pCount%256;
-//    int64_t* output = rr[pCurrent++].rsp;
-//    pCurrent=pCurrent%256;
-//    return output;
 }
+
 void addProcessToList(PCB* newP){
     if(firstP==NULL){
         newP->next=0;
@@ -99,6 +110,7 @@ char newProcess(uint64_t fPtr, char priority) {
     newP->rsp = createStackContext(((uint64_t) & rbp[1023]), fPtr);
     newP->priority=priority;
     newP->times=0;
+    newP->state=READY;
     newP->next = NULL;
     addProcessToList(newP);
     return (newP->pid);
@@ -126,6 +138,7 @@ uint64_t * firstProcess(uint64_t fPtr){
 
     addProcessToList(first);
 //    ncPrintChar('4');
+    newProcess(&haltP, MAX_PRIORITY); //creo proceso halt
     startFirstP();
     ncPrintChar('F');   //aca no dberia llegar
     return first->rsp;
@@ -134,6 +147,10 @@ uint64_t * firstProcess(uint64_t fPtr){
 uint64_t * getCurrentSP(){
     return currentProcess->rsp;
 }
+PCB * getCurrentPCB(){
+    return currentProcess;
+}
+
 PCB * getCurrentPCB(){
     return currentProcess;
 }
