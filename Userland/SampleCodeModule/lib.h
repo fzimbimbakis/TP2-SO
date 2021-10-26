@@ -1,6 +1,8 @@
 #ifndef _LIB_H_
 #define _LIB_H_
 
+#include <stdint.h>
+
 #define STDIN 0
 #define STDOUT 1
 #define MAX_BUFFER 40
@@ -19,8 +21,14 @@ char* scanf();
 void initial();
 void* alloc(unsigned size);
 void free(void * ptr);
-int newP(void * fPtr, char priority);
+int newP(void * fPtr);
 void exit();
+void ps();
+int kill(uint32_t pid);
+int block(uint32_t pid);
+uint32_t getpid();
+int nice(uint32_t pid, char newPrio);
+void yield();
 unsigned * memInfo();
 unsigned long int hexToDec(char* num);
 #endif

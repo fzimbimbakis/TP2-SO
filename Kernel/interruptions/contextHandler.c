@@ -5,51 +5,97 @@
 #include "interrupts.h"
 #include "process.h"
 
-//struct process{
-//    char state;
-//    uint64_t* rbp;
-//    uint64_t* rsp;
-//    int pid
-//}typedef process;
-
-extern void updateStack();
 static PCB* currentProcess = NULL;
 static PCB* firstP = NULL;
-static char lastPID = 0;
+static uint32_t lastPID = 0;
+static PCB* halt=NULL;
+
+void printProcesses(){
+    PCB* aux=firstP;
+    while(aux != NULL){
+        ncPrintDec(aux->pid);
+        ncPrint("\n");
+        aux=aux->next;
+    }
+}
 
 void updateRSP(uint64_t* sp){
     currentProcess->rsp=sp;
 }
 
+uint32_t getPid(){
+    return currentProcess->pid;
+}
+
+int changePriority(uint32_t pid, char newPrio){
+    PCB* aux =firstP;
+    while(aux!=NULL){
+        if(aux->pid==pid){
+            aux->priority=newPrio;
+            return 0;
+        }
+        aux=aux->next;
+    }
+    return -1;
+}
+
 void unblockShell(){
-    PCB* aux=currentProcess;
-    while(aux->pid!=0){
+    PCB* aux=firstP;
+    while(aux->pid!= SHELL){
         aux=aux->next;
         //ncPrintDec(aux->pid);
     }
-    ncPrint("Desbloqueo shell\n");
+    //ncPrint("UNBLOCK\n");
     aux->state=READY;
+    if(currentProcess==halt){
+        currentProcess=aux;
+        updateStack();
+    }
+}
+
+void yield(){
+    //ncPrint("YIELD\n");
+    currentProcess->times=currentProcess->priority;
+    int20();
 }
 
 void blockProcess(){
     currentProcess->state=BLOCKED;
-    ncPrint("Bloqueo shell\n");
-    //ncPrintDec(currentProcess->pid);
-    //ncPrint("\n");
-    
+    //ncPrint("BLOCK\n");
     int20();
     return;
 }
 
+int blockProcessPID(uint32_t pid){
+    //ncPrint("BLOCK\n");
+    PCB* aux=firstP;
+    while(aux!=NULL){
+        //ncPrintDec(aux->pid);
+        //ncPrint(" AUX\n");
+        if(aux->pid==pid){
+            if(aux->state==BLOCKED){
+                //ncPrint("BLOCKED\n");
+                aux->state=READY;
+                if(currentProcess==halt){
+                    currentProcess=aux;
+                    updateStack();
+                }
+            }else{
+                //ncPrint("NOTBLOCK\n");
+                aux->state=BLOCKED;
+                if(currentProcess==aux)
+                    int20();
+            }
+            return 0;
+        }
+        aux=aux->next;
+
+    }
+    
+    return -1;
+}
+
 void exit(){
-//    ncPrint("\nEXITT\nnext:");
-//    ncPrintHex(currentProcess->next);
-//    ncPrint("\nnextPID:");
-//    ncPrintHex(currentProcess->next->pid);
-//    ncPrint("\nnextRSP:");
-//    ncPrintHex(currentProcess->next->rsp);
-//    ncPrint("\nprev (deberia ser 0): ");
-//    ncPrintHex(currentProcess->prev);
 
     if (currentProcess->prev!=0){
         currentProcess->prev->next=currentProcess->next;
@@ -65,23 +111,69 @@ void exit(){
         currentProcess=auxP;
     }
     else{
+
         free(currentProcess->rbp);
         free(currentProcess);
+        currentProcess=firstP; //faltaria ver si es NULL??? el free lo deja en NULL??
     }
 //    ncPrint("prehandl\n");
     updateStack();
 }
 
+
+int kill(uint32_t pid){
+    //ncPrintDec(pid);
+    //ncPrint(" KILL\n");
+    
+
+    if(currentProcess->pid==pid)
+        exit();
+
+    PCB* aux =firstP;
+    while( aux!= NULL){
+        if(aux->pid==pid){
+            killProcess(aux);
+            return 0;
+        }
+        aux=aux->next;
+    }
+    return -1;
+}
+
+void killProcess(PCB* process){
+        if (process->prev!=0)
+            process->prev->next=process->next;
+        else
+            firstP=process->next;
+
+
+        if (process->next!=0)
+            process->next->prev=process->prev;
+
+        free(process->rbp);
+        free(process);
+}
+
+
+
 void handler() {
 //    ncPrintChar('5');
+    if(currentProcess!=halt){
+        uint32_t currentPid=currentProcess->pid;
 
-    if(currentProcess->times == currentProcess->priority || currentProcess->state==BLOCKED){
-        currentProcess->times=0;
-        do{
-            currentProcess = ((currentProcess->next==0)? firstP : currentProcess->next);
-        }while(currentProcess->state==BLOCKED);
-    }else{
-        currentProcess->times++;
+        if(currentProcess->times == currentProcess->priority || currentProcess->state==BLOCKED){
+            currentProcess->times=0;
+            do{
+                currentProcess = ((currentProcess->next==0)? firstP : currentProcess->next);
+
+            }while(currentProcess->state==BLOCKED && currentProcess->pid!=currentPid);
+
+            if(currentProcess->state==BLOCKED)//di toda la vuelta y no hay un proceso ready
+                currentProcess=halt;
+
+        }else{
+            currentProcess->times++;
+        }
     }
 }
 
@@ -95,10 +187,11 @@ void addProcessToList(PCB* newP){
         //ncPrintChar('3');
         return;
     }
+
     newP->next=firstP;
+    firstP->prev=newP;
     newP->prev=0;
     firstP=newP;
-    return;
 }
 
 char newProcess(uint64_t fPtr, char priority) {
@@ -116,13 +209,14 @@ char newProcess(uint64_t fPtr, char priority) {
     return (newP->pid);
 }
 
-uint64_t * firstProcess(uint64_t fPtr){
+uint64_t * firstProcess(uint64_t fPtr){ //deberia ser void????
     //ncPrintChar('1');
+    newProcess(fPtr, MAX_PRIORITY);
+    
     uint64_t * rbp = alloc(1024*sizeof (uint64_t));
-    PCB* first = alloc(sizeof (PCB));
-    first->rbp=rbp;
-    first->pid=lastPID++;
-    first->rsp= createStackContext((uint64_t) &rbp[1023], fPtr);
+    halt = alloc(sizeof (PCB));
+    halt->rbp=rbp;
+    halt->rsp= createStackContext((uint64_t) &rbp[1023], &haltP);
 //    ncPrintChar('\n');
 
 //    ncPrintHex(rbp);
@@ -131,17 +225,13 @@ uint64_t * firstProcess(uint64_t fPtr){
 //    ncPrintChar('\n');
 //
 //    ncPrintHex(fPtr);
-    first->priority=MAX_PRIORITY;
-    first->next=0;
-    first->prev=0;
 //    ncPrintChar('2');
-
-    addProcessToList(first);
+    
 //    ncPrintChar('4');
-    newProcess(&haltP, MAX_PRIORITY); //creo proceso halt
+    //newProcess(&haltP, MAX_PRIORITY); //creo proceso halt
     startFirstP();
     ncPrintChar('F');   //aca no dberia llegar
-    return first->rsp;
+    return 0;
 };
 
 uint64_t * getCurrentSP(){

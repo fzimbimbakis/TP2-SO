@@ -2,6 +2,7 @@
 GLOBAL createStackContext
 GLOBAL startFirstP
 GLOBAL haltP
+GLOBAL updateStack
 GLOBAL int20
 
 extern alloc
@@ -86,7 +87,7 @@ startFirstP:
     	iretq
 
 haltP:
-	;mov rdi, 65; A
+	;mov rdi, 43; +
     ;call ncPrintChar
 	sti
 	hlt
@@ -96,3 +97,10 @@ haltP:
 int20:
 	int 20h
 	ret
+
+updateStack:
+     call getCurrentSP  ;cambio contexto
+     mov rsp, rax
+     popState
+
+     iretq

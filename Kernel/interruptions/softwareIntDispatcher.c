@@ -15,7 +15,8 @@ void memoryFree(void * ptr);
 void * memoryAlloc(unsigned size);
 unsigned * memoryInfo();
 
-EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo, &newProcess, &exit, &_hlt, &blockProcess};
+EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree,
+&memoryInfo, &newProcess, &exit, &_hlt, &blockProcessPID, &yield, &kill, &printProcesses, &getPid, &changePriority};
 
 int int_80(unsigned int arg1, unsigned int arg2, unsigned int arg3, int sysCall){
     int ret=functionPtrs[sysCall](arg1, arg2, arg3);
@@ -54,7 +55,7 @@ void read(unsigned int fd, char * buffer, unsigned int count){
     if(fd==0){      // STDIN
         cleanBuffer();
         while(getEndBuffer()<count){
-		    blockProcess();
+		    blockProcess(); //cambiar por un semaforo
         }
         char * inBuffer = getBuffer();
         int i;

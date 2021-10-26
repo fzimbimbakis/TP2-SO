@@ -17,6 +17,23 @@ void commandSelector(char* buffer){
         testMMCommand(buffer);
     } else if(isCommand("mem", buffer)){
         memInfoCommand();
+    }else if(isCommandWithArg("block", buffer)){
+        blockCommand(buffer);
+    }
+    else if(isCommandWithArg("kill", buffer)){
+        killCommand(buffer);
+    }
+    else if(isCommand("testsch",buffer)){
+        testScheduler();
+    }
+    else if(isCommand("getpid",buffer)){
+        getpidCommand();
+    }
+    else if(isCommandWithArg("nice",buffer)){
+        niceCommand(buffer);
+    }
+    else if(isCommand("testprio",buffer)){
+        testPrio();
     }
     else{
         printer("Command not found");

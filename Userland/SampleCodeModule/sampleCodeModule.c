@@ -15,8 +15,8 @@ void imprimir(){
 }
 
 void ioi(){
-	while(1){
-	putChar('A');
+	while (1){
+	putChar('-');
 	sysWait();
 	}
 }
@@ -24,8 +24,8 @@ void ioi(){
 int main() {
 
 	printf("Bienvenido! Que comando desea correr?\n");
-	//newP(&imprimir, 2);
-	//newP(&ioi, 0);
+	//newP(&imprimir);
+	//newP(&ioi);
 	// while (1)
 	// {
 	// 	putChar('A');

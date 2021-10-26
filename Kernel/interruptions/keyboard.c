@@ -39,8 +39,8 @@ void keyboard_handler(){
     else{
         char toPrint = keyTable[idx];
         currentBuffer[(bufferIdx)++]=(capsLock && IS_LETTER(toPrint))?toPrint-'a'+'A':toPrint;
-        }
-        unblockShell();
+    }
+    unblockShell();//cambiar por semaforo
 }
 
 void cleanBuffer(){

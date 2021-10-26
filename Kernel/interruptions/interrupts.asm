@@ -1,4 +1,4 @@
-GLOBAL updateStack
+;GLOBAL updateStack
 GLOBAL _cli
 GLOBAL _sti
 GLOBAL picMasterMask
@@ -189,12 +189,6 @@ _irq00Handler:
 
      iretq
 
-updateStack:
-     call getCurrentSP  ;cambio contexto
-     mov rsp, rax
-     popState
-
-     iretq
 
 ;Keyboard
 _irq01Handler:
