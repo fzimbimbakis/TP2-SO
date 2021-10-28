@@ -1,9 +1,5 @@
 #ifndef MEM_MAN_H
 #define MEM_MAN_H
-
-
-
-
 #include<stddef.h>
 #define BEGIN_MEM (unsigned)0x600000
 #define END_MEM (unsigned)0xFFFFFF

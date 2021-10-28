@@ -1,4 +1,4 @@
-
+GLOBAL updateStack
 GLOBAL _cli
 GLOBAL _sti
 GLOBAL picMasterMask
@@ -16,6 +16,8 @@ GLOBAL _irq05Handler
 GLOBAL _exception0Handler
 GLOBAL _exception6Handler
 
+GLOBAL timer_handler
+
 EXTERN printEOE
 EXTERN waiting
 EXTERN getStackBase
@@ -24,9 +26,13 @@ EXTERN ncClear
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 EXTERN int_80
+EXTERN getCurrentSP
+EXTERN updateRSP
+EXTERN irqDispatcher
 EXTERN printRegName
 EXTERN ncPrintHex
 EXTERN ncNewline
+EXTERN handler
 SECTION .text
 
 %macro pushState 0
@@ -110,6 +116,7 @@ SECTION .text
 %endmacro
 
 
+
 printRegs:
 	mov rbx, 0
 	mov rcx, rsp
@@ -161,10 +168,33 @@ picSlaveMask:
     pop     rbp
     retn
 
+timer_handler:
 
+;
 ;8254 Timer (Timer Tick)
 _irq00Handler:
-	irqHandlerMaster 0
+     pushState
+
+     mov rdi, rsp
+     call updateRSP
+
+     mov rdi, 0
+     call irqDispatcher   ;actualizao RoundRobin
+
+    call getCurrentSP  ;cambio contexto
+     mov rsp, rax
+     mov al,20h
+     out 20h, al
+     popState
+
+     iretq
+
+updateStack:
+     call getCurrentSP  ;cambio contexto
+     mov rsp, rax
+     popState
+
+     iretq
 
 ;Keyboard
 _irq01Handler:

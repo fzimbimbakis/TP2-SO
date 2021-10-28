@@ -19,6 +19,13 @@ char* scanf();
 void initial();
 void* alloc(unsigned size);
 void free(void * ptr);
+int newP(void * fPtr, char priority);
+void exit();
 unsigned * memInfo();
 unsigned long int hexToDec(char* num);
+#include <stdint.h>
+int post_sem(char * id);
+int wait_sem(char * id);
+int create_sem(char * id, uint64_t value);
+void yield();
 #endif

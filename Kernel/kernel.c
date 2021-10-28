@@ -6,6 +6,8 @@
 #include <interrupts.h>
 #include <keyboard.h>
 #include "memoryManager.h"
+#include "./interruptions/process.h"
+#include "./interruptions/contextHandler.h"
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -85,7 +87,6 @@ void * initializeKernelBinary()
 
 int main()
 {	
-	load_idt();
 	ncPrint("[Kernel Main]");
 	ncNewline();
 	ncPrint("  Sample code module at 0x");
@@ -105,7 +106,12 @@ int main()
 	ncPrint("[Finished]");
 	init();
 	ncClear();
-	((EntryPoint)sampleCodeModuleAddress)();	// Aca se llama a userland
-	
+    _cli();
+    load_idt();
+
+    firstProcess((uint64_t)sampleCodeModuleAddress);
+    ncPrint("si llego aca es porque esta mal :( ");
+//	((EntryPoint)sampleCodeModuleAddress)();	// Aca se llama a userland
+	ncPrint("si llego aca es porque esta mal :(");
 	return 0;
 }

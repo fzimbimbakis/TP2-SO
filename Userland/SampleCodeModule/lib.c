@@ -126,6 +126,16 @@ char getChar(){
 	return ret;
 }
 
+int newP(void* fPtr, char priority){
+	return sysNewP(fPtr , priority);
+}
+void yield(){
+    sysYield();
+}
+void exit(){
+    sysExit();
+}
+
 char* scanf(){
 	buffer[0]=0;
 	static int idx = 0;
@@ -157,6 +167,16 @@ void free(void * ptr){
 
 unsigned * memInfo(){
     return sysMemInfo();
+}
+
+int create_sem(char * id, uint64_t value){
+    return sysSemCreate(id, value);
+}
+int wait_sem(char * id){
+    return sysSemWait(id);
+}
+int post_sem(char * id){
+    return sysSemPost(id);
 }
 
 /*
