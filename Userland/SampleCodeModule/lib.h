@@ -26,6 +26,7 @@ void exit();
 void ps();
 int kill(uint32_t pid);
 int block(uint32_t pid);
+int unblock(uint32_t pid);
 uint32_t getpid();
 int nice(uint32_t pid, char newPrio);
 void yield();

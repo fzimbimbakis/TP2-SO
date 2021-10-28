@@ -225,6 +225,18 @@ void testMMCommand(char * buffer){
 
 }
 
+void unblockCommand(char* buffer){
+    char arg[MAX_BUFFER];
+
+    getArguments(buffer,arg);
+    uint32_t pid=strToNum(arg);
+    if(unblock(pid)==-1){
+        printer("Invalid PID");
+        printf("\n");
+    }
+
+}
+
  void killCommand(char* buffer){
         char arg[MAX_BUFFER];
 

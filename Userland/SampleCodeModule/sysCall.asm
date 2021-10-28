@@ -4,6 +4,7 @@ GLOBAL sysTime
 GLOBAL sysFree
 GLOBAL sysYield
 GLOBAL sysBlock
+GLOBAL sysUnblock
 GLOBAL sysNice
 GLOBAL sysAlloc
 GLOBAL sysGetpid
@@ -270,6 +271,13 @@ sysGetpid:
 sysNice:
 	pushStateNoRAX
     mov rax, 14
+    int 80h
+    popStateNoRAX
+    ret
+
+sysUnblock:
+	pushStateNoRAX
+    mov rax, 15
     int 80h
     popStateNoRAX
     ret

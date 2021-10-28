@@ -38,6 +38,7 @@ PCB * getCurrentPCB();
 
 void blockProcess();
 blockProcessPID(uint32_t pid);
+int unblockProcessPID(uint32_t pid);
 void unblockShell();
 
 char newProcess(uint64_t fPtr, char priority);

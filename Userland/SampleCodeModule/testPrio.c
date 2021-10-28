@@ -25,7 +25,7 @@ uint64_t _block(uint64_t pid){
 }
 
 uint64_t _unblock(uint64_t pid){
-  return block(pid);
+  return unblock(pid);
 }
 
 void bussy_wait(uint64_t n){

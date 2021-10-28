@@ -20,6 +20,9 @@ void commandSelector(char* buffer){
     }else if(isCommandWithArg("block", buffer)){
         blockCommand(buffer);
     }
+    else if(isCommandWithArg("unblock", buffer)){
+        unblockCommand(buffer);
+    }
     else if(isCommandWithArg("kill", buffer)){
         killCommand(buffer);
     }

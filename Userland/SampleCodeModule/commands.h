@@ -10,6 +10,7 @@ void inforegCommand();
 void printRegName(int index);
 //void cpuidCommand();
 void blockCommand(char* buffer);
+void unblockCommand(char* buffer);
 void killCommand(char* buffer);
 void testScheduler();
 void testPrio();

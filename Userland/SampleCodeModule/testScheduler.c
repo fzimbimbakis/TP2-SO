@@ -20,7 +20,7 @@ uint32_t my_block(uint32_t pid){
 }
 
 uint32_t my_unblock(uint32_t pid){
-  return block(pid);
+  return unblock(pid);
 }
 
 #define MAX_PROCESSES 100 //Should be around 80% of the the processes handled by the kernel

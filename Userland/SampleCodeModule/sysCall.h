@@ -13,6 +13,7 @@ int sysNewP(void * fPtr, char priority);
 void sysExit();
 void sysYield();
 int sysBlock(uint32_t pid);
+int sysUnblock(uint32_t pid);
 int sysKill(uint32_t pid);
 int sysNice(uint32_t pid, char newPrio);
 uint32_t sysGetpid();

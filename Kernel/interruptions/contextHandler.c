@@ -65,6 +65,22 @@ void blockProcess(){
     int20();
     return;
 }
+int unblockProcessPID(uint32_t pid){
+    PCB * aux = firstP;
+    while(aux!=NULL){
+        if(aux->pid==pid){
+            aux->state=READY;
+            if(currentProcess==halt){
+                currentProcess=aux;
+                updateStack();
+            }
+
+            return 0;
+        }
+        aux = aux->next;
+    }
+    return -1;
+}
 
 int blockProcessPID(uint32_t pid){
     //ncPrint("BLOCK\n");
@@ -73,19 +89,10 @@ int blockProcessPID(uint32_t pid){
         //ncPrintDec(aux->pid);
         //ncPrint(" AUX\n");
         if(aux->pid==pid){
-            if(aux->state==BLOCKED){
-                //ncPrint("BLOCKED\n");
-                aux->state=READY;
-                if(currentProcess==halt){
-                    currentProcess=aux;
-                    updateStack();
-                }
-            }else{
-                //ncPrint("NOTBLOCK\n");
-                aux->state=BLOCKED;
-                if(currentProcess==aux)
-                    int20();
-            }
+            aux->state=BLOCKED;
+            if(currentProcess==aux)
+                int20();
+
             return 0;
         }
         aux=aux->next;

@@ -167,6 +167,10 @@ int block(uint32_t pid){
 	return sysBlock(pid);
 }
 
+int unblock(uint32_t pid){
+    return sysUnblock(pid);
+}
+
 void yield(){
 	sysYield();
 }
