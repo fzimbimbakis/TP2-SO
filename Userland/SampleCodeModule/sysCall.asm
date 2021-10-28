@@ -5,8 +5,13 @@ GLOBAL sysFree
 GLOBAL sysAlloc
 GLOBAL sysMemInfo
 GLOBAL sysNewP
-GLOBAL exit
+GLOBAL sysExit
 GLOBAL sysWait
+GLOBAL sysYield
+GLOBAL sysBlock
+GLOBAL sysSemCreate
+GLOBAL sysSemWait
+GLOBAL sysSemPost
 section .text
 
 %macro pushState 0
@@ -45,6 +50,23 @@ section .text
 	pop rax
 %endmacro
 
+%macro popStateNoRax 0
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop r11
+	pop r10
+	pop r9
+	pop r8
+	pop rsi
+	pop rdi
+	pop rbp
+	pop rdx
+	pop rcx
+	pop rbx
+%endmacro
+
 sysWrite:
     pushState
     mov rax, 0
@@ -66,7 +88,7 @@ sysNewP:
 	popState
 	ret
 
-exit:
+sysExit:
     pushState
     mov rax, 7
     int 80h
@@ -189,4 +211,39 @@ sysWait:
     mov rax, 8
     int 80h
     popState
+    ret
+
+sysYield:
+    pushState
+    mov rax, 10
+    int 80h
+    popState
+    ret
+
+sysBlock:
+    pushState
+    mov rax, 9
+    int 80h
+    popState
+    ret
+
+sysSemCreate:
+    pushStateNoRax
+    mov rax, 11
+    int 80h
+    popStateNoRax
+    ret
+
+sysSemWait:
+    pushStateNoRax
+    mov rax, 12
+    int 80h
+    popStateNoRax
+    ret
+
+sysSemPost:
+    pushStateNoRax
+    mov rax, 13
+    int 80h
+    popStateNoRax
     ret

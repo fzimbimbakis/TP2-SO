@@ -3,6 +3,7 @@
 #include <keyboard.h>
 #include "../memoryManager.h"
 #include "contextHandler.h"
+#include "../semaphore.h"
 #include "process.h"
 
 #define RED 4
@@ -15,7 +16,7 @@ void memoryFree(void * ptr);
 void * memoryAlloc(unsigned size);
 unsigned * memoryInfo();
 
-EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo, &newProcess, &exit, &_hlt, &blockProcess};
+EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo, &newProcess, &exit, &_hlt, &blockProcessPID, &yield, &sem_create, &sem_wait, &sem_post};
 
 int int_80(unsigned int arg1, unsigned int arg2, unsigned int arg3, int sysCall){
     int ret=functionPtrs[sysCall](arg1, arg2, arg3);

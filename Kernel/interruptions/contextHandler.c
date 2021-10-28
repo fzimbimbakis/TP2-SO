@@ -33,11 +33,11 @@ void unblockShell(){
         aux=aux->next;
         //ncPrintDec(aux->pid);
     }
-    ncPrint("Desbloqueo shell\n");
+//    ncPrint("Desbloqueo shell\n");
     aux->state=READY;
 }
 
-int blockProcess(char pid){
+int blockProcessPID(char pid){
     PCB * aux = firstP;
     while(aux!=NULL){
         if(aux->pid==pid){
@@ -50,7 +50,7 @@ int blockProcess(char pid){
     }
     return -1;
 }
-int unblockProcess(char pid){
+int unblockProcessPID(char pid){
     PCB * aux = firstP;
     while(aux!=NULL){
         if(aux->pid==pid){
@@ -64,7 +64,7 @@ int unblockProcess(char pid){
 
 void blockProcess(){
     currentProcess->state=BLOCKED;
-    ncPrint("Bloqueo shell\n");
+//    ncPrint("Bloqueo shell\n");
     //ncPrintDec(currentProcess->pid);
     //ncPrint("\n");
     
@@ -98,6 +98,7 @@ void exit(){
     else{
         free(currentProcess->rbp);
         free(currentProcess);
+        currentProcess = firstP;
     }
 //    ncPrint("prehandl\n");
     updateStack();

@@ -50,7 +50,8 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 }
 
 int myStrcmp(const char * a, const char * b){
-    while(a[i]!='\0' && b[i]!='\0'){
+    int i = 0;
+    while(a[i]!=0 && b[i]!=0){
         if(a[i]!=b[i])
             return 0;
         i++;

@@ -211,3 +211,24 @@ void testMMCommand(char * buffer){
     }
 
 }
+
+void testsemCommand(char * buffer){
+    char arg[MAX_BUFFER];
+
+    getArguments(buffer,arg);
+    int num=strToNum(arg);
+    switch (num){
+        case 0:;
+            test_sync();
+            break;
+        case 1:   ;
+            test_no_sync();
+            break;
+
+
+        default:
+            printer("Test ID is not valid");
+            printf("\n");
+            break;
+    }
+}

@@ -1,15 +1,15 @@
 
 #include "semaphore.h"
-#define STARTING_SEMAPHORES 16
+//#define STARTING_SEMAPHORES 16
 static sem_t * semaphores = NULL;
-static char sem_counter = 0;
-static char sem_array_size = STARTING_SEMAPHORES;
-void sem_init(){
+//static char sem_counter = 0;
+//static char sem_array_size = STARTING_SEMAPHORES;
+//void sem_init(){
 //    semaphores = alloc(sizeof(sem_t *) * STARTING_SEMAPHORES);
 //    for (int i = 0; i < STARTING_SEMAPHORES; ++i) {
 //        semaphores[i] = NULL;
 //    }
-}
+//}
 int sem_create(char * id, uint64_t value){
 //      Array semaphores
 //    if(sem_counter==sem_array_size){
@@ -39,19 +39,25 @@ int sem_create(char * id, uint64_t value){
         semaphores = alloc(sizeof(sem_t));
         semaphores->id=id;
         semaphores->value = value;
+        semaphores->p_waiting=0;
+        semaphores->next=NULL;
+        semaphores->channel=NULL;
     } else{
-            if(myStrcmp(semaphores->id, sem_id))
+            if(myStrcmp(semaphores->id, id))
                 return -1;
 
             sem_t * aux = semaphores;
             while(aux->next!=NULL){
-                if(myStrcmp(aux->id, sem_id))
+                if(myStrcmp(aux->id, id))
                     return -1;
                 aux = aux->next;
             }
             aux->next = alloc(sizeof(sem_t));
             aux->next->value = value;
             aux->next->id = id;
+            aux->next->p_waiting=0;
+            aux->next->next=NULL;
+            aux->next->channel=NULL;
         }
         return 0;
 }
@@ -60,10 +66,11 @@ int sem_wait(char * sem_id){
 //    sem_t * semaphore_ptr = semaphores[sem_id];
 
     sem_t * semaphore_ptr = semaphores;
-    while (semaphore_ptr!=NULL && myStrcmp(semaphore_ptr->id, sem_id))
+    while (semaphore_ptr!=NULL && !myStrcmp(semaphore_ptr->id, sem_id))
         semaphore_ptr = semaphore_ptr->next;
-    if(semaphore_ptr==NULL)
+    if(semaphore_ptr==NULL) {
         return -1;
+    }
 
     // TODO: Implement spinlocks
     // acquire(semaphore_ptr->lock) // spinlock
@@ -84,9 +91,9 @@ int sem_wait(char * sem_id){
             aux->next->next = NULL;
         }
         semaphore_ptr->p_waiting++;
-
         blockProcess();     // Solo lo despierta un post.
     }
+    return 0;
     // release(semaphore_ptr->lock) // spinlock
 
 }
@@ -94,7 +101,7 @@ int sem_wait(char * sem_id){
 int sem_post(char * sem_id){
 //    sem_t * semaphore_ptr = semaphores[sem_id];
     sem_t * semaphore_ptr = semaphores;
-    while (semaphore_ptr!=NULL && myStrcmp(semaphore_ptr->id, sem_id))
+    while (semaphore_ptr!=NULL && !myStrcmp(semaphore_ptr->id, sem_id))
         semaphore_ptr = semaphore_ptr->next;
     if(semaphore_ptr==NULL)
         return -1;
@@ -105,7 +112,7 @@ int sem_post(char * sem_id){
         free(semaphore_ptr->channel);
         semaphore_ptr->channel = aux;
         semaphore_ptr->p_waiting--;
-        unblockProcess(pid);
+        unblockProcessPID(pid);
     } else semaphore_ptr->value++;
     // release(semaphore_ptr->lock) // spinlock
 }
