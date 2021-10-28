@@ -56,5 +56,5 @@ int myStrcmp(const char * a, const char * b){
             return 0;
         i++;
     }
-    return a[i]=='\0' && b[i]=='\0';
+    return a[i]==0 && b[i]==0;
 }
