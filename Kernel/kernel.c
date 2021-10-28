@@ -5,7 +5,7 @@
 #include <naiveConsole.h>
 #include <interrupts.h>
 #include <keyboard.h>
-#include "memoryManager.h"
+#include "include/memoryManager.h"
 
 extern uint8_t text;
 extern uint8_t rodata;

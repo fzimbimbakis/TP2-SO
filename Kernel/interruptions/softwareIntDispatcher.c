@@ -1,7 +1,7 @@
 #include "../include/naiveConsole.h"
 #include <interrupts.h>
 #include <keyboard.h>
-#include "../memoryManager.h"
+#include "../include/memoryManager.h"
 #define RED 4
 typedef int (*EntryPoint)(unsigned int, unsigned int, unsigned int);
 
