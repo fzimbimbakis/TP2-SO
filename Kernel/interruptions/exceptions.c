@@ -6,7 +6,6 @@
 #include <lib.h>
 #include <naiveConsole.h>
 
-static void printRegisters();
 static void zero_division();
 static void invalid_opcode();
 

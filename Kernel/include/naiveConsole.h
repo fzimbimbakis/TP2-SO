@@ -14,7 +14,8 @@ void ncScroll();
 void ncClear();
 void ncPrintColor(const char * string, int color);
 void ncPrintColorChar(char character,int color);
-void ncBackSpace();
+void ncBackspace();
+void ncTab();
 void ncSwitchShell();
 
 

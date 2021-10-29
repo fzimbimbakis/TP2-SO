@@ -8,16 +8,22 @@
 static int idx;
 static int capsLock = 0;
 
-static const char keyTable[] = {
-	0, 0, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\'', '¿',0, 0,
-    'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '´', '+',0, 0, 
-    'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ñ', '{', '|',0, '}',
-    'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '-', 
-    0, '*', 0, ' ',0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '7','↑', '9', '-', '←', '5', '→', '+', '1', '↓', '3', 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0
+static const char keyTable[128] = {
+
+      0,   27, '1', '2', '3', '4', '5', '6', '7', '8', '9',  '0', '-', '=', 
+   '\b', '\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',  '[', ']', 
+   '\n',    0, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`',    
+      0, '\\', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/',    0, '*',    
+      0,  ' ',   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,    0,   0,
+      0,    0,   0,   0, '-',   0,   0,   0, '+',   0,   0,   0,    0,   0, 
+      0,    0,   0,   0,   0,   0    
+
 };
-static char* currentBuffer[64]={0};
+static char currentBuffer[64]={0};
 static int bufferIdx=0;
 static int endBuffer = 0;
+
+
 void keyboard_handler(){
     idx = _keyHandler();
     if(endBuffer){
@@ -27,20 +33,14 @@ void keyboard_handler(){
     }
     if(BREAK_CODE(idx)) //es break code
         return;
-    else if(idx == 0x1C) {   //code del enter
-        currentBuffer[(bufferIdx)++]='\n';
-    }
-    else if(idx == 0x3A){
+    else if(idx == 0x3A)
         capsLock = 1-capsLock;
-    }
-    else if(idx == 0x0E){   //code del delete
-        currentBuffer[(bufferIdx)++]='\b';
-    }
     else{
         char toPrint = keyTable[idx];
         currentBuffer[(bufferIdx)++]=(capsLock && IS_LETTER(toPrint))?toPrint-'a'+'A':toPrint;
     }
-    unblockShell();//cambiar por semaforo
+    unblockShell();//TODO:cambiar por semaforo
+
 }
 
 void cleanBuffer(){
@@ -56,5 +56,5 @@ int getEndBuffer(){
 }
 
 char * getBuffer(){
-    return currentBuffer;
+    return (char*)currentBuffer;
 }
