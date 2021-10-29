@@ -7,8 +7,9 @@
 #define BLOCKED 1
 #define DEAD 2
 #define MAX_PRIORITY 2
-
-typedef struct PCB{
+#include "../pipes.h"
+typedef struct PCB PCB;
+struct PCB{
     char pid;
     char state;
     uint64_t* rsp;
