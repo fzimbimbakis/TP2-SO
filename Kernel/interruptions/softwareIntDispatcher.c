@@ -8,7 +8,7 @@
 #include "../pipes.h"
 
 #define RED 4
-typedef int (*EntryPoint)(unsigned int, unsigned int, unsigned int);
+typedef int (*EntryPoint)(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int);
 
 void write(unsigned int fd, const char * buffer, unsigned int count);
 void read(unsigned int fd, char * buffer, unsigned int count);
@@ -19,8 +19,8 @@ unsigned * memoryInfo();
 
 EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo, &newProcess, &exit, &_hlt, &blockProcessPID, &yield, &sem_create, &sem_wait, &sem_post, &pipeOpen, &dup};
 
-int int_80(unsigned int arg1, unsigned int arg2, unsigned int arg3, int sysCall){
-    int ret=functionPtrs[sysCall](arg1, arg2, arg3);
+int int_80(unsigned int arg1, unsigned int arg2, unsigned int arg3, unsigned int arg4, unsigned int arg5, int sysCall){
+    int ret=functionPtrs[sysCall](arg1, arg2, arg3, arg4, arg5);
     return ret;
 }
 

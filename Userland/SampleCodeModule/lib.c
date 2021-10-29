@@ -126,7 +126,7 @@ char getChar(){
 	return ret;
 }
 
-int newPipedProcess(void* fPtr, char priority, char * buffer, int pipeId, char * sem_id){
+int newPipedProcess(uint64_t fPtr, char priority, char * buffer, int pipeId, char * sem_id){
 	return sysNewP(fPtr , priority, buffer, pipeId, sem_id);  // No devuelve nada.
 }
 int newBufferProcess(void* fPtr, char priority, char * buffer){

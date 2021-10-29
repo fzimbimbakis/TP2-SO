@@ -140,6 +140,14 @@ void processWrapper(uint64_t fPtr, int nArgs, va_list * vaList){
 }
 
 char newProcess(uint64_t fPtr, char priority, char * arg1, int arg2, char * arg3) {  // Los procesos pueden recibir tres argumentos mas. Son un char *, int e int.
+//    ncPrint("En newProcess: \n");
+//    ncPrint("buffer ");
+//    ncPrint(arg1);
+//    ncPrint("\nfd ");
+//    ncPrintDec(arg2);
+//    ncPrint("\nsemId ");
+//    ncPrint(arg3);
+//    ncPrintChar('\n');
     uint64_t *rbp = alloc(1024 * sizeof(uint64_t));
     PCB *newP = alloc(sizeof(PCB));
     newP->rbp=rbp;

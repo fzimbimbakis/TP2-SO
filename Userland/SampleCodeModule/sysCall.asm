@@ -87,10 +87,10 @@ section .text
 %endmacro
 
 sysPipe:
-    pushState
+    pushStateNoRax
     mov rax, 14
     int 80h
-    popState
+    popStateNoRax
     ret
 
     sysDupPipe:
