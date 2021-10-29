@@ -18,7 +18,7 @@ struct PCB{
     char times;
     struct PCB* next;
     struct PCB* prev;
-}PCB;
+};
 
 void handler();
 uint64_t * getCurrentSP();

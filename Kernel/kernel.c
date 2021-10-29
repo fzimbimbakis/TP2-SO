@@ -108,7 +108,6 @@ int main()
 	ncClear();
     _cli();
     load_idt();
-
     firstProcess((uint64_t)sampleCodeModuleAddress);
     ncPrint("si llego aca es porque esta mal :( ");
 //	((EntryPoint)sampleCodeModuleAddress)();	// Aca se llama a userland

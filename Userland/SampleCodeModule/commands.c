@@ -15,7 +15,8 @@
 
 int isCommand(char* command, char* buffer){ //1 si son iguales, 0 si no
 	int comLen=strlen(command);
-
+//command:date
+//buffer: date
     if(comLen > strlen(buffer))
 		return 0;
 

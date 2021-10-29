@@ -1,5 +1,6 @@
 
 #include "semaphore.h"
+#include <string.h>
 //#define STARTING_SEMAPHORES 16
 static semaphore_t * semaphores = NULL;
 //static char sem_counter = 0;
@@ -140,6 +141,7 @@ int sem_close(int sem_id){
         prev->next = semaphore_ptr->next;
     }
     free(semaphore_ptr);
+    free(sem_id);
     // release(semaphore_ptr->lock) // spinlock
 }
 

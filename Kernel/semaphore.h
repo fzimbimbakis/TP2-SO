@@ -1,5 +1,7 @@
 
 #ifndef TP2_SO_SEMAPHORE_H
+#define TP2_SO_SEMAPHORE_H
+
 #include <stdint.h>
 #include "interruptions/contextHandler.h"
 #include "memoryManager.h"

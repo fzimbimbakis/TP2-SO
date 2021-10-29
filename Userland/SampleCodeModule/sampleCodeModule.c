@@ -30,7 +30,9 @@ int main() {
 	// {
 	// 	putChar('A');
 	// }
-	
+	char isPipedCmd = 0;
+    int pipeIdx = 0;
+    char isBackground = 0;
     while(1){
 		while((c=getChar())!='\n'){
 			putChar(c);
@@ -39,15 +41,31 @@ int main() {
 			(idx)--;
 			}
 			else{
-			buffer[idx]=c;
-			(idx)++;
+                if(c=='-') {
+                    isPipedCmd = 1;
+                    pipeIdx = idx;
+                }
+                else if(c=='&'){
+                    isBackground = 1;
+                }
+			    buffer[idx]=c;
+			    (idx)++;
 			}
+
 		}
 		putChar('\n');
 		buffer[(idx)++]='\n';
 		buffer[(idx)++]=0;
 		idx=0;
-		commandSelector(buffer);
+        if(isPipedCmd){
+            pipeCommand(buffer, pipeIdx, isBackground);
+        }
+		else {
+            commandSelector(buffer);
+        }
+        isPipedCmd=0;
+        isBackground = 0;
+        pipeIdx=0;
 		buffer[0] = 0; // "Borro" el buffer
 	}
 

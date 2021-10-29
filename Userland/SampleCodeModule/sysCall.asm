@@ -12,6 +12,8 @@ GLOBAL sysBlock
 GLOBAL sysSemCreate
 GLOBAL sysSemWait
 GLOBAL sysSemPost
+GLOBAL sysPipe
+GLOBAL sysDupPipe
 section .text
 
 %macro pushState 0
@@ -83,6 +85,20 @@ section .text
 	pop rcx
 	pop rbx
 %endmacro
+
+sysPipe:
+    pushState
+    mov rax, 14
+    int 80h
+    popState
+    ret
+
+    sysDupPipe:
+        pushState
+        mov rax, 15
+        int 80h
+        popState
+        ret
 
 sysWrite:
     pushState

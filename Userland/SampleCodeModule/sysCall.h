@@ -11,6 +11,8 @@ int sysNewP(void * fPtr, char priority);
 void sysYield();
 void sysBlock(char pid);
 void sysWait();
+void sysPipe(int* array);
+int sysDupPipe(int oldId, char id);
 int sysSemCreate(char * id, uint64_t value);
 int sysSemWait(char * id);
 int sysSemPost(char * id);
