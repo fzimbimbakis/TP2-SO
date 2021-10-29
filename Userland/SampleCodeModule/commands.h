@@ -13,6 +13,9 @@ void cpuidCommand();
 void getArguments(char* buffer, char* arg);
 void exceptionTestCommando(char * buffer);
 void printmemCommand(char* buffer);
+void filterCommand();
+void catCommand();
+void wcCommand();
 void dateCommand();
 #include "testSem.h"
 void testsemCommand(char * buffer);
