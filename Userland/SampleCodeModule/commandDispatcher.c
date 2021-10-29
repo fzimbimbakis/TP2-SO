@@ -1,5 +1,7 @@
 #include "lib.h"
 #include "commands.h"
+#include "sysCall.h"
+
 
 
 void commandSelector(char* buffer){
