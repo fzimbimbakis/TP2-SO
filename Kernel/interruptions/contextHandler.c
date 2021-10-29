@@ -4,6 +4,8 @@
 #include "../memoryManager.h"
 #include "interrupts.h"
 #include "process.h"
+#include "../pipes.h"
+#include <stdarg.h>
 
 //struct process{
 //    char state;
@@ -133,17 +135,23 @@ void addProcessToList(PCB* newP){
     return;
 }
 
-char newProcess(uint64_t fPtr, char priority) {
+void processWrapper(uint64_t fPtr, int nArgs, va_list * vaList){
+
+}
+
+char newProcess(uint64_t fPtr, char priority, char * arg1, int arg2, char * arg3) {  // Los procesos pueden recibir tres argumentos mas. Son un char *, int e int.
     uint64_t *rbp = alloc(1024 * sizeof(uint64_t));
     PCB *newP = alloc(sizeof(PCB));
     newP->rbp=rbp;
     newP->pid = lastPID++;
     newP->prev=0;
-    newP->rsp = createStackContext(((uint64_t) & rbp[1023]), fPtr);
+    newP->rsp = createStackContext(((uint64_t) & rbp[1023]), fPtr, arg1, arg2, arg3);
     newP->priority=priority;
     newP->times=0;
     newP->state=READY;
     newP->next = NULL;
+    newP->inputPipe = getCurrentPCB()->inputPipe;       //// Nota: Cerrar el stdin o stdout desde un proceso los cierra en todos los procesos.
+    newP->outputPipe = getCurrentPCB()->outputPipe;
     addProcessToList(newP);
     return (newP->pid);
 }
@@ -154,7 +162,7 @@ uint64_t * firstProcess(uint64_t fPtr){
     PCB* first = alloc(sizeof (PCB));
     first->rbp=rbp;
     first->pid=lastPID++;
-    first->rsp= createStackContext((uint64_t) &rbp[1023], fPtr);
+    first->rsp= createStackContext((uint64_t) &rbp[1023], fPtr, NULL, -1, -1);
 //    ncPrintChar('\n');
 
 //    ncPrintHex(rbp);
@@ -170,7 +178,11 @@ uint64_t * firstProcess(uint64_t fPtr){
 
     addProcessToList(first);
 //    ncPrintChar('4');
-    newProcess(&haltP, MAX_PRIORITY); //creo proceso halt
+    newProcess(&haltP, MAX_PRIORITY, NULL, NULL, NULL); //creo proceso halt
+
+    // Set pipes
+    initialPipes(first);
+
     startFirstP();
     ncPrintChar('F');   //aca no dberia llegar
     return first->rsp;

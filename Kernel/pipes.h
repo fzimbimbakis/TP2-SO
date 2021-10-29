@@ -8,7 +8,7 @@
 #include "include/naiveConsole.h"
 #include "interruptions/contextHandler.h"
 #define STARTING_PIPES_SPACE 8
-#define PIPE_SIZE
+#define PIPE_SIZE 512
 #define WRITE 0
 #define READ !WRITE
 typedef struct pipe_t{

@@ -11,7 +11,7 @@ static semaphore_t * semaphores = NULL;
 //        semaphores[i] = NULL;
 //    }
 //}
-int sem_create(char * id, uint64_t value){
+int sem_create(char * newId, uint64_t value){
 //      Array semaphores
 //    if(sem_counter==sem_array_size){
 //        semaphore_t * aux[] = semaphores;
@@ -36,6 +36,8 @@ int sem_create(char * id, uint64_t value){
 //            return -1;
 //        semaphores[auxCount]->value = value;
     //      Linked list semaphores
+    char * id = alloc(myStrlen(newId)* sizeof(char));
+    myStrcpy(id, newId);
         if(semaphores==NULL){
         semaphores = alloc(sizeof(semaphore_t));
         semaphores->id=id;
@@ -118,7 +120,7 @@ int sem_post(char * sem_id){
     // release(semaphore_ptr->lock) // spinlock
 }
 
-int sem_close(int sem_id){
+int sem_close(char * sem_id){
 
     semaphore_t * semaphore_ptr = semaphores;
     semaphore_t * prev=NULL;

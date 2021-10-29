@@ -126,9 +126,16 @@ char getChar(){
 	return ret;
 }
 
-int newP(void* fPtr, char priority){
-	return sysNewP(fPtr , priority);
+int newPipedProcess(void* fPtr, char priority, char * buffer, int pipeId, char * sem_id){
+	return sysNewP(fPtr , priority, buffer, pipeId, sem_id);  // No devuelve nada.
 }
+int newBufferProcess(void* fPtr, char priority, char * buffer){
+    return sysNewP(fPtr , priority, buffer, -1, -1);  // No devuelve nada.
+}
+int newP(void* fPtr, char priority){
+    return sysNewP(fPtr , priority, NULL, -1, -1);  // No devuelve nada.
+}
+
 void yield(){
     sysYield();
 }

@@ -7,7 +7,7 @@ unsigned int sysTime(unsigned int mode);
 void * sysAlloc(unsigned size);
 void sysFree(void * free);
 unsigned * sysMemInfo();
-int sysNewP(void * fPtr, char priority);
+int sysNewP(void * fPtr, char priority, char * arg1, int arg2, char * arg3);
 void sysYield();
 void sysBlock(char pid);
 void sysWait();

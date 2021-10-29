@@ -23,6 +23,6 @@ typedef struct semaphore_t{
 int sem_create(char * id, uint64_t value);
 int sem_post(char * sem_id);
 int sem_wait(char * sem_id);
-#define TP2_SO_SEMAPHORE_H
+int sem_close(char * sem_id);
 
 #endif //TP2_SO_SEMAPHORE_H

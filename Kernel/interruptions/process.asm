@@ -60,6 +60,9 @@ createStackContext:
     push 0x202 ; RFLAGS
     push 0x8 ; CS
     push rsi; RIP
+    mov rdi, rdx
+    mov rsi, rcx
+    mov rdx, r8
     pushState
     mov rax, rsp
     mov rsp, rbp

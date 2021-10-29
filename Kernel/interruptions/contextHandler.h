@@ -14,8 +14,10 @@ struct PCB{
     char state;
     uint64_t* rsp;
     uint64_t* rbp;
-    char priority; //TODO implementar las prioridades
+    char priority;
     char times;
+    struct pipe_t * inputPipe;     //// Agregar en el informe esta decision.
+    struct pipe_t * outputPipe;
     struct PCB* next;
     struct PCB* prev;
 };
@@ -30,8 +32,8 @@ void yield();
 void blockProcess();
 void unblockShell();
 
-char newProcess(uint64_t fPtr, char priority);
+char newProcess(uint64_t fPtr, char priority, char * arg1, int arg2, char * arg3);
 void exit();
 uint64_t * firstProcess(uint64_t fPtr);
-extern uint64_t * createStackContext(uint64_t sp, uint64_t fPtr);
+extern uint64_t * createStackContext(uint64_t sp, uint64_t fPtr, char * arg1, int agr2, char * agr3);
 #endif

@@ -38,32 +38,34 @@ unsigned * memoryInfo(){
 }
 
 void write(unsigned int fd, const char * buffer, unsigned int count){
-    if(fd==1){      // STDOUT
-        for (int i = 0; i < count && buffer[i]; i++)
-        {
-            ncPrintChar(buffer[i]);
-        }
-    }
-    if(fd==2){      // STDERR
-        for (int i = 0; i < count && buffer[i]; i++)
-        {
-            ncPrintColorChar(buffer[i], RED);
-        }
-    }
+//    if(fd==1){      // STDOUT
+//        for (int i = 0; i < count && buffer[i]; i++)
+//        {
+//            ncPrintChar(buffer[i]);
+//        }
+//    }
+//    if(fd==2){      // STDERR
+//        for (int i = 0; i < count && buffer[i]; i++)
+//        {
+//            ncPrintColorChar(buffer[i], RED);
+//        }
+//    }
+    pipeWrite((int)fd, buffer, (int)count);
 }
 
 void read(unsigned int fd, char * buffer, unsigned int count){
-    if(fd==0){      // STDIN
-        cleanBuffer();
-        while(getEndBuffer()<count){
-		    blockProcess();
-        }
-        char * inBuffer = getBuffer();
-        int i;
-        for (i = 0; i < count ; i++)
-        {
-            buffer[i] = inBuffer[i];
-        }
-        cleanBuffer();
-    }
+//    if(fd==0){      // STDIN
+//        cleanBuffer();
+//        while(getEndBuffer()<count){
+//		    blockProcess();
+//        }
+//        char * inBuffer = getBuffer();
+//        int i;
+//        for (i = 0; i < count ; i++)
+//        {
+//            buffer[i] = inBuffer[i];
+//        }
+//        cleanBuffer();
+//    }
+    pipeRead((int)fd, buffer, (int)count);
 }
