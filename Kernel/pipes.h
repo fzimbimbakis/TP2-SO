@@ -15,8 +15,8 @@ typedef struct pipe_t{
     char type;
     char id;
     char * buffer;
-    int nRead;
-    int nWrite;
+    int * nRead;
+    int * nWrite;
     char * sem_R;
     int read_waiting;
     char * sem_W;
@@ -24,7 +24,7 @@ typedef struct pipe_t{
     struct pipe_t * reverse_side;
     struct pipe_t * next;
 }pipe_t;
-pipe_t * newPipe(char type, int id, char * buffer, int nRead, int nWrite, char * sem_R, char * sem_W, pipe_t * next);
+pipe_t * newPipe(char type, int id, char * buffer, int * nRead, int * nWrite, char * sem_R, char * sem_W, pipe_t * next);
 void initialPipes(struct PCB * pcb);
 int pipeOpen(int * array);
 int pipeWrite(int fd, char* buffer, int count);

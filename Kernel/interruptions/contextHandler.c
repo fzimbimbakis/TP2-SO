@@ -185,11 +185,11 @@ uint64_t * firstProcess(uint64_t fPtr){
 //    ncPrintChar('2');
 
     addProcessToList(first);
+    // Set pipes
+    initialPipes(first);
 //    ncPrintChar('4');
     newProcess(&haltP, MAX_PRIORITY, NULL, NULL, NULL); //creo proceso halt
 
-    // Set pipes
-    initialPipes(first);
 
     startFirstP();
     ncPrintChar('F');   //aca no dberia llegar

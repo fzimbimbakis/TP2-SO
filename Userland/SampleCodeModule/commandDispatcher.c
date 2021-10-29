@@ -21,6 +21,12 @@ void commandSelector(char* buffer){
         memInfoCommand();
     } else if(isCommandWithArg("testsem", buffer)){
         testsemCommand(buffer);
+    }else if(isCommand("filter", buffer)){
+        filterCommand();
+    }else if(isCommand("cat", buffer)){
+        catCommand();
+    } else if(isCommand("wc", buffer)){
+        wcCommand();
     }
     else{
 //        printer(buffer);
@@ -33,18 +39,29 @@ void commandSelector(char* buffer){
 void process1(char * buffer,int fd, char * sem){
 //    printf("P1\n");
     sysDupPipe(0, fd);
+//    char * aux = alloc(sizeof(char)*9);
+//    sysRead(0, aux, 8);
+//    buffer[7]=0;
+//    printf(aux);
     commandSelector(buffer);
-    if(sem!=0)
-    post_sem(sem);
+    if(sem!=0) {
+        post_sem(sem);
+    }
     exit();
 }
 
 void process2(char * buffer,int fd, char* sem){
 //    printf("P2\n");
+//    printf("      %d       ", fd);
+//    printf("A\n");
+//    printf(buffer);
+//    printf("B\n");
     sysDupPipe(1, fd);
     commandSelector(buffer);
-    if(sem!=0)
-    post_sem(sem);
+    if(sem!=0) {
+//        printf("POST\n");   // TODO: Pongo UN PRINTF y salta una EXCEPTION aiycvuaihbcoivyagoubdjfsd
+        post_sem(sem);
+    }
     exit();
 }
 
@@ -62,17 +79,19 @@ void pipeCommand(char* buffer, int idx, char isBackground){
         semID[0] = semForPipesID++;
         semID[1] = 0;
         create_sem(semID,0);
-//        printf("antes de newPipedProcess\n");
-//        printf("AAAA pipe 1:%d pipe 2: %d\n", pipes[0], pipes[1]);
+
+
         newPipedProcess(&process1, 0, buffer, pipes[0], semID);
         newPipedProcess(&process2, 0, buffer+idx+2, pipes[1], semID);
-//        printf("despues de newPipedProcess\n");
+
         wait_sem(semID);
         wait_sem(semID);
+//        printf("Desbloqueo\n");
+
         free(semID);
     } else{
         newPipedProcess(&process1, 0, buffer, pipes[0], 0); // No se como. Cambia el stdin o out
-        newPipedProcess(&process2, 0, buffer+idx+1, pipes[1], 0); // No se como. Cambia el stdin o out
+        newPipedProcess(&process2, 0, buffer+idx+2, pipes[1], 0); // No se como. Cambia el stdin o out
     }
 
 }

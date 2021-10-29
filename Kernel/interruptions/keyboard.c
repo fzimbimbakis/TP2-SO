@@ -39,7 +39,12 @@ void keyboard_handler(){
         char toPrint = keyTable[idx];
         currentBuffer[bufferIdx++]=(capsLock && IS_LETTER(toPrint))?toPrint-'a'+'A':toPrint;
         }
-        unblockShell();
+//        unblockShell();
+//    ncPrint("Desbloqueo\n");
+//    ncPrintDec(getCurrentPCB()->pid);
+//    ncPrint("\n");
+    sem_post(getCurrentPCB()->inputPipe->sem_R);
+//    ncPrint("Paso\n");
 }
 
 void cleanBuffer(){

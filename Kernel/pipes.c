@@ -20,9 +20,17 @@ void initialPipes(PCB * pcb){
 //    int InSem_W = sem_create(0);
 //    int OutSem_R = sem_create(0);
 //    int OutSem_W = sem_create(0);
-
-    pipe_t* stdin = newPipe(READ, lastID++, NULL, 0, 0, 0, 0, NULL);
-    pipe_t* stdout = newPipe(WRITE, lastID++, NULL, 0, 0, 0, 0, stdin);
+    char * sem = alloc(3 * sizeof(char));
+    sem[0] = lastID;
+    sem[1] = 'R';
+    sem[2] = 0;
+    if (sem_create(sem, 0) == -1) {
+        free(sem);
+        ncPrint("pipeOpen --> first sem_create returned -1.");
+        return -1;
+    }
+    pipe_t* stdin = newPipe(READ, lastID++, NULL, 0, 0, sem, 0, NULL);
+    pipe_t* stdout = newPipe(WRITE, lastID++, NULL, 0, 0, sem, 0, stdin);
 //    pipe_t * stderr = newPipe(WRITE, lastID++, NULL, 0, 0, 0, 0, stdout);
     setReverseSide(stdout, stdin);
     setReverseSide(stdin, stdout);
@@ -33,7 +41,7 @@ void initialPipes(PCB * pcb){
 
 
 
-pipe_t * newPipe(char type, int id, char * buffer, int nRead, int nWrite, char * sem_R, char * sem_W, pipe_t * next){
+pipe_t * newPipe(char type, int id, char * buffer, int * nRead, int * nWrite, char * sem_R, char * sem_W, pipe_t * next){
     pipe_t* pipe = alloc(sizeof(pipe_t));
     if (pipe == NULL)
         return NULL;
@@ -82,15 +90,20 @@ int pipeOpen(int * array){
         return -1;
     }
 
+    int * nWrite = alloc(sizeof(int));
+    int * nRead = alloc(sizeof(int));
+    *nRead = 0;
+    *nWrite = 0;
+
 //    ncPrint("antes de newPipe\n");
-    pipe_t* readPipe = newPipe(READ, lastID++, buffer, 0, 0, Rid, Wid, firstPipe);
+    pipe_t* readPipe = newPipe(READ, lastID++, buffer, nRead, nWrite, Rid, Wid, firstPipe);
     if (readPipe == NULL){
         free(Wid);
         free(Rid);
         free(buffer);
         return -1;
     }
-    pipe_t* writePipe = newPipe(WRITE, lastID++, buffer, 0, 0, Rid, Wid, readPipe);
+    pipe_t* writePipe = newPipe(WRITE, lastID++, buffer, nRead, nWrite, Rid, Wid, readPipe);
     if (writePipe == NULL){
         free(Wid);
         free(Rid);
@@ -114,6 +127,7 @@ int pipeWrite(int fd, char * buffer, int count){
     if (fd==1) {
         aux = getCurrentPCB()->outputPipe;
         if(aux==NULL || aux->type==READ) {//porl
+            ncPrint("Error en pipe Write. Pipe no existe o es de lectura.");
             return -1;
         }
         if(aux->buffer==NULL){      // Salida estandar posta
@@ -131,44 +145,76 @@ int pipeWrite(int fd, char * buffer, int count){
             aux = aux->next;
         }
 
-        if (aux == NULL || aux->type == READ)
+        if (aux == NULL || aux->type == READ) {
+            ncPrint("Error en pipe Write. Pipe no existe o es de lectura.");
             return -1;
+        }
     }
     for (int i = 0; i < count; ++i) {
-
-        while (aux->nWrite ==aux->nRead + PIPE_SIZE) {      // TODO:Si otro write me gana, se me solapa lo que escribo
+//        ncPrint("i: ");
+//        ncPrintDec(i);
+//        ncPrintChar(' ');
+        while ((*(aux->nWrite)) == (*(aux->nRead)) + PIPE_SIZE) {      // TODO:Si otro write me gana, se me solapa lo que escribo
             if (aux->read_waiting > 0) {
                 for (int j = 0; j < aux->read_waiting; ++j)
                     sem_post(aux->sem_R);
+                aux->read_waiting = 0;
             }
+            ncPrint("A esperar write?\n");
             aux->write_waiting++;
             sem_wait(aux->sem_W);
         }
-
-        aux->buffer[aux->nWrite++ % PIPE_SIZE] = buffer[i];
+        ncPrintDec((*(aux->nWrite)) % PIPE_SIZE);
+        ncPrintChar(' ');
+        aux->buffer[(*(aux->nWrite))++ % PIPE_SIZE] = buffer[i];
+//        ncPrint("nWrite: ");
+//        ncPrintDec((*(aux->nWrite)));
+//        ncPrintChar(' ');
     }
     if (aux->read_waiting > 0) {
+        ncPrint("read waiting?\n");
         for (int j = 0; j < aux->read_waiting; ++j)
             sem_post(aux->sem_R);
     }
 }
 
 int pipeClose(int fd){
-    pipe_t * aux = firstPipe;
-    pipe_t * prev;
+    pipe_t * aux = firstPipe->next;
+    pipe_t * prev = firstPipe;
+    if(prev->id==fd){
+
+        if(prev->reverse_side==NULL){
+            free(prev->buffer);
+            sem_close(prev->sem_W);
+            sem_close(prev->sem_R);
+            free(prev->nWrite);
+            free(prev->nRead);
+            firstPipe = prev->next;
+            free(prev);
+            return 0;
+        } else{
+            prev->reverse_side->reverse_side = NULL;
+            firstPipe = prev->next;
+            free(prev);
+            return 0;
+        }
+
+    }
     while (aux!=NULL){
         if(aux->id==fd)
             break;
         prev = aux;
         aux = aux->next;
     }
-    if(aux==NULL || aux->type==READ)
+    if(aux==NULL)
         return -1;
 
     if(aux->reverse_side == NULL){
         prev->next=aux->next;
         sem_close(aux->sem_W);
         sem_close(aux->sem_R);
+        free(aux->nWrite);
+        free(aux->nRead);
         free(aux->buffer);
         free(aux);
         return 0;
@@ -176,6 +222,7 @@ int pipeClose(int fd){
         prev->next=aux->next;
         aux->reverse_side->reverse_side=NULL;
         free(aux);
+        return 0;
     }
 
 
@@ -183,46 +230,67 @@ int pipeClose(int fd){
 
 int pipeRead(int fd, char * buffer, int count){
 //    ncPrint("R1\n");
+    pipe_t * aux;
     if(fd==0){
-        cleanBuffer();
-        while(getEndBuffer()<count){
-            blockProcess();;
-        }
-        char * inBuffer = getBuffer();
-        int i;
-        for (i = 0; i < count ; i++)
-        {
-            buffer[i] = inBuffer[i];
-        }
+        aux = getCurrentPCB()->inputPipe;
+        if(aux->buffer==NULL){
+            cleanBuffer();
+            while (getEndBuffer() < count) {
+//                ncPrint("Se bloquea\n");
+//                blockProcess();
+                sem_wait(aux->sem_R);
+            }
+            char *inBuffer = getBuffer();
+            int i;
+            for (i = 0; i < count; i++) {
+                buffer[i] = inBuffer[i];
+            }
 
-        cleanBuffer();
-    } else{
-        pipe_t * aux = firstPipe;
-               while (aux!=NULL){
-                   if(aux->id==fd)
-                       break;
-                   aux = aux->next;
-               }
-               if(aux==NULL || aux->type==WRITE)
-                   return -1;
+            cleanBuffer();
+            return 0;
+        }
+    } else {
+        aux = firstPipe;
+        while (aux != NULL) {
+            if (aux->id == fd)
+                break;
+            aux = aux->next;
+        }
+        if (aux == NULL || aux->type == WRITE) {
+            ncPrint("pipeRead: Pipe no existe o es escritura en vez de lectura.\n");
+            return -1;
+        }
+    }
+//    ncPrint("SALIO\n");
         for (int i = 0; i < count; ++i) {
-
-            while (aux->nRead == aux->nWrite){      // TODO:Si otro write me gana, se me solapa lo que escribo
+//            ncPrintDec(i);
+//            ncPrint(" i ");
+//            ncPrintChar(' ');
+//            ncPrintDec((*(aux->nWrite)));
+//            ncPrint("nWrite ");
+//            ncPrintChar(' ');
+//            ncPrintDec((*(aux->nRead)));
+//            ncPrint("nRead ");
+//            ncPrint(" | ");
+            while ((*(aux->nRead)) == (*(aux->nWrite))){      // TODO:Si otro write me gana, se me solapa lo que escribo
                 if(aux->write_waiting>0) {
                     for (int j = 0; j < aux->write_waiting; ++j)
                         sem_post(aux->sem_W);
+                    aux->write_waiting = 0;
                 }
+                ncPrint("A esperar read?");
                 aux->read_waiting++;
                 sem_wait(aux->sem_R);
             }
-
-            buffer[i] = aux->buffer[aux->nRead++ % PIPE_SIZE];
+//            ncPrintChar(aux->buffer[(*(aux->nRead)) % PIPE_SIZE]);
+//            ncPrintChar(' ');
+            buffer[i] = aux->buffer[(*(aux->nRead))++ % PIPE_SIZE];
         }
+
         if(aux->write_waiting>0) {
             for (int j = 0; j < aux->write_waiting; ++j)
                 sem_post(aux->sem_W);
         }
-    }
 }
 
 int dup(char oldId, char id){
@@ -240,14 +308,18 @@ int dup(char oldId, char id){
         return -1;
     }
     if(oldId==0){
-        if(aux->type!=READ)
+        if(aux->type!=READ) {
+            ncPrint("Pipe not same type.\n");
             return -1;
+        }
         getCurrentPCB()->inputPipe = aux;
         return 0;
     }
     if(oldId==1){
-        if(aux->type!=WRITE)
+        if(aux->type!=WRITE) {
+            ncPrint("Pipe not same type.\n");
             return -1;
+        }
         getCurrentPCB()->outputPipe = aux;
         return 0;
     }
