@@ -1,5 +1,6 @@
 #include <keyboard.h>
 #include <naiveConsole.h>
+#include <contextHandler.h>
 
 #define BREAK_CODE(num) num>0x80
 #define IS_LETTER(c) ((c>='a') && (c<='z'))
@@ -30,14 +31,16 @@ void keyboard_handler(){
         bufferIdx=0;
         endBuffer = 0;
     }
-    if(BREAK_CODE(idx)) //es break code 
+    if(BREAK_CODE(idx)) //es break code
         return;
     else if(idx == 0x3A)
         capsLock = 1-capsLock;
     else{
         char toPrint = keyTable[idx];
-        currentBuffer[bufferIdx++]=(capsLock && IS_LETTER(toPrint))?toPrint-'a'+'A':toPrint;
-        }
+        currentBuffer[(bufferIdx)++]=(capsLock && IS_LETTER(toPrint))?toPrint-'a'+'A':toPrint;
+    }
+    unblockShell();//TODO:cambiar por semaforo
+
 }
 
 void cleanBuffer(){

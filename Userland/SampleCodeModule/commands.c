@@ -5,6 +5,7 @@
 #include "readMemory.h"
 
 #include "testMM.h"
+#include "testScheduler.h"
 
 #define SECONDS 0
 #define MINUTES 2
@@ -208,6 +209,95 @@ void testMMCommand(char * buffer){
             printer("Test ID is not valid");
             printf("\n");
             break;
+    }
+
+}
+
+ void blockCommand(char* buffer){
+        char arg[MAX_BUFFER];
+
+        getArguments(buffer,arg);
+        uint32_t pid=strToNum(arg);
+        if(block(pid)==-1){
+            printer("Invalid PID");
+            printf("\n");
+        }
+
+}
+
+void unblockCommand(char* buffer){
+    char arg[MAX_BUFFER];
+
+    getArguments(buffer,arg);
+    uint32_t pid=strToNum(arg);
+    if(unblock(pid)==-1){
+        printer("Invalid PID");
+        printf("\n");
+    }
+
+}
+
+ void killCommand(char* buffer){
+        char arg[MAX_BUFFER];
+
+        getArguments(buffer,arg);
+        uint32_t pid=strToNum(arg);
+        if(kill(pid)==-1){
+            printer("Invalid PID");
+            printf("\n");
+        }
+}
+
+void testScheduler(){
+    test_processes();
+}
+
+void testPrio(){
+    test_prio();
+}
+
+void getpidCommand(){
+    uint32_t pid= getpid();
+    printf("PID = %d\n", pid);
+}
+
+void getStrings(char * buffer, char * str1, char* str2){
+    int buffLen=strlen(buffer);
+    int i;
+    for(i=0;buffer[i]!= ' ';i++){
+        str1[i]=buffer[i];
+    }
+    str1[i]=0;
+
+    while(buffer[i]==' ')
+        i++;
+    int flag=1;
+
+    for(int j=0; j < MAX_BUFFER && i < buffLen && flag; j++, i++ ){
+        if(buffer[i]=='\n'){
+            str2[j]=0; //final del string
+            flag=0;
+        }else
+            str2[j]=buffer[i]; //copio el string
+    }
+}
+
+void niceCommand(char * buffer){
+    char arg[MAX_BUFFER];
+
+    getArguments(buffer,arg);
+
+    char arg1[MAX_BUFFER];
+    char arg2[MAX_BUFFER];
+
+    getStrings(arg, arg1, arg2);
+    uint32_t pid=strToNum(arg1);
+
+    char priority = strToNum(arg2);
+
+    if(nice(pid, priority)==-1){
+        printer("Invalid PID");
+            printf("\n");
     }
 
 }

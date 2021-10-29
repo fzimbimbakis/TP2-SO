@@ -1,16 +1,37 @@
 /* sampleCodeModule.c */
 #include "lib.h"
 #include "commandDispatcher.h"
+#include "sysCall.h"
 char * v = (char*)0xB8000 + 79 * 2;
 	static char c;
 	static char buffer[MAX_BUFFER]={0};
 	static int idx = 0;
-	
-	
+
+void imprimir(){
+    while (1){
+	putChar('X');
+	sysWait();
+	}
+}
+
+void ioi(){
+	while (1){
+	putChar('-');
+	sysWait();
+	}
+}
 
 int main() {
+
 	printf("Bienvenido! Que comando desea correr?\n");
-	while(1){
+	//newP(&imprimir);
+	//newP(&ioi);
+	// while (1)
+	// {
+	// 	putChar('A');
+	// }
+	
+    while(1){
 		while((c=getChar())!='\n'){
 			putChar(c);
 			if(c=='\b'){

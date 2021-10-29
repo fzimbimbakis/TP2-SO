@@ -126,6 +126,10 @@ char getChar(){
 	return ret;
 }
 
+int newP(void* fPtr){
+	return sysNewP(fPtr ,0);
+}
+
 char* scanf(){
 	buffer[0]=0;
 	static int idx = 0;
@@ -151,12 +155,44 @@ void * alloc(unsigned size){
 	return sysAlloc(size);
 }
 
+void exit(){
+	sysExit();
+}
+
+int kill(uint32_t pid){
+	return sysKill(pid);
+}
+
+int block(uint32_t pid){
+	return sysBlock(pid);
+}
+
+int unblock(uint32_t pid){
+    return sysUnblock(pid);
+}
+
+void yield(){
+	sysYield();
+}
+
 void free(void * ptr){
 	sysFree(ptr);
 }
 
 unsigned * memInfo(){
     return sysMemInfo();
+}
+
+void ps(){
+	sysPs();
+}
+
+uint32_t getpid(){
+	return sysGetpid();
+}
+
+int nice(uint32_t pid, char newPrio){
+	return sysNice(pid, newPrio);
 }
 
 /*

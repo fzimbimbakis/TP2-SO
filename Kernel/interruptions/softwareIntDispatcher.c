@@ -2,6 +2,9 @@
 #include <interrupts.h>
 #include <keyboard.h>
 #include "../memoryManager.h"
+#include "contextHandler.h"
+#include "process.h"
+
 #define RED 4
 typedef int (*EntryPoint)(unsigned int, unsigned int, unsigned int);
 
@@ -12,10 +15,12 @@ void memoryFree(void * ptr);
 void * memoryAlloc(unsigned size);
 unsigned * memoryInfo();
 
-EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo};
+EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree,
+&memoryInfo, &newProcess, &exit, &_hlt, &blockProcessPID, &yield, &kill, &printProcesses,
+&getPid, &changePriority, &unblockProcessPID};
 
 int int_80(unsigned int arg1, unsigned int arg2, unsigned int arg3, int sysCall){
-    int ret=(functionPtrs[sysCall])(arg1, arg2, arg3);
+    int ret=functionPtrs[sysCall](arg1, arg2, arg3);
     return ret;
 }
 
@@ -32,9 +37,9 @@ unsigned * memoryInfo(){
     return array;
 }
 
-void write(unsigned int fd, const char * buffer, unsigned int count){       
+void write(unsigned int fd, const char * buffer, unsigned int count){
     if(fd==1){      // STDOUT
-        for (int i = 0; i < count && buffer[i]; i++)            
+        for (int i = 0; i < count && buffer[i]; i++)
         {
             ncPrintChar(buffer[i]);
         }
@@ -47,11 +52,11 @@ void write(unsigned int fd, const char * buffer, unsigned int count){
     }
 }
 
-void read(unsigned int fd, char * buffer, unsigned int count){      
+void read(unsigned int fd, char * buffer, unsigned int count){
     if(fd==0){      // STDIN
         cleanBuffer();
         while(getEndBuffer()<count){
-		    _hlt();
+		    blockProcess(); //cambiar por un semaforo
         }
         char * inBuffer = getBuffer();
         int i;
@@ -59,7 +64,6 @@ void read(unsigned int fd, char * buffer, unsigned int count){
         {
             buffer[i] = inBuffer[i];
         }
-        
         cleanBuffer();
     }
 }

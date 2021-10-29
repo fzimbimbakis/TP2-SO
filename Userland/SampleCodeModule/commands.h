@@ -8,9 +8,17 @@ int isCommandWithArg(char* command, char* buffer);
 void helpCommand();
 void inforegCommand();
 void printRegName(int index);
-void cpuidCommand();
+//void cpuidCommand();
+void blockCommand(char* buffer);
+void unblockCommand(char* buffer);
+void killCommand(char* buffer);
+void testScheduler();
+void testPrio();
+void getpidCommand();
+void niceCommand(char * buffer);
 
 void getArguments(char* buffer, char* arg);
+void getStrings(char * buffer, char * str1, char* str2);
 void exceptionTestCommando(char * buffer);
 void printmemCommand(char* buffer);
 void dateCommand();
