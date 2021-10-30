@@ -19,6 +19,8 @@ GLOBAL sysSemClose
 GLOBAL sysSemInfo
 GLOBAL sysSleep
 GLOBAL sysKill
+GLOBAL sysPipe
+GLOBAL sysDupPipe
 section .text
 
 %macro pushState 0
@@ -124,6 +126,20 @@ section .text
 	pop rcx
 	pop rbx
 %endmacro
+
+sysPipe:
+    pushStateNoRax
+    mov rax, 20
+    int 80h
+    popStateNoRax
+    ret
+
+    sysDupPipe:
+        pushState
+        mov rax, 19
+        int 80h
+        popState
+        ret
 
 sysWrite:
     pushState

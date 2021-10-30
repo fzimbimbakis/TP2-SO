@@ -3,6 +3,7 @@
 #define _CONTEXTHANDLER_H
 
 #include <stdint.h>
+#include "../pipes.h"
 #define MAX_PRIORITY 2
 #define SHELL 0
 
@@ -15,16 +16,11 @@ typedef struct PCB{
     uint64_t* rbp;
     char priority;
     char times;
+    struct pipe_t * inputPipe;     //// Agregar en el informe esta decision.
+    struct pipe_t * outputPipe;
     struct PCB* next;
     struct PCB* prev;
 }PCB;
-
-/*typedef struct ProcessList{
-    PCB * head;
-    PCB* current;
-    int size;
-    int blocked;
-}ProcessList;*/
 
 void handler();
 void yield();
@@ -36,14 +32,14 @@ int changePriority(uint32_t pid, char newPrio);
 uint64_t * getCurrentSP();
 PCB * getCurrentPCB();
 char getCurrentPID();
-void yield();
+
 void blockProcess();
-blockProcessPID(uint32_t pid);
+int blockProcessPID(uint32_t pid);
 int unblockProcessPID(uint32_t pid);
 void unblockShell();
 
-char newProcess(uint64_t fPtr, char priority);
+char newProcess(uint64_t fPtr, char priority, char * arg1, int arg2, char * arg3);
 void exit();
 uint64_t * firstProcess(uint64_t fPtr);
-extern uint64_t * createStackContext(uint64_t sp, uint64_t fPtr);
+extern uint64_t * createStackContext(uint64_t sp, uint64_t fPtr, char * arg1, int agr2, char * agr3);
 #endif

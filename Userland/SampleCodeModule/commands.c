@@ -16,7 +16,8 @@
 
 int isCommand(char* command, char* buffer){ //1 si son iguales, 0 si no
 	int comLen=strlen(command);
-
+//command:date
+//buffer: date
     if(comLen > strlen(buffer))
 		return 0;
 
@@ -147,7 +148,8 @@ void dateCommand(){
     printf("/");
     printHex(sysTime(YEAR));
     printf("\n");
-    
+    putChar(';');
+
 }
 
 void exceptionTestCommando(char * buffer){
@@ -170,9 +172,15 @@ void exceptionTestCommando(char * buffer){
     
 }
 
-void memInfoCommand(){
+void memInfoCommand(){      // TODO: Agregar debilidad al informe. Si le pasamos mem a un pipe como el que escribe en el pipe. Se rompe
     unsigned * array = memInfo();
-    printf("Total memory: %d.\nTaken memory: %d.\nFree memory: %d.\n", array[0], array[1], array[2]);
+    printf("Total memory: ");
+    printDec(array[0]);
+    printf(" Taken memory: ");
+    printDec(array[1]);
+    printf(" Free memory " );
+    printDec(array[2]);
+    putChar('\n');
     free(array);
 }
 
@@ -339,6 +347,44 @@ void testsemCommand(char * buffer){
             break;
     }
 }
+
+void filterCommand(){
+    char c;
+
+        while((c=getChar())!=';'){
+                if(c=='a' || c=='e' || c=='i' || c=='o' || c=='u'){
+                    putChar(c);
+                }
+        }
+    putChar(';');
+        printf("\nEnd filter.\n");
+        return;
+
+}
+void catCommand(){
+    char c;
+
+        while((c=getChar())!=';'){
+            putChar(c);
+        }
+    putChar(';');
+        printf("\nEnd cat.\n");
+        return;
+
+}
+void wcCommand(){
+    char c;
+    int lines=0;
+    while((c=getChar())!=';'){
+        putChar(c);
+        if(c=='\n')
+            lines++;
+    }
+    putChar(';');
+    printf("\nwc: Input has %d lines.\n", lines);
+    return;
+}
+
 
 void semInfoCommand(){
     int qty;

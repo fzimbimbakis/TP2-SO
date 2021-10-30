@@ -5,6 +5,8 @@
 #include "interrupts.h"
 #include "process.h"
 #include "time.h"
+#include "../pipes.h"
+#include <stdarg.h>
 
 static PCB* currentProcess = NULL;
 static PCB* firstP = NULL;
@@ -64,20 +66,45 @@ void unblockShell(){
     }
 }
 void yield(){
-    //ncPrint("YIELD\n");
-    currentProcess->times=currentProcess->priority;
-    int20();
-}
-
-void blockProcess(){
-    currentProcess->state=BLOCKED;
-//    ncPrint("Bloqueo shell\n");
-    //ncPrintDec(currentProcess->pid);
-    //ncPrint("\n");
-    
+    currentProcess->times = currentProcess->priority;
     int20();
     return;
 }
+
+//void unblockShell(){
+//    PCB* aux=currentProcess;
+//    while(aux->pid!=0){
+//        aux=aux->next;
+//        //ncPrintDec(aux->pid);
+//    }
+////    ncPrint("Desbloqueo shell\n");
+//    aux->state=READY;
+//}
+
+//int blockProcessPID(char pid){
+//    PCB * aux = firstP;
+//    while(aux!=NULL){
+//        if(aux->pid==pid){
+//            aux->state=BLOCKED;
+//            if(currentProcess==aux)
+//                int20();
+//            return 0;
+//        }
+//        aux = aux->next;
+//    }
+//    return -1;
+//}
+//int unblockProcessPID(char pid){
+//    PCB * aux = firstP;
+//    while(aux!=NULL){
+//        if(aux->pid==pid){
+//            aux->state=READY;
+//            return 0;
+//        }
+//        aux = aux->next;
+//    }
+//    return -1;
+//}
 int unblockProcessPID(uint32_t pid){
     PCB * aux = firstP;
     while(aux!=NULL){
@@ -113,6 +140,16 @@ int blockProcessPID(uint32_t pid){
     }
 
     return -1;
+}
+
+void blockProcess(){
+    currentProcess->state=BLOCKED;
+//    ncPrint("Bloqueo shell\n");
+    //ncPrintDec(currentProcess->pid);
+    //ncPrint("\n");
+    
+    int20();
+    return;
 }
 
 void exit(){
@@ -216,39 +253,49 @@ void addProcessToList(PCB* newP){
     firstP=newP;
 }
 
-char newProcess(uint64_t fPtr, char priority) {
+
+
+char newProcess(uint64_t fPtr, char priority, char * arg1, int arg2, char * arg3) {  // Los procesos pueden recibir tres argumentos mas. Son un char *, int e int.
     uint64_t *rbp = alloc(1024 * sizeof(uint64_t));
     PCB *newP = alloc(sizeof(PCB));
     newP->rbp=rbp;
     newP->pid = lastPID++;
     newP->prev=0;
-    newP->rsp = createStackContext(((uint64_t) & rbp[1023]), fPtr);
+    newP->rsp = createStackContext(((uint64_t) & rbp[1023]), fPtr, arg1, arg2, arg3);
     newP->priority=priority;
     newP->times=0;
     newP->state=READY;
     newP->next = NULL;
+    newP->inputPipe = getCurrentPCB()->inputPipe;       //// Nota: Cerrar el stdin o stdout desde un proceso los cierra en todos los procesos.
+    newP->outputPipe = getCurrentPCB()->outputPipe;
     addProcessToList(newP);
     return (newP->pid);
 }
 
 uint64_t * firstProcess(uint64_t fPtr){ //deberia ser void????
     //ncPrintChar('1');
-    newProcess(fPtr, MAX_PRIORITY);
+    uint64_t * rbp = alloc(1024*sizeof (uint64_t));
+    PCB* first = alloc(sizeof (PCB));
+    first->rbp=rbp;
+    first->pid=lastPID++;
+    first->rsp= createStackContext((uint64_t) &rbp[1023], fPtr, NULL, -1, NULL);
 
+    first->priority=MAX_PRIORITY;
+    first->next=0;
+    first->prev=0;
+
+    initialPipes(first);
     uint64_t * rbp = alloc(1024*sizeof (uint64_t));
     halt = alloc(sizeof (PCB));
     halt->rbp=rbp;
-    halt->rsp= createStackContext((uint64_t) &rbp[1023], &haltP);
-//    ncPrintChar('\n');
+    halt->rsp= createStackContext((uint64_t) &rbp[1023], &haltP, NULL, -1, NULL);
+    halt->inputPipe = first->inputPipe;
+    halt->outputPipe = first->outputPipe;
+    halt->priority=0;
+    halt->next=0;
+    halt->prev=0;
 
-//    ncPrintHex(rbp);
-//    ncPrintChar('\n');
-//    ncPrintHex(first->rsp);
-//    ncPrintChar('\n');
-//
-//    ncPrintHex(fPtr);
-//    ncPrintChar('2');
-
+    addProcessToList(first);
 //    ncPrintChar('4');
     //newProcess(&haltP, MAX_PRIORITY); //creo proceso halt
     startFirstP();

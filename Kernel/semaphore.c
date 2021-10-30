@@ -1,12 +1,13 @@
 
 #include "semaphore.h"
 #include "include/naiveConsole.h"
+
 //#define STARTING_SEMAPHORES 16
-static sem_t * semaphores = NULL;
+static semaphore_t * semaphores = NULL;
 //static char sem_counter = 0;
 //static char sem_array_size = STARTING_SEMAPHORES;
 //void sem_init(){
-//    semaphores = alloc(sizeof(sem_t *) * STARTING_SEMAPHORES);
+//    semaphores = alloc(sizeof(semaphore_t *) * STARTING_SEMAPHORES);
 //    for (int i = 0; i < STARTING_SEMAPHORES; ++i) {
 //        semaphores[i] = NULL;
 //    }
@@ -23,8 +24,8 @@ static sem_t * semaphores = NULL;
 int sem_create(char * newId, uint64_t value){
 //      Array semaphores
 //    if(sem_counter==sem_array_size){
-//        sem_t * aux[] = semaphores;
-//        semaphores = alloc(sizeof(sem_t *) * (sem_counter+STARTING_SEMAPHORES));
+//        semaphore_t * aux[] = semaphores;
+//        semaphores = alloc(sizeof(semaphore_t *) * (sem_counter+STARTING_SEMAPHORES));
 //        sem_array_size += STARTING_SEMAPHORES;
 //        for (int i = 0; i < sem_array_size; ++i) {
 //            if(i<sem_counter)
@@ -40,7 +41,7 @@ int sem_create(char * newId, uint64_t value){
 //            }
 //            auxCount++;
 //        }
-//    semaphores[auxCount] = alloc(sizeof(sem_t));
+//    semaphores[auxCount] = alloc(sizeof(semaphore_t));
 //        if(semaphores[auxCount] == NULL)
 //            return -1;
 //        semaphores[auxCount]->value = value;
@@ -48,7 +49,7 @@ int sem_create(char * newId, uint64_t value){
     char * id = alloc(myStrlen(newId)* sizeof(char));
     myStrcpy(id, newId);
         if(semaphores==NULL){
-        semaphores = alloc(sizeof(sem_t));
+        semaphores = alloc(sizeof(semaphore_t));
         semaphores->id=id;
         semaphores->value = value;
         semaphores->p_waiting=0;
@@ -60,13 +61,13 @@ int sem_create(char * newId, uint64_t value){
             if(myStrcmp(semaphores->id, id))
                 return -1;
 
-            sem_t * aux = semaphores;
+            semaphore_t * aux = semaphores;
             while(aux->next!=NULL){
                 if(myStrcmp(aux->id, id))
                     return -1;
                 aux = aux->next;
             }
-            aux->next = alloc(sizeof(sem_t));
+            aux->next = alloc(sizeof(semaphore_t));
             aux->next->value = value;
             aux->next->id = id;
             aux->next->p_waiting=0;
@@ -80,9 +81,9 @@ int sem_create(char * newId, uint64_t value){
 }
 
 int sem_wait(char * sem_id){
-//    sem_t * semaphore_ptr = semaphores[sem_id];
+//    semaphore_t * semaphore_ptr = semaphores[sem_id];
 
-    sem_t * semaphore_ptr = semaphores;
+    semaphore_t * semaphore_ptr = semaphores;
     while (semaphore_ptr!=NULL && !myStrcmp(semaphore_ptr->id, sem_id))
         semaphore_ptr = semaphore_ptr->next;
     if(semaphore_ptr==NULL) {
@@ -121,8 +122,8 @@ int sem_wait(char * sem_id){
 }
 
 int sem_post(char * sem_id){
-//    sem_t * semaphore_ptr = semaphores[sem_id];
-    sem_t * semaphore_ptr = semaphores;
+//    semaphore_t * semaphore_ptr = semaphores[sem_id];
+    semaphore_t * semaphore_ptr = semaphores;
     while (semaphore_ptr!=NULL && !myStrcmp(semaphore_ptr->id, sem_id))
         semaphore_ptr = semaphore_ptr->next;
     if(semaphore_ptr==NULL)
@@ -141,13 +142,13 @@ int sem_post(char * sem_id){
         return 0;
     } else semaphore_ptr->value++;
     release(&(semaphore_ptr->lock)); // spinlock
-
     return 0;
 }
 
+
 int sem_close(char * sem_id){
-    sem_t * semaphore_ptr = semaphores;
-    sem_t * prev=NULL;
+    semaphore_t * semaphore_ptr = semaphores;
+    semaphore_t * prev=NULL;
     while (semaphore_ptr!=NULL && !myStrcmp(semaphore_ptr->id, sem_id)) {
         prev = semaphore_ptr;
         semaphore_ptr = semaphore_ptr->next;

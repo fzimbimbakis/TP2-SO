@@ -6,9 +6,10 @@
 #include "../semaphore.h"
 #include "process.h"
 #include "time.h"
+#include "../pipes.h"
 
 #define RED 4
-typedef int (*EntryPoint)(unsigned int, unsigned int, unsigned int);
+typedef int (*EntryPoint)(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int);
 
 void write(unsigned int fd, const char * buffer, unsigned int count);
 void read(unsigned int fd, char * buffer, unsigned int count);
@@ -18,14 +19,15 @@ void * memoryAlloc(unsigned size);
 unsigned * memoryInfo();
 
 //EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo, &newProcess, &exit, &_hlt, &blockProcess};
-//EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo,
-//                             &newProcess, &exit, &blockProcessPID, &yield, &kill, &printProcesses,
-//                             &getPid, &changePriority, &sem_create, &sem_wait, &sem_post, &sem_close,&sem_info, &dup,&pipeOpen, &unblockProcessPID, &sleep };
 EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo,
                              &newProcess, &exit, &blockProcessPID, &yield, &kill, &printProcesses,
-                             &getPid, &changePriority, &sem_create, &sem_wait, &sem_post, &sem_close,&sem_info, NULL,NULL, &unblockProcessPID, &sleep };
-int int_80(unsigned int arg1, unsigned int arg2, unsigned int arg3, int sysCall){
-    int ret=functionPtrs[sysCall](arg1, arg2, arg3);
+                             &getPid, &changePriority, &sem_create, &sem_wait, &sem_post, &sem_close,&sem_info, &dup,&pipeOpen, &unblockProcessPID, &sleep };
+//EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo,
+//                             &newProcess, &exit, &blockProcessPID, &yield, &kill, &printProcesses,
+//                             &getPid, &changePriority, &sem_create, &sem_wait, &sem_post, &sem_close,&sem_info, NULL,NULL, &unblockProcessPID, &sleep };
+
+int int_80(unsigned int arg1, unsigned int arg2, unsigned int arg3, unsigned int arg4, unsigned int arg5, int sysCall){
+    int ret=functionPtrs[sysCall](arg1, arg2, arg3, arg4, arg5);
     return ret;
 }
 
@@ -43,32 +45,34 @@ unsigned * memoryInfo(){
 }
 
 void write(unsigned int fd, const char * buffer, unsigned int count){
-    if(fd==1){      // STDOUT
-        for (int i = 0; i < count && buffer[i]; i++)
-        {
-            ncPrintChar(buffer[i]);
-        }
-    }
-    if(fd==2){      // STDERR
-        for (int i = 0; i < count && buffer[i]; i++)
-        {
-            ncPrintColorChar(buffer[i], RED);
-        }
-    }
+//    if(fd==1){      // STDOUT
+//        for (int i = 0; i < count && buffer[i]; i++)
+//        {
+//            ncPrintChar(buffer[i]);
+//        }
+//    }
+//    if(fd==2){      // STDERR
+//        for (int i = 0; i < count && buffer[i]; i++)
+//        {
+//            ncPrintColorChar(buffer[i], RED);
+//        }
+//    }
+    pipeWrite((int)fd, buffer, (int)count);
 }
 
 void read(unsigned int fd, char * buffer, unsigned int count){
-    if(fd==0){      // STDIN
-        cleanBuffer();
-        while(getEndBuffer()<count){
-		    blockProcess(); //cambiar por un semaforo
-        }
-        char * inBuffer = getBuffer();
-        int i;
-        for (i = 0; i < count ; i++)
-        {
-            buffer[i] = inBuffer[i];
-        }
-        cleanBuffer();
-    }
+//    if(fd==0){      // STDIN
+//        cleanBuffer();
+//        while(getEndBuffer()<count){
+//		    blockProcess();
+//        }
+//        char * inBuffer = getBuffer();
+//        int i;
+//        for (i = 0; i < count ; i++)
+//        {
+//            buffer[i] = inBuffer[i];
+//        }
+//        cleanBuffer();
+//    }
+    pipeRead((int)fd, buffer, (int)count);
 }

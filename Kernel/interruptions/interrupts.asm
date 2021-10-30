@@ -224,7 +224,7 @@ _softwareHandler:
 	push r13
 	push r14
 	push r15
-	mov rcx, rax
+	mov r9, rax
 	call int_80
 	pop r15
 	pop r14

@@ -23,6 +23,9 @@ void getArguments(char* buffer, char* arg);
 void getStrings(char * buffer, char * str1, char* str2);
 void exceptionTestCommando(char * buffer);
 void printmemCommand(char* buffer);
+void filterCommand();
+void catCommand();
+void wcCommand();
 void dateCommand();
 void semInfoCommand();
 #include "testSem.h"

@@ -7,6 +7,7 @@
 #define STDOUT 1
 #define MAX_BUFFER 40
 #define STDERR 2
+#include <stdint.h>
 int strlen(char* string);
 void putChar(char c);
 void printf(char* string, ...);
@@ -21,7 +22,9 @@ char* scanf();
 void initial();
 void* alloc(unsigned size);
 void free(void * ptr);
-int newP(void * fPtr);
+int newP(void* fPtr);
+int newBufferProcess(void* fPtr, char priority, char * buffer);
+int newPipedProcess(uint64_t fPtr, char priority, char * buffer, int pipeId, char * sem_id);
 void exit();
 void sleep(int seconds);
 void ps();
@@ -37,6 +40,6 @@ unsigned long int hexToDec(char* num);
 int post_sem(char * id);
 int wait_sem(char * id);
 int create_sem(char * id, uint64_t value);
-void yield();
+
 int close_sem(char * id);
 #endif

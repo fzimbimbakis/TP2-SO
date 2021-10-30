@@ -126,9 +126,17 @@ char getChar(){
 	return ret;
 }
 
-int newP(void* fPtr){
-	return sysNewP(fPtr ,0);
+int newPipedProcess(uint64_t fPtr, char priority, char * buffer, int pipeId, char * sem_id){
+	return sysNewP(fPtr , priority, buffer, pipeId, sem_id);  // No devuelve nada.
 }
+int newBufferProcess(void* fPtr, char priority, char * buffer){
+    return sysNewP(fPtr , priority, buffer, -1, -1);  // No devuelve nada.
+}
+int newP(void* fPtr){
+    return sysNewP(fPtr , 0, NULL, -1, -1);  // No devuelve nada.
+}
+
+
 
 char* scanf(){
 	buffer[0]=0;
