@@ -1,6 +1,6 @@
 include Makefile.inc
 
-MEM_MANAGER=listfree # buddy o listfree
+MEM_MANAGER=buddy # buddy o listfree
 KERNEL=kernel.bin
 SOURCES=$(wildcard *.c)
 SOURCES_INTERRUPTIONS=$(wildcard interruptions/*.c)
@@ -20,7 +20,7 @@ ALL_OBJECTS= $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS_INTERRUPTIONS) 
 all: $(MEM_MANAGER) $(KERNEL)
 
 $(KERNEL): $(STATICLIBS) $(ALL_OBJECTS)
-	$(LD) $(LDFLAGS) -T kernel.ld -o $@ $^
+	$(LD) $(LDFLAGS) -T kernel.ld -o $@ $^ memoryManager.o
 
 buddy:
 	$(GCC) $(GCCFLAGS) -I./include -c "memoryManager/buddyManager.c" -o memoryManager.o

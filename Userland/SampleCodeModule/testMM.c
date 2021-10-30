@@ -128,7 +128,7 @@ void testmm3(){
 #include "test_util.h"
 
 #define MAX_BLOCKS 128
-#define MAX_MEMORY 8388560 //Should be around 80% of memory managed by the MM
+#define MAX_MEMORY 8388560 //Should be around 80% of memory managed by the MM  buddy=6710886
 
 typedef struct MM_rq{
     void *address;
