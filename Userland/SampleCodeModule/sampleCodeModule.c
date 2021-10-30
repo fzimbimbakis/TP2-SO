@@ -7,19 +7,19 @@ char * v = (char*)0xB8000 + 79 * 2;
 	static char buffer[MAX_BUFFER]={0};
 	static int idx = 0;
 
-void imprimir(){
-    while (1){
-	putChar('X');
-	sysWait();
-	}
-}
-
-void ioi(){
-	while (1){
-	putChar('-');
-	sysWait();
-	}
-}
+//void imprimir(){
+//    while (1){
+//	putChar('X');
+//	sysWait();
+//	}
+//}
+//
+//void ioi(){
+//	while (1){
+//	putChar('-');
+//	sysWait();
+//	}
+//}
 
 int main() {
 

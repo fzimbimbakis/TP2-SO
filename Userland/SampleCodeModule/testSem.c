@@ -113,8 +113,8 @@ void test_sync(){
         printf("CREATING PROCESSES...(WITH SEM)\n");
 
         for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-            newP(&incSemA, 0);
-            newP(&incSemB, 0);
+            newP(&incSemA);
+            newP(&incSemB);
         }
     }
     for (int j = 0; j < TOTAL_PAIR_PROCESSES; ++j) {
@@ -134,8 +134,8 @@ void test_no_sync(){
     printf("CREATING PROCESSES...(WITHOUT SEM)\n");
 
     for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-        newP(&incNoSemA, 0);
-        newP(&incNoSemB, 0);
+        newP(&incNoSemA);
+        newP(&incNoSemB);
     }
     return;
 }

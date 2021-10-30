@@ -36,8 +36,6 @@ int changePriority(uint32_t pid, char newPrio);
 uint64_t * getCurrentSP();
 PCB * getCurrentPCB();
 char getCurrentPID();
-int blockProcessPID(char pid);
-int unblockProcessPID(char pid);
 void yield();
 void blockProcess();
 blockProcessPID(uint32_t pid);
