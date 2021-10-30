@@ -15,11 +15,12 @@ uint64_t my_sem_post(char *sem_id){
 }
 
 uint64_t my_sem_close(char *sem_id){
-    return 0;
+    return close_sem(sem_id);
 }
 
-#define TOTAL_PAIR_PROCESSES 2
+#define TOTAL_PAIR_PROCESSES 3
 #define SEM_ID "sem"
+#define AUX_SEM "auxSem"
 
 static int global;  //shared memory
 
@@ -29,14 +30,14 @@ void slowInc(int *p, int inc){
     yield();
     *p = aux;
     yield();
-//    printf("Slow inc: %d, %d\n", aux, inc);
+    printf("#");
     return;
 }
 
 void incSemA(){
     uint64_t i;
     int value = 1;
-    uint64_t N = 100;
+    uint64_t N = 10;
 //    if (!my_sem_open(SEM_ID, 1)){
 //        printf("ERROR OPENING SEM\n");
 //        exit();
@@ -44,22 +45,23 @@ void incSemA(){
 
     for (i = 0; i < N; i++){
         my_sem_wait(SEM_ID);
-//        printf("A.1\n");
+//        printf(" A.1 ");
         slowInc(&global, value);
-//        printf("A.2\n");
+//        printf(" i:%d A.2\n", i);
         my_sem_post(SEM_ID);
     }
 
-    my_sem_close(SEM_ID);
+//    my_sem_close(SEM_ID);
 
     printf("Final value: %d\n", global);
+    my_sem_post(AUX_SEM);
     exit();
 }
 void incSemB(){
     uint64_t i;
     uint64_t sem = 1;
     int value = -1;
-    uint64_t N = 100;
+    uint64_t N = 10;
 //    if (sem && !my_sem_open(SEM_ID, 1)){
 //        printf("ERROR OPENING SEM\n");
 //        exit();
@@ -67,21 +69,22 @@ void incSemB(){
 
     for (i = 0; i < N; i++){
         my_sem_wait(SEM_ID);
-//        printf("B.1\n");
+//        printf(" B.1 ");
         slowInc(&global, value);
-//        printf("B.2\n");
+//        printf(" i:%d B.2 \n", i);
         my_sem_post(SEM_ID);
     }
 
-    if (sem) my_sem_close(SEM_ID);
+//    if (sem) my_sem_close(SEM_ID);
 
     printf("Final value: %d\n", global);
+    my_sem_post(AUX_SEM);
     exit();
 }
 void incNoSemA(){
     uint64_t i;
     int value = 1;
-    int N = 100;
+    int N = 25;
     for (i = 0; i < N; i++){
         slowInc(&global, value);
     }
@@ -92,7 +95,7 @@ void incNoSemA(){
 void incNoSemB(){
     uint64_t i;
     int value = -1;
-    uint64_t N = 100;
+    uint64_t N = 25;
 
     for (i = 0; i < N; i++){
         slowInc(&global, value);
@@ -106,16 +109,25 @@ void test_sync(){
     uint64_t i;
 
     global = 1000;
+
+    if ((i = my_sem_open(AUX_SEM, 1)))
+        printf("ERROR OPENING SEM: %d\n", i);
     if ((i = my_sem_open(SEM_ID, 1))){
         printf("ERROR OPENING SEM: %d\n", i);
     } else{
         printf("CREATING PROCESSES...(WITH SEM)\n");
 
-        for(i = 0; i < 1; i++){
+        for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
             newP(&incSemA, 0);
             newP(&incSemB, 0);
         }
     }
+    for (int j = 0; j < TOTAL_PAIR_PROCESSES; ++j) {
+        my_sem_wait(AUX_SEM);
+        my_sem_wait(AUX_SEM);
+    }
+    my_sem_close(AUX_SEM);
+    my_sem_close(SEM_ID);
     return;
 }
 
@@ -126,7 +138,7 @@ void test_no_sync(){
 
     printf("CREATING PROCESSES...(WITHOUT SEM)\n");
 
-    for(i = 0; i < 1; i++){
+    for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
         newP(&incNoSemA, 0);
         newP(&incNoSemB, 0);
     }

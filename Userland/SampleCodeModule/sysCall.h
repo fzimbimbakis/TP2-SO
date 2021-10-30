@@ -13,6 +13,7 @@ void sysBlock(char pid);
 void sysWait();
 int sysSemCreate(char * id, uint64_t value);
 int sysSemWait(char * id);
+int sysSemClose(char * id);
 int sysSemPost(char * id);
 void sysExit();
 #endif

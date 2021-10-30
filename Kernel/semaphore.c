@@ -1,5 +1,6 @@
 
 #include "semaphore.h"
+#include "include/naiveConsole.h"
 //#define STARTING_SEMAPHORES 16
 static sem_t * semaphores = NULL;
 //static char sem_counter = 0;
@@ -10,7 +11,16 @@ static sem_t * semaphores = NULL;
 //        semaphores[i] = NULL;
 //    }
 //}
-int sem_create(char * id, uint64_t value){
+//int sem_open(char * sem_id){
+//    sem_t * semaphore_ptr = semaphores;
+//    while (semaphore_ptr!=NULL && !myStrcmp(semaphore_ptr->id, sem_id))
+//        semaphore_ptr = semaphore_ptr->next;
+//    if(semaphore_ptr==NULL) {
+//        return -1;
+//    }
+//    semaphore_ptr->nOpen++;
+//}
+int sem_create(char * newId, uint64_t value){
 //      Array semaphores
 //    if(sem_counter==sem_array_size){
 //        sem_t * aux[] = semaphores;
@@ -35,6 +45,8 @@ int sem_create(char * id, uint64_t value){
 //            return -1;
 //        semaphores[auxCount]->value = value;
     //      Linked list semaphores
+    char * id = alloc(myStrlen(newId)* sizeof(char));
+    myStrcpy(id, newId);
         if(semaphores==NULL){
         semaphores = alloc(sizeof(sem_t));
         semaphores->id=id;
@@ -42,6 +54,7 @@ int sem_create(char * id, uint64_t value){
         semaphores->p_waiting=0;
         semaphores->next=NULL;
         semaphores->channel=NULL;
+//        semaphores->nOpen = 0;
     } else{
             if(myStrcmp(semaphores->id, id))
                 return -1;
@@ -58,6 +71,7 @@ int sem_create(char * id, uint64_t value){
             aux->next->p_waiting=0;
             aux->next->next=NULL;
             aux->next->channel=NULL;
+//            aux->next->nOpen=0;
         }
         return 0;
 }
@@ -117,11 +131,10 @@ int sem_post(char * sem_id){
     // release(semaphore_ptr->lock) // spinlock
 }
 
-int sem_close(int sem_id){
-
+int sem_close(char * sem_id){
     sem_t * semaphore_ptr = semaphores;
     sem_t * prev=NULL;
-    while (semaphore_ptr!=NULL && myStrcmp(semaphore_ptr->id, sem_id)) {
+    while (semaphore_ptr!=NULL && !myStrcmp(semaphore_ptr->id, sem_id)) {
         prev = semaphore_ptr;
         semaphore_ptr = semaphore_ptr->next;
     }
@@ -136,8 +149,11 @@ int sem_close(int sem_id){
         free(semaphore_ptr->channel);
         semaphore_ptr->channel = aux;
     }
+    free(semaphore_ptr->id);
     if(prev!=NULL){
         prev->next = semaphore_ptr->next;
+    } else{
+        semaphores = semaphore_ptr->next;
     }
     free(semaphore_ptr);
     // release(semaphore_ptr->lock) // spinlock

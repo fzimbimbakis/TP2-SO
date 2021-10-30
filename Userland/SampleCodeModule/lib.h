@@ -28,4 +28,5 @@ int post_sem(char * id);
 int wait_sem(char * id);
 int create_sem(char * id, uint64_t value);
 void yield();
+int close_sem(char * id);
 #endif

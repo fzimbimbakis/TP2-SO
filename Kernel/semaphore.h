@@ -10,6 +10,7 @@ char process;
 struct sem_list_wrapper * next;
 }sem_list_wrapper;
 typedef struct sem_t {
+//    int nOpen;
     char * id;
     uint16_t value;
 //    char lock;
@@ -21,6 +22,7 @@ typedef struct sem_t {
 int sem_create(char * id, uint64_t value);
 int sem_post(char * sem_id);
 int sem_wait(char * sem_id);
+int sem_close(char * sem_id);
 #define TP2_SO_SEMAPHORE_H
 
 #endif //TP2_SO_SEMAPHORE_H

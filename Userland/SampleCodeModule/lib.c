@@ -178,6 +178,9 @@ int wait_sem(char * id){
 int post_sem(char * id){
     return sysSemPost(id);
 }
+int close_sem(char * id){
+    return sysSemClose(id);
+}
 
 /*
 
