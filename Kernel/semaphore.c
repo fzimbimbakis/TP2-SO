@@ -75,6 +75,7 @@ int sem_create(char * newId, uint64_t value){
             aux->next->lock = 0;
 //            aux->next->nOpen=0;
         }
+        nSems++;
         return 0;
 }
 
@@ -168,8 +169,28 @@ int sem_close(char * sem_id){
         semaphores = semaphore_ptr->next;
     }
     free(semaphore_ptr);
+    nSems--;
     return 0;
 
 }
-
-//    TODO: SEM info
+struct sem_info_wrapper * sem_info(int * qty){
+    *qty = nSems;
+    sem_info_wrapper * info = alloc(sizeof(sem_info_wrapper)*(*qty));
+    sem_t * semaphore_ptr = semaphores;
+    int j;
+    sem_list_wrapper * aux= semaphore_ptr->channel;
+    for (int i = 0; i < (*qty); ++i) {
+        info[i].id = alloc(myStrlen(semaphore_ptr->id)* sizeof(char));
+        myStrcpy((info[i].id), semaphore_ptr->id);
+        info[i].value = semaphore_ptr->value;
+        info[i].pids = alloc(semaphore_ptr->p_waiting);
+        info[i].nPids = semaphore_ptr->p_waiting;
+        ncPrintDec(info[i].nPids);
+        j=0;
+        while (aux!=NULL){
+            info[i].pids[j] = aux->process;
+            aux = aux->next;
+        }
+    }
+    return info;
+}

@@ -232,3 +232,15 @@ void testsemCommand(char * buffer){
             break;
     }
 }
+
+void semInfoCommand(){
+    int qty;
+    sem_info_wrapper * info = sysSemInfo(&qty);
+    for (int i = 0; i < qty; ++i) {
+        printf("ID: %s Value: %d Process pids blocked: ", info[i].id, info[i].value);
+        for (int j = 0; j < info[i].nPids; ++j) {
+            printf("%d ", info[i].pids[j]);
+        }
+        putChar('\n');
+    }
+}

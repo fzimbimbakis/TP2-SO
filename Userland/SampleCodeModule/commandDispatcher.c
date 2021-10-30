@@ -19,6 +19,8 @@ void commandSelector(char* buffer){
         memInfoCommand();
     } else if(isCommandWithArg("testsem", buffer)){
         testsemCommand(buffer);
+    } else if(isCommand("seminfo", buffer)){
+        semInfoCommand(buffer);
     }
     else{
         printer("Command not found");

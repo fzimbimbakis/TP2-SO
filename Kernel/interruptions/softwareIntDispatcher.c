@@ -16,7 +16,7 @@ void memoryFree(void * ptr);
 void * memoryAlloc(unsigned size);
 unsigned * memoryInfo();
 
-EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo, &newProcess, &exit, &_hlt, &blockProcessPID, &yield, &sem_create, &sem_wait, &sem_post, &sem_close};
+EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo, &newProcess, &exit, &_hlt, &blockProcessPID, &yield, &sem_create, &sem_wait, &sem_post, &sem_close, &sem_info};
 
 int int_80(unsigned int arg1, unsigned int arg2, unsigned int arg3, int sysCall){
     int ret=functionPtrs[sysCall](arg1, arg2, arg3);

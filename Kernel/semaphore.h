@@ -25,5 +25,12 @@ int sem_create(char * id, uint64_t value);
 int sem_post(char * sem_id);
 int sem_wait(char * sem_id);
 int sem_close(char * sem_id);
-
+typedef struct sem_info_wrapper{
+    char * id;
+    uint16_t value;
+    char * pids;
+    int nPids;
+}sem_info_wrapper;
+struct sem_info_wrapper * sem_info(int * qty);
+static int nSems = 0;
 #endif //TP2_SO_SEMAPHORE_H

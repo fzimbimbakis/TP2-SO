@@ -13,6 +13,7 @@ GLOBAL sysSemCreate
 GLOBAL sysSemWait
 GLOBAL sysSemPost
 GLOBAL sysSemClose
+GLOBAL sysSemInfo
 section .text
 
 %macro pushState 0
@@ -272,3 +273,10 @@ sysSemClose:
     int 80h
     popStateNoRax
     ret
+
+    sysSemInfo:
+        pushStateNoRax
+        mov rax, 15
+        int 80h
+        popStateNoRax
+        ret
