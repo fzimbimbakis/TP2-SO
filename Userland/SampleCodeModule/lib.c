@@ -199,6 +199,19 @@ int nice(uint32_t pid, char newPrio){
 	return sysNice(pid, newPrio);
 }
 
+int create_sem(char * id, uint64_t value){
+    return sysSemCreate(id, value);
+}
+int wait_sem(char * id){
+    return sysSemWait(id);
+}
+int post_sem(char * id){
+    return sysSemPost(id);
+}
+int close_sem(char * id){
+    return sysSemClose(id);
+}
+
 /*
 
 typedef long Align;

@@ -33,4 +33,10 @@ int nice(uint32_t pid, char newPrio);
 void yield();
 unsigned * memInfo();
 unsigned long int hexToDec(char* num);
+#include <stdint.h>
+int post_sem(char * id);
+int wait_sem(char * id);
+int create_sem(char * id, uint64_t value);
+void yield();
+int close_sem(char * id);
 #endif

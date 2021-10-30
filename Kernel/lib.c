@@ -48,3 +48,28 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 
 	return destination;
 }
+
+int myStrcmp(const char * a, const char * b){
+    int i = 0;
+    while(a[i]!=0 && b[i]!=0){
+        if(a[i]!=b[i])
+            return 0;
+        i++;
+    }
+    return a[i]==0 && b[i]==0;
+}
+int myStrlen(char* string){
+    int i = 0;
+    while(string[i]!=0){
+        i++;
+    }
+    return i;
+}
+
+void myStrcpy(char * to, char* from){
+    int i = 0;
+    while(from[i] != 0){
+        to[i]=from[i];
+        i++;
+    }
+}

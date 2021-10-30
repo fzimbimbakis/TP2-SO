@@ -3,6 +3,7 @@
 #include <keyboard.h>
 #include "../memoryManager.h"
 #include "contextHandler.h"
+#include "../semaphore.h"
 #include "process.h"
 #include "time.h"
 
@@ -16,10 +17,13 @@ void memoryFree(void * ptr);
 void * memoryAlloc(unsigned size);
 unsigned * memoryInfo();
 
-EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree,
-&memoryInfo, &newProcess, &exit, &_hlt, &blockProcessPID, &yield, &kill, &printProcesses,
-&getPid, &changePriority, &unblockProcessPID, &sleep};
-
+//EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo, &newProcess, &exit, &_hlt, &blockProcess};
+//EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo,
+//                             &newProcess, &exit, &blockProcessPID, &yield, &kill, &printProcesses,
+//                             &getPid, &changePriority, &sem_create, &sem_wait, &sem_post, &sem_close,&sem_info, &dup,&pipeOpen, &unblockProcessPID, &sleep };
+EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo,
+                             &newProcess, &exit, &blockProcessPID, &yield, &kill, &printProcesses,
+                             &getPid, &changePriority, &sem_create, &sem_wait, &sem_post, &sem_close,&sem_info, NULL,NULL, &unblockProcessPID, &sleep };
 int int_80(unsigned int arg1, unsigned int arg2, unsigned int arg3, int sysCall){
     int ret=functionPtrs[sysCall](arg1, arg2, arg3);
     return ret;

@@ -63,7 +63,6 @@ void unblockShell(){
         updateStack();
     }
 }
-
 void yield(){
     //ncPrint("YIELD\n");
     currentProcess->times=currentProcess->priority;
@@ -72,7 +71,10 @@ void yield(){
 
 void blockProcess(){
     currentProcess->state=BLOCKED;
-    //ncPrint("BLOCK\n");
+//    ncPrint("Bloqueo shell\n");
+    //ncPrintDec(currentProcess->pid);
+    //ncPrint("\n");
+    
     int20();
     return;
 }
@@ -109,7 +111,7 @@ int blockProcessPID(uint32_t pid){
         aux=aux->next;
 
     }
-    
+
     return -1;
 }
 
@@ -132,7 +134,7 @@ void exit(){
 
         free(currentProcess->rbp);
         free(currentProcess);
-        currentProcess=firstP; //faltaria ver si es NULL??? el free lo deja en NULL??
+        currentProcess=firstP;
     }
 //    ncPrint("prehandl\n");
     updateStack();
@@ -142,7 +144,7 @@ void exit(){
 int kill(uint32_t pid){
     //ncPrintDec(pid);
     //ncPrint(" KILL\n");
-    
+
 
     if(currentProcess->pid==pid)
         exit();
@@ -232,7 +234,7 @@ char newProcess(uint64_t fPtr, char priority) {
 uint64_t * firstProcess(uint64_t fPtr){ //deberia ser void????
     //ncPrintChar('1');
     newProcess(fPtr, MAX_PRIORITY);
-    
+
     uint64_t * rbp = alloc(1024*sizeof (uint64_t));
     halt = alloc(sizeof (PCB));
     halt->rbp=rbp;
@@ -246,7 +248,7 @@ uint64_t * firstProcess(uint64_t fPtr){ //deberia ser void????
 //
 //    ncPrintHex(fPtr);
 //    ncPrintChar('2');
-    
+
 //    ncPrintChar('4');
     //newProcess(&haltP, MAX_PRIORITY); //creo proceso halt
     startFirstP();
@@ -256,6 +258,9 @@ uint64_t * firstProcess(uint64_t fPtr){ //deberia ser void????
 
 uint64_t * getCurrentSP(){
     return currentProcess->rsp;
+}
+char getCurrentPID(){
+    return currentProcess->pid;
 }
 
 PCB * getCurrentPCB(){

@@ -43,6 +43,10 @@ void commandSelector(char* buffer){
     }
     else if(isCommand("ps",buffer)){
         psCommand();
+    } else if(isCommandWithArg("testsem", buffer)){
+        testsemCommand(buffer);
+    } else if(isCommand("seminfo", buffer)){
+        semInfoCommand(buffer);
     }
     else{
         printer("Command not found");

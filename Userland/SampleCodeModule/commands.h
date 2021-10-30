@@ -24,6 +24,7 @@ void getStrings(char * buffer, char * str1, char* str2);
 void exceptionTestCommando(char * buffer);
 void printmemCommand(char* buffer);
 void dateCommand();
-
-
+void semInfoCommand();
+#include "testSem.h"
+void testsemCommand(char * buffer);
 #endif

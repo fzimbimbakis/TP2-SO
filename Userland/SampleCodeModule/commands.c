@@ -95,7 +95,7 @@ void helpCommand(){
 static char * registersNames[] = {"RAX", "RBX", "RCX", "RDX", "RBP", "RSI", "RDI", "R8", "R9", "R10", "R11", "R12", "R13", "R14", "R15"};
 void printRegName(int index){
 	putChar(' ');
-	printer(registersNames[14-index]);
+	printf(registersNames[14-index]);
 	printf(":");
     cleanBuffer();
 }
@@ -119,13 +119,13 @@ void printmemCommand(char* buffer){
             value=value<<16;
             value+=low;
 
-            printer(numToStr(direction+i,16));
+            printf(numToStr(direction+i,16));
 
             printf(": %s   ",numToStr(value,16));
         }
         printf("\n");
     }else{
-        printer("Direccion invalida");
+        printf("Direccion invalida");
         printf("\n");
     }   
     
@@ -163,7 +163,7 @@ void exceptionTestCommando(char * buffer){
             opCodeTest();
             break;
         default:
-            printer("Exception ID is not valid");
+            printf("Exception ID is not valid");
             printf("\n");
             break;
     }
@@ -206,7 +206,7 @@ void testMMCommand(char * buffer){
             break;
 
         default:
-            printer("Test ID is not valid");
+            printf("Test ID is not valid");
             printf("\n");
             break;
     }
@@ -219,7 +219,7 @@ void testMMCommand(char * buffer){
         getArguments(buffer,arg);
         uint32_t pid=strToNum(arg);
         if(block(pid)==-1){
-            printer("Invalid PID");
+            printf("Invalid PID");
             printf("\n");
         }
 
@@ -231,7 +231,7 @@ void unblockCommand(char* buffer){
     getArguments(buffer,arg);
     uint32_t pid=strToNum(arg);
     if(unblock(pid)==-1){
-        printer("Invalid PID");
+        printf("Invalid PID");
         printf("\n");
     }
 
@@ -243,7 +243,7 @@ void unblockCommand(char* buffer){
         getArguments(buffer,arg);
         uint32_t pid=strToNum(arg);
         if(kill(pid)==-1){
-            printer("Invalid PID");
+            printf("Invalid PID");
             printf("\n");
         }
 }
@@ -296,7 +296,7 @@ void niceCommand(char * buffer){
     char priority = strToNum(arg2);
 
     if(nice(pid, priority)==-1){
-        printer("Invalid PID");
+        printf("Invalid PID");
             printf("\n");
     }
 
@@ -316,5 +316,38 @@ void loopCommand(char *buffer){
     while(1){
         sleep(seconds);
         printf("pid: %d\n", getpid());
+    }
+}
+
+void testsemCommand(char * buffer){
+    char arg[MAX_BUFFER];
+
+    getArguments(buffer,arg);
+    int num=strToNum(arg);
+    switch (num){
+        case 0:;
+            test_sync();
+            break;
+        case 1:   ;
+            test_no_sync();
+            break;
+
+
+        default:
+            printf("Test ID is not valid");
+            printf("\n");
+            break;
+    }
+}
+
+void semInfoCommand(){
+    int qty;
+    sem_info_wrapper * info = sysSemInfo(&qty);
+    for (int i = 0; i < qty; ++i) {
+        printf("ID: %s Value: %d Process pids blocked: ", info[i].id, info[i].value);
+        for (int j = 0; j < info[i].nPids; ++j) {
+            printf("%d ", info[i].pids[j]);
+        }
+        putChar('\n');
     }
 }
