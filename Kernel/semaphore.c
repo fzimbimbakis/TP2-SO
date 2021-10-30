@@ -54,6 +54,7 @@ int sem_create(char * newId, uint64_t value){
         semaphores->p_waiting=0;
         semaphores->next=NULL;
         semaphores->channel=NULL;
+        semaphores->lock = 0;
 //        semaphores->nOpen = 0;
     } else{
             if(myStrcmp(semaphores->id, id))
@@ -71,6 +72,7 @@ int sem_create(char * newId, uint64_t value){
             aux->next->p_waiting=0;
             aux->next->next=NULL;
             aux->next->channel=NULL;
+            aux->next->lock = 0;
 //            aux->next->nOpen=0;
         }
         return 0;
@@ -86,8 +88,9 @@ int sem_wait(char * sem_id){
         return -1;
     }
 
-    // TODO: Implement spinlocks
-    // acquire(semaphore_ptr->lock) // spinlock
+
+    acquire(&(semaphore_ptr->lock)); // spinlock
+
     if(semaphore_ptr->value > 0){
         semaphore_ptr->value--;
     } else{
@@ -105,10 +108,14 @@ int sem_wait(char * sem_id){
             aux->next->next = NULL;
         }
         semaphore_ptr->p_waiting++;
+        release(&(semaphore_ptr->lock)); // spinlock        TODO: Agregar la decision de poner este release aca al informe.
+
         blockProcess();     // Solo lo despierta un post.
+        return 0;
     }
+    release(&(semaphore_ptr->lock)); // spinlock
+
     return 0;
-    // release(semaphore_ptr->lock) // spinlock
 
 }
 
@@ -119,16 +126,22 @@ int sem_post(char * sem_id){
         semaphore_ptr = semaphore_ptr->next;
     if(semaphore_ptr==NULL)
         return -1;
-    // acquire(semaphore_ptr->lock) // spinlock
+    acquire(&(semaphore_ptr->lock)); // spinlock
+
     if(semaphore_ptr->channel!=NULL){
         char pid = semaphore_ptr->channel->process;
         sem_list_wrapper * aux = semaphore_ptr->channel->next;
         free(semaphore_ptr->channel);
         semaphore_ptr->channel = aux;
         semaphore_ptr->p_waiting--;
+        release(&(semaphore_ptr->lock)); // spinlock
+
         unblockProcessPID(pid);
+        return 0;
     } else semaphore_ptr->value++;
-    // release(semaphore_ptr->lock) // spinlock
+    release(&(semaphore_ptr->lock)); // spinlock
+
+    return 0;
 }
 
 int sem_close(char * sem_id){
@@ -141,8 +154,7 @@ int sem_close(char * sem_id){
     if(semaphore_ptr==NULL)
         return -1;
 
-    // acquire(semaphore_ptr->lock) // spinlock
-    // TODO: Wakeup all processes?
+
     sem_list_wrapper * aux;
     while (semaphore_ptr->channel!=NULL){
         aux = semaphore_ptr->channel->next;
@@ -156,6 +168,8 @@ int sem_close(char * sem_id){
         semaphores = semaphore_ptr->next;
     }
     free(semaphore_ptr);
-    // release(semaphore_ptr->lock) // spinlock
+    return 0;
+
 }
 
+//    TODO: SEM info

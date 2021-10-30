@@ -21,7 +21,7 @@ uint64_t my_sem_close(char *sem_id){
 #define TOTAL_PAIR_PROCESSES 3
 #define SEM_ID "sem"
 #define AUX_SEM "auxSem"
-
+#define TOTAL_INCREMENT 10
 static int global;  //shared memory
 
 void slowInc(int *p, int inc){
@@ -37,7 +37,7 @@ void slowInc(int *p, int inc){
 void incSemA(){
     uint64_t i;
     int value = 1;
-    uint64_t N = 10;
+    uint64_t N = TOTAL_INCREMENT;
 //    if (!my_sem_open(SEM_ID, 1)){
 //        printf("ERROR OPENING SEM\n");
 //        exit();
@@ -59,13 +59,9 @@ void incSemA(){
 }
 void incSemB(){
     uint64_t i;
-    uint64_t sem = 1;
     int value = -1;
-    uint64_t N = 10;
-//    if (sem && !my_sem_open(SEM_ID, 1)){
-//        printf("ERROR OPENING SEM\n");
-//        exit();
-//    }
+    uint64_t N = TOTAL_INCREMENT;
+
 
     for (i = 0; i < N; i++){
         my_sem_wait(SEM_ID);
@@ -75,7 +71,6 @@ void incSemB(){
         my_sem_post(SEM_ID);
     }
 
-//    if (sem) my_sem_close(SEM_ID);
 
     printf("Final value: %d\n", global);
     my_sem_post(AUX_SEM);
@@ -84,7 +79,7 @@ void incSemB(){
 void incNoSemA(){
     uint64_t i;
     int value = 1;
-    int N = 25;
+    int N = TOTAL_INCREMENT;
     for (i = 0; i < N; i++){
         slowInc(&global, value);
     }
@@ -95,7 +90,7 @@ void incNoSemA(){
 void incNoSemB(){
     uint64_t i;
     int value = -1;
-    uint64_t N = 25;
+    uint64_t N = TOTAL_INCREMENT;
 
     for (i = 0; i < N; i++){
         slowInc(&global, value);
