@@ -16,10 +16,9 @@ GLOBAL _irq05Handler
 GLOBAL _exception0Handler
 GLOBAL _exception6Handler
 
-GLOBAL timer_handler
 
 EXTERN printEOE
-EXTERN waiting
+EXTERN sleep
 EXTERN getStackBase
 EXTERN ncClear
 
@@ -106,7 +105,7 @@ SECTION .text
 	call picMasterMask
 	sti			
 	mov rdi, 10
-	call waiting
+	call sleep
 	mov rdi, 0xFD
 	call picMasterMask
 	pop rax
@@ -168,9 +167,7 @@ picSlaveMask:
     pop     rbp
     retn
 
-timer_handler:
 
-;
 ;8254 Timer (Timer Tick)
 _irq00Handler:
      pushState

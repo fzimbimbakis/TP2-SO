@@ -4,16 +4,27 @@
 #include "../memoryManager.h"
 #include "interrupts.h"
 #include "process.h"
+#include "time.h"
 
 static PCB* currentProcess = NULL;
 static PCB* firstP = NULL;
 static uint32_t lastPID = 0;
 static PCB* halt=NULL;
 
-void printProcesses(){
+void printProcesses(){ //TODO: agregar nombre a los procesos y background/foreground
     PCB* aux=firstP;
     while(aux != NULL){
+        ncPrint("PID: ");
         ncPrintDec(aux->pid);
+        ncPrint("\t");
+        ncPrint("Priority: ");
+        ncPrintDec(aux->priority);
+        ncPrint("\t");
+        ncPrint("RSP: ");
+        ncPrintDec(aux->rsp);
+        ncPrint("\t");
+        ncPrint("RBP: ");
+        ncPrintDec(aux->rbp);
         ncPrint("\n");
         aux=aux->next;
     }
@@ -165,6 +176,7 @@ void killProcess(PCB* process){
 
 void handler() {
 //    ncPrintChar('5');
+    timer_handler();
     if(currentProcess!=halt){
         uint32_t currentPid=currentProcess->pid;
 
@@ -183,6 +195,7 @@ void handler() {
         }
     }
 }
+
 
 void addProcessToList(PCB* newP){
     if(firstP==NULL){

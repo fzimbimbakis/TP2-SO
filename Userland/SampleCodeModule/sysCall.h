@@ -12,6 +12,7 @@ unsigned * sysMemInfo();
 int sysNewP(void * fPtr, char priority);
 void sysExit();
 void sysYield();
+void sysSleep(int seconds);
 int sysBlock(uint32_t pid);
 int sysUnblock(uint32_t pid);
 int sysKill(uint32_t pid);

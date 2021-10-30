@@ -301,3 +301,20 @@ void niceCommand(char * buffer){
     }
 
 }
+
+void psCommand(){
+    ps();
+}
+
+
+void loopCommand(char *buffer){
+    char arg[MAX_BUFFER];
+
+    getArguments(buffer,arg);
+    int seconds=strToNum(arg);
+
+    while(1){
+        sleep(seconds);
+        printf("pid: %d\n", getpid());
+    }
+}

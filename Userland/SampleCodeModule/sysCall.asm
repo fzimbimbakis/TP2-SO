@@ -13,6 +13,7 @@ GLOBAL sysMemInfo
 GLOBAL sysNewP
 GLOBAL sysExit
 GLOBAL sysWait
+GLOBAL sysSleep
 
 GLOBAL sysKill
 section .text
@@ -236,6 +237,13 @@ sysWait:
 sysYield:
 	pushState
     mov rax, 10
+    int 80h
+    popState
+    ret
+
+sysSleep:
+	pushState
+    mov rax, 16
     int 80h
     popState
     ret

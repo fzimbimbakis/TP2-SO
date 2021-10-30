@@ -4,6 +4,7 @@
 #include "../memoryManager.h"
 #include "contextHandler.h"
 #include "process.h"
+#include "time.h"
 
 #define RED 4
 typedef int (*EntryPoint)(unsigned int, unsigned int, unsigned int);
@@ -17,7 +18,7 @@ unsigned * memoryInfo();
 
 EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree,
 &memoryInfo, &newProcess, &exit, &_hlt, &blockProcessPID, &yield, &kill, &printProcesses,
-&getPid, &changePriority, &unblockProcessPID};
+&getPid, &changePriority, &unblockProcessPID, &sleep};
 
 int int_80(unsigned int arg1, unsigned int arg2, unsigned int arg3, int sysCall){
     int ret=functionPtrs[sysCall](arg1, arg2, arg3);

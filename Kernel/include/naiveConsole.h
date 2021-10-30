@@ -16,7 +16,6 @@ void ncPrintColor(const char * string, int color);
 void ncPrintColorChar(char character,int color);
 void ncBackspace();
 void ncTab();
-void ncSwitchShell();
 
 
 #endif

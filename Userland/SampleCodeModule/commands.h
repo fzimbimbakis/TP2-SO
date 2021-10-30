@@ -16,6 +16,8 @@ void testScheduler();
 void testPrio();
 void getpidCommand();
 void niceCommand(char * buffer);
+void psCommand();
+void loopCommand(char *buffer);
 
 void getArguments(char* buffer, char* arg);
 void getStrings(char * buffer, char * str1, char* str2);

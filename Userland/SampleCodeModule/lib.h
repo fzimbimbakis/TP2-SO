@@ -23,6 +23,7 @@ void* alloc(unsigned size);
 void free(void * ptr);
 int newP(void * fPtr);
 void exit();
+void sleep(int seconds);
 void ps();
 int kill(uint32_t pid);
 int block(uint32_t pid);

@@ -35,8 +35,14 @@ void commandSelector(char* buffer){
     else if(isCommandWithArg("nice",buffer)){
         niceCommand(buffer);
     }
+    else if(isCommandWithArg("loop",buffer)){
+        loopCommand(buffer);
+    }
     else if(isCommand("testprio",buffer)){
         testPrio();
+    }
+    else if(isCommand("ps",buffer)){
+        psCommand();
     }
     else{
         printer("Command not found");

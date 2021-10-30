@@ -13,7 +13,7 @@ typedef struct PCB{
     enum State state;
     uint64_t* rsp;
     uint64_t* rbp;
-    char priority; //TODO implementar las prioridades
+    char priority;
     char times;
     struct PCB* next;
     struct PCB* prev;

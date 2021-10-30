@@ -159,6 +159,10 @@ void exit(){
 	sysExit();
 }
 
+void sleep(int seconds){
+    sysSleep(seconds);
+}
+
 int kill(uint32_t pid){
 	return sysKill(pid);
 }
