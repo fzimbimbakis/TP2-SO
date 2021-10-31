@@ -4,7 +4,7 @@
 
 
 static pipe_t * firstPipe;
-static int lastID = 0;
+static int lastID = 1;
 
 void setReverseSide(pipe_t * myPipe, pipe_t * reverse_side){
     myPipe->reverse_side = reverse_side;

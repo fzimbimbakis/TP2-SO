@@ -395,5 +395,9 @@ void semInfoCommand(){
             printf("%d ", info[i].pids[j]);
         }
         putChar('\n');
+        free(info[i].pids);
+        free(info[i].id);
     }
+    free(info);
+
 }

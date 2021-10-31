@@ -2,50 +2,8 @@
 #include "semaphore.h"
 #include "include/naiveConsole.h"
 
-//#define STARTING_SEMAPHORES 16
 static semaphore_t * semaphores = NULL;
-//static char sem_counter = 0;
-//static char sem_array_size = STARTING_SEMAPHORES;
-//void sem_init(){
-//    semaphores = alloc(sizeof(semaphore_t *) * STARTING_SEMAPHORES);
-//    for (int i = 0; i < STARTING_SEMAPHORES; ++i) {
-//        semaphores[i] = NULL;
-//    }
-//}
-//int sem_open(char * sem_id){
-//    sem_t * semaphore_ptr = semaphores;
-//    while (semaphore_ptr!=NULL && !myStrcmp(semaphore_ptr->id, sem_id))
-//        semaphore_ptr = semaphore_ptr->next;
-//    if(semaphore_ptr==NULL) {
-//        return -1;
-//    }
-//    semaphore_ptr->nOpen++;
-//}
 int sem_create(char * newId, uint64_t value){
-//      Array semaphores
-//    if(sem_counter==sem_array_size){
-//        semaphore_t * aux[] = semaphores;
-//        semaphores = alloc(sizeof(semaphore_t *) * (sem_counter+STARTING_SEMAPHORES));
-//        sem_array_size += STARTING_SEMAPHORES;
-//        for (int i = 0; i < sem_array_size; ++i) {
-//            if(i<sem_counter)
-//            semaphores[i] = aux[i];
-//            else semaphores[i] = NULL;
-//        }
-//        free(aux);
-//    }
-//    int auxCount = 0;
-//        while(1){
-//            if(semaphores[auxCount]==NULL){
-//                break;
-//            }
-//            auxCount++;
-//        }
-//    semaphores[auxCount] = alloc(sizeof(semaphore_t));
-//        if(semaphores[auxCount] == NULL)
-//            return -1;
-//        semaphores[auxCount]->value = value;
-    //      Linked list semaphores
     char * id = alloc(myStrlen(newId)* sizeof(char));
     myStrcpy(id, newId);
         if(semaphores==NULL){
@@ -56,15 +14,24 @@ int sem_create(char * newId, uint64_t value){
         semaphores->next=NULL;
         semaphores->channel=NULL;
         semaphores->lock = 0;
-//        semaphores->nOpen = 0;
     } else{
-            if(myStrcmp(semaphores->id, id))
+            if(myStrcmp(semaphores->id, id)) {
+                ncPrint("Sem already exists.\n");
+                ncPrint(id);
+                ncPrintChar('\n');
+                free(id);
                 return -1;
+            }
 
             semaphore_t * aux = semaphores;
             while(aux->next!=NULL){
-                if(myStrcmp(aux->id, id))
+                if(myStrcmp(aux->id, id)) {
+                    ncPrint("Sem already exists.\n");
+                    ncPrint(id);
+                    ncPrintChar('\n');
+                    free(id);
                     return -1;
+                }
                 aux = aux->next;
             }
             aux->next = alloc(sizeof(semaphore_t));
@@ -74,15 +41,12 @@ int sem_create(char * newId, uint64_t value){
             aux->next->next=NULL;
             aux->next->channel=NULL;
             aux->next->lock = 0;
-//            aux->next->nOpen=0;
         }
         nSems++;
         return 0;
 }
 
 int sem_wait(char * sem_id){
-//    semaphore_t * semaphore_ptr = semaphores[sem_id];
-
     semaphore_t * semaphore_ptr = semaphores;
     while (semaphore_ptr!=NULL && !myStrcmp(semaphore_ptr->id, sem_id))
         semaphore_ptr = semaphore_ptr->next;
@@ -122,12 +86,16 @@ int sem_wait(char * sem_id){
 }
 
 int sem_post(char * sem_id){
-//    semaphore_t * semaphore_ptr = semaphores[sem_id];
     semaphore_t * semaphore_ptr = semaphores;
-    while (semaphore_ptr!=NULL && !myStrcmp(semaphore_ptr->id, sem_id))
+    while (semaphore_ptr!=NULL && !myStrcmp(semaphore_ptr->id, sem_id)) {
         semaphore_ptr = semaphore_ptr->next;
-    if(semaphore_ptr==NULL)
+    }
+    if(semaphore_ptr==NULL) {
+        ncPrint("Semaphore not found in sem_post. semId:");
+        ncPrint(sem_id);
+        ncPrintChar('\n');
         return -1;
+    }
     acquire(&(semaphore_ptr->lock)); // spinlock
 
     if(semaphore_ptr->channel!=NULL){
@@ -153,8 +121,12 @@ int sem_close(char * sem_id){
         prev = semaphore_ptr;
         semaphore_ptr = semaphore_ptr->next;
     }
-    if(semaphore_ptr==NULL)
+    if(semaphore_ptr==NULL) {
+        ncPrint("Semaphore not found in sem_close. ID: ");
+        ncPrint(sem_id);
+        ncPrintChar('\n');
         return -1;
+    }
 
 
     sem_list_wrapper * aux;
@@ -186,7 +158,6 @@ struct sem_info_wrapper * sem_info(int * qty){
         info[i].value = semaphore_ptr->value;
         info[i].pids = alloc(semaphore_ptr->p_waiting);
         info[i].nPids = semaphore_ptr->p_waiting;
-        ncPrintDec(info[i].nPids);
         j=0;
         while (aux!=NULL){
             info[i].pids[j] = aux->process;

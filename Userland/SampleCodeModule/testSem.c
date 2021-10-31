@@ -18,7 +18,7 @@ uint64_t my_sem_close(char *sem_id){
     return close_sem(sem_id);
 }
 
-#define TOTAL_PAIR_PROCESSES 3
+#define TOTAL_PAIR_PROCESSES 2
 #define SEM_ID "sem"
 #define AUX_SEM "auxSem"
 #define TOTAL_INCREMENT 10
@@ -105,7 +105,7 @@ void test_sync(){
 
     global = 1000;
 
-    if ((i = my_sem_open(AUX_SEM, 1)))
+    if ((i = my_sem_open(AUX_SEM, 0)))
         printf("ERROR OPENING SEM: %d\n", i);
     if ((i = my_sem_open(SEM_ID, 1))){
         printf("ERROR OPENING SEM: %d\n", i);
