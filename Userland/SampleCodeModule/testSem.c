@@ -21,7 +21,7 @@ uint64_t my_sem_close(char *sem_id){
 #define TOTAL_PAIR_PROCESSES 2
 #define SEM_ID "sem"
 #define AUX_SEM "auxSem"
-#define TOTAL_INCREMENT 10
+#define TOTAL_INCREMENT 3
 static int global;  //shared memory
 
 void slowInc(int *p, int inc){
@@ -85,6 +85,7 @@ void incNoSemA(){
     }
 
     printf("Final value: %d\n", global);
+    my_sem_post(AUX_SEM);
     exit();
 }
 void incNoSemB(){
@@ -97,6 +98,7 @@ void incNoSemB(){
     }
 
     printf("Final value: %d\n", global);
+    my_sem_post(AUX_SEM);
     exit();
 }
 
@@ -132,11 +134,17 @@ void test_no_sync(){
     global = 1000;
 
     printf("CREATING PROCESSES...(WITHOUT SEM)\n");
-
+    if ((i = my_sem_open(AUX_SEM, 0)))
+        printf("ERROR OPENING SEM: %d\n", i);
     for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
         newP(&incNoSemA);
         newP(&incNoSemB);
     }
+    for (int j = 0; j < TOTAL_PAIR_PROCESSES; ++j) {
+        my_sem_wait(AUX_SEM);
+        my_sem_wait(AUX_SEM);
+    }
+    my_sem_close(AUX_SEM);
     return;
 }
 
