@@ -177,7 +177,7 @@ int sem_close(char * sem_id){
 struct sem_info_wrapper * sem_info(int * qty){
     *qty = nSems;
     sem_info_wrapper * info = alloc(sizeof(sem_info_wrapper)*(*qty));
-    sem_t * semaphore_ptr = semaphores;
+    semaphore_t * semaphore_ptr = semaphores;
     int j;
     sem_list_wrapper * aux= semaphore_ptr->channel;
     for (int i = 0; i < (*qty); ++i) {

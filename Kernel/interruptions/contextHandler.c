@@ -266,7 +266,7 @@ char newProcess(uint64_t fPtr, char priority, char * arg1, int arg2, char * arg3
     newP->times=0;
     newP->state=READY;
     newP->next = NULL;
-    newP->inputPipe = getCurrentPCB()->inputPipe;       //// Nota: Cerrar el stdin o stdout desde un proceso los cierra en todos los procesos.
+    newP->inputPipe = getCurrentPCB()->inputPipe;
     newP->outputPipe = getCurrentPCB()->outputPipe;
     addProcessToList(newP);
     return (newP->pid);
@@ -285,10 +285,10 @@ uint64_t * firstProcess(uint64_t fPtr){ //deberia ser void????
     first->prev=0;
 
     initialPipes(first);
-    uint64_t * rbp = alloc(1024*sizeof (uint64_t));
+    uint64_t * rbpHalt = alloc(1024*sizeof (uint64_t));
     halt = alloc(sizeof (PCB));
     halt->rbp=rbp;
-    halt->rsp= createStackContext((uint64_t) &rbp[1023], &haltP, NULL, -1, NULL);
+    halt->rsp= createStackContext((uint64_t) &rbpHalt[1023], &haltP, NULL, -1, NULL);
     halt->inputPipe = first->inputPipe;
     halt->outputPipe = first->outputPipe;
     halt->priority=0;
