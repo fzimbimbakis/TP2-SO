@@ -4,7 +4,7 @@
 
 static semaphore_t * semaphores = NULL;
 int sem_create(char * newId, uint64_t value){
-    char * id = alloc(myStrlen(newId)* sizeof(char));
+    char * id = alloc((myStrlen(newId)+1)* sizeof(char));
     myStrcpy(id, newId);
         if(semaphores==NULL){
         semaphores = alloc(sizeof(semaphore_t));
@@ -153,7 +153,7 @@ struct sem_info_wrapper * sem_info(int * qty){
     int j;
     sem_list_wrapper * aux= semaphore_ptr->channel;
     for (int i = 0; i < (*qty); ++i) {
-        info[i].id = alloc(myStrlen(semaphore_ptr->id)* sizeof(char));
+        info[i].id = alloc((myStrlen(semaphore_ptr->id)+1)* sizeof(char));
         myStrcpy((info[i].id), semaphore_ptr->id);
         info[i].value = semaphore_ptr->value;
         info[i].pids = alloc(semaphore_ptr->p_waiting);

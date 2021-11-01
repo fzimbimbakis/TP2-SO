@@ -72,4 +72,5 @@ void myStrcpy(char * to, char* from){
         to[i]=from[i];
         i++;
     }
+    to[i]=0;
 }
