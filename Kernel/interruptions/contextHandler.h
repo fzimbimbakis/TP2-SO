@@ -31,7 +31,6 @@ void killProcess(PCB* process);
 int changePriority(uint32_t pid, char newPrio);
 uint64_t * getCurrentSP();
 PCB * getCurrentPCB();
-char getCurrentPID();
 
 void blockProcess();
 int blockProcessPID(uint32_t pid);

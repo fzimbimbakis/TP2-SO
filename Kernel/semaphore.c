@@ -69,7 +69,7 @@ int sem_wait(char * sem_id){
     if(semaphore_ptr->value > 0){
         semaphore_ptr->value--;
     } else{
-        uint32_t process = getCurrentPID();
+        uint32_t process = getPid();
         if(semaphore_ptr->channel == NULL){
             semaphore_ptr->channel = alloc(sizeof (sem_list_wrapper));
             semaphore_ptr->channel->process = process;
