@@ -14,7 +14,7 @@ void phyloCommand() {
 //    printerPID = newP(&printerProcess);
     while (currentPhylos < INITIAL_PHYLO) {
 //        wait_sem("PhyloTable");
-        addPhylo(newBufferProcess(&phyloCycle, 0, aux[currentPhylos]));
+        addPhylo(newBufferProcess((uint64_t)&phyloCycle, 0, aux[currentPhylos]));
 //        post_sem("PhyloTable");
     }
     char c;
@@ -22,7 +22,7 @@ void phyloCommand() {
         c=getChar();
         if (c == 'a') {
 //            wait_sem("PhyloTable");
-            addPhylo(newBufferProcess(&phyloCycle, 0, aux[currentPhylos]));
+            addPhylo(newBufferProcess((uint64_t)&phyloCycle, 0, aux[currentPhylos]));
 //            post_sem("PhyloTable");
 
         } else if (c == 'r') {
