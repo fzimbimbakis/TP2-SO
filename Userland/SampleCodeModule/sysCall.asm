@@ -79,39 +79,6 @@ section .text
 	pop rax
 %endmacro
 
-%macro pushStateNoRAX 0
-	push rbx
-	push rcx
-	push rdx
-	push rbp
-	push rdi
-	push rsi
-	push r8
-	push r9
-	push r10
-	push r11
-	push r12
-	push r13
-	push r14
-	push r15
-%endmacro
-
-%macro popStateNoRAX 0
-	pop r15
-	pop r14
-	pop r13
-	pop r12
-	pop r11
-	pop r10
-	pop r9
-	pop r8
-	pop rsi
-	pop rdi
-	pop rbp
-	pop rdx
-	pop rcx
-	pop rbx
-%endmacro
 
 %macro popStateNoRax 0
 	pop r15
@@ -172,10 +139,10 @@ sysRead:
     ret
 
 sysNewP:
-	pushStateNoRAX
+	pushStateNoRax
 	mov rax, 6
 	int 80h
-	popStateNoRAX
+	popStateNoRax
 	ret
 
 sysExit:
@@ -187,74 +154,22 @@ sysExit:
 
 sysTime:
 	; No pusheo y popeo el rax. Lo uso para retornar.
-	push rbx
-	push rcx
-	push rdx
-	push rbp
-	push rdi
-	push rsi
-	push r8
-	push r9
-	push r10
-	push r11
-	push r12
-	push r13
-	push r14
-	push r15
+	pushStateNoRax
 
 	mov rax, 2
 	int 80h
 
-	pop r15
-	pop r14
-	pop r13
-	pop r12
-	pop r11
-	pop r10
-	pop r9
-	pop r8
-	pop rsi
-	pop rdi
-	pop rbp
-	pop rdx
-	pop rcx
-	pop rbx
+	popStateNoRax
 	ret
 
 sysAlloc:
 	; No pusheo y popeo el rax. Lo uso para retornar.
-	push rbx
-	push rcx
-	push rdx
-	push rbp
-	push rdi
-	push rsi
-	push r8
-	push r9
-	push r10
-	push r11
-	push r12
-	push r13
-	push r14
-	push r15
+	pushStateNoRax
 
 	mov rax, 3
 	int 80h
 
-	pop r15
-	pop r14
-	pop r13
-	pop r12
-	pop r11
-	pop r10
-	pop r9
-	pop r8
-	pop rsi
-	pop rdi
-	pop rbp
-	pop rdx
-	pop rcx
-	pop rbx
+	popStateNoRax
 	ret
 
 	sysFree:
@@ -265,36 +180,10 @@ sysAlloc:
 	ret
 
 	sysMemInfo:
-    	push rbx
-        	push rcx
-        	push rdx
-        	push rbp
-        	push rdi
-        	push rsi
-        	push r8
-        	push r9
-        	push r10
-        	push r11
-        	push r12
-        	push r13
-        	push r14
-        	push r15
+    	pushStateNoRax
     	mov rax, 5
     	int 80h
-    	    pop r15
-        	pop r14
-        	pop r13
-        	pop r12
-        	pop r11
-        	pop r10
-        	pop r9
-        	pop r8
-        	pop rsi
-        	pop rdi
-        	pop rbp
-        	pop rdx
-        	pop rcx
-        	pop rbx
+    	popStateNoRax
     	ret
     sysSemCreate:
         pushStateNoRax
@@ -352,17 +241,17 @@ sysSleep:
     ret
 
 sysBlock:
-	pushStateNoRAX
+	pushStateNoRax
     mov rax, 8
     int 80h
-    popStateNoRAX
+    popStateNoRax
     ret
 
 sysKill:
-	pushStateNoRAX
+	pushStateNoRax
     mov rax, 10
     int 80h
-    popStateNoRAX
+    popStateNoRax
     ret
 
 sysPs:
@@ -373,22 +262,22 @@ sysPs:
     ret
 
 sysGetpid:
-	pushStateNoRAX
+	pushStateNoRax
     mov rax, 12
     int 80h
-    popStateNoRAX
+    popStateNoRax
     ret
 
 sysNice:
-	pushStateNoRAX
+	pushStateNoRax
     mov rax, 13
     int 80h
-    popStateNoRAX
+    popStateNoRax
     ret
 
 sysUnblock:
-	pushStateNoRAX
+	pushStateNoRax
     mov rax, 21
     int 80h
-    popStateNoRAX
+    popStateNoRax
     ret
