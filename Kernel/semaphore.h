@@ -27,7 +27,7 @@ int sem_close(char * sem_id);
 typedef struct sem_info_wrapper{
     char * id;
     uint16_t value;
-    char * pids;
+    uint32_t * pids;
     int nPids;
 }sem_info_wrapper;
 sem_info_wrapper * getSemInfo(char * sem_id);

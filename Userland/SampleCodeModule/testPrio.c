@@ -4,7 +4,7 @@
 #define MINOR_WAIT 1000000                               // TODO: To prevent a process from flooding the screen
 #define WAIT      10000000                              // TODO: Long enough to see theese processes beeing run at least twice
 
-uint64_t _getpid(){
+uint32_t _getpid(){
   return getpid();
 }
 

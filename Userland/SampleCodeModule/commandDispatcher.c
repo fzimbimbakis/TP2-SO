@@ -116,8 +116,8 @@ void pipeCommand(char* buffer, int idx){
         create_sem(semID,0);
 
 
-        newPipedProcess((uint64_t)&process1, 0, buffer, pipes[0], semID);
-        newPipedProcess((uint64_t)&process2, 0, buffer+idx+2, pipes[1], semID);
+        newPipedProcess((uint64_t)&process1, 0, buffer+idx+2, pipes[0], semID);
+        newPipedProcess((uint64_t)&process2, 0, buffer, pipes[1], semID);
 
         wait_sem(semID);
         wait_sem(semID);
