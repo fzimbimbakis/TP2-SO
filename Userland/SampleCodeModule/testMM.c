@@ -5,7 +5,7 @@
 #include "lib.h"
 #include "testMM.h"
 void testmm0(){
-    int nroA = END_MEM - (BEGIN_MEM+100);
+    int nroA = END_MEM - (BEGIN_MEM) + 1;
     char * ptrA = (char *)alloc(nroA);
     if(alloc(nroA) != NULL){
         printf("ERROR: alloc sin espacio no dio null.\n");
@@ -127,8 +127,8 @@ void testmm3(){
 
 #include "test_util.h"
 
-#define MAX_BLOCKS 128
-#define MAX_MEMORY 8388560 //Should be around 80% of memory managed by the MM  buddy=6710886
+#define MAX_BLOCKS 64
+#define MAX_MEMORY 500000 //Should be around 80% of memory managed by the MM  buddy=6710886
 
 typedef struct MM_rq{
     void *address;
@@ -140,12 +140,13 @@ void test_mm(){
     uint8_t rq;
     uint32_t total;
 
-//  while (1){
+  while (1){
     rq = 0;
     total = 0;
 
     // Request as many blocks as we can
     while(rq < MAX_BLOCKS && total < MAX_MEMORY){
+
         mm_rqs[rq].size = GetUniform(MAX_MEMORY - total - 1) + 1;
         mm_rqs[rq].address = alloc(mm_rqs[rq].size);
 
@@ -157,22 +158,26 @@ void test_mm(){
     }
 
     // Set
+      printf("SET\n");
     uint32_t i;
+
     for (i = 0; i < rq; i++)
         if (mm_rqs[i].address != NULL)
             memset(mm_rqs[i].address, i, mm_rqs[i].size);
             // TODO: Chequear. No se que memset esta usando. Pero si lo defino arriba salta un error de redefinicion
 
     // Check
+      printf("CHECK\n");
     for (i = 0; i < rq; i++)
         if (mm_rqs[i].address != NULL)
             if(!memcheck(mm_rqs[i].address, i, mm_rqs[i].size))
                 printf("ERROR!\n");
 
     // Free
+      printf("FREE\n");
     for (i = 0; i < rq; i++)
         if (mm_rqs[i].address != NULL)
             free(mm_rqs[i].address);
-//  }
+  }
     printf("Test passed.\n");
 }
