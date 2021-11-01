@@ -401,3 +401,4 @@ void semInfoCommand(){
     free(info);
 
 }
+

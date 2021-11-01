@@ -1,6 +1,7 @@
 #include "lib.h"
 #include "commands.h"
 #include "sysCall.h"
+#include "phylo.h"
 
 
 
@@ -55,6 +56,8 @@ void commandSelector(char* buffer){
         catCommand();
     } else if(isCommand("wc", buffer)){
         wcCommand();
+    } else if (isCommand("phylo", buffer)){
+        phyloCommand();
     }
     else{
 //        printer(buffer);
