@@ -1,7 +1,7 @@
 #include "contextHandler.h"
 #include <stdint.h>
 #include "../include/naiveConsole.h"
-#include "../memoryManager.h"
+#include "../include/memoryManager.h"
 #include "interrupts.h"
 #include "process.h"
 #include "time.h"
