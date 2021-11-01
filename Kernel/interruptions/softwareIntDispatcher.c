@@ -22,7 +22,7 @@ unsigned * memoryInfo();
 EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo,
                              &newProcess, &exit, &blockProcessPID, &yield, &kill, &printProcesses,
                              &getPid, &changePriority, &sem_create, &sem_wait, &sem_post, &sem_close,&sem_info, &dup,&pipeOpen, &unblockProcessPID, &sleep,
-                             &pipeClose, &infoPipe};
+                             &pipeClose, &infoPipe, &alterSem};
 //EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo,
 //                             &newProcess, &exit, &blockProcessPID, &yield, &kill, &printProcesses,
 //                             &getPid, &changePriority, &sem_create, &sem_wait, &sem_post, &sem_close,&sem_info, NULL,NULL, &unblockProcessPID, &sleep };

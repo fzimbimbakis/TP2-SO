@@ -27,4 +27,5 @@ int sysSemWait(char * id);
 int sysSemClose(char * id);
 int sysSemPost(char * id);
 struct sem_info_wrapper * sysSemInfo(int * qty);
+int sysAlterSem(char * sem_id, uint16_t value);
 #endif
