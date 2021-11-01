@@ -55,6 +55,8 @@ void commandSelector(char* buffer){
         catCommand();
     } else if(isCommand("wc", buffer)){
         wcCommand();
+    } else if(isCommand("pipeinfo", buffer)){
+        pipeInfoCommand();
     }
     else{
 //        printer(buffer);
@@ -153,5 +155,5 @@ void backgroundCommand(char * buffer, int pipeIdx, int isPiped){
     } else{
         newBufferProcess(&bgCommand, 0, myBuffer);
     }
-    sleep(1);       // TODO: VER PORQUE NO LIBERA LA MEMORIA
+    yield();       // TODO: VER PORQUE NO LIBERA LA MEMORIA
 }

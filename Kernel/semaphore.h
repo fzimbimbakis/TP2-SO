@@ -30,6 +30,7 @@ typedef struct sem_info_wrapper{
     char * pids;
     int nPids;
 }sem_info_wrapper;
+sem_info_wrapper * getSemInfo(char * sem_id);
 struct sem_info_wrapper * sem_info(int * qty);
 static int nSems = 0;
 #endif //TP2_SO_SEMAPHORE_H

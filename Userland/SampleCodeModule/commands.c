@@ -401,3 +401,31 @@ void semInfoCommand(){
     free(info);
 
 }
+
+void pipeInfoCommand(){
+    int qty;
+//    int * pipes = alloc(2* sizeof(int));
+//    sysPipe(pipes);
+    pipe_info_wrapper * info = sysInfoPipe(&qty);
+    for (int i = 0; i < qty; ++i) {
+        printf("ID: %d Process pids blocked: ", info[i].id);
+        if(info[i].semR!=0){
+            for (int j = 0; j < info[i].semR->nPids; ++j) {
+                printf("%d ", info[i].semR->pids[j]);
+            }
+            free(info[i].semR->pids);
+            free(info[i].semR->id);
+            free(info[i].semR);
+        }
+        if(info[i].semW!=0) {
+            for (int j = 0; j < info[i].semW->nPids; ++j) {
+                printf("%d ", info[i].semW->pids[j]);
+            }
+            free(info[i].semW->pids);
+            free(info[i].semW->id);
+            free(info[i].semW);
+        }
+        putChar('\n');
+    }
+    free(info);
+}

@@ -160,10 +160,33 @@ struct sem_info_wrapper * sem_info(int * qty){
         info[i].nPids = semaphore_ptr->p_waiting;
         j=0;
         while (aux!=NULL){
-            info[i].pids[j] = aux->process;
+            info[i].pids[j++] = aux->process;
             aux = aux->next;
         }
         semaphore_ptr = semaphore_ptr->next;
+        aux = semaphore_ptr->channel;
+    }
+    return info;
+}
+
+sem_info_wrapper * getSemInfo(char * sem_id){
+    semaphore_t * semaphore_ptr = semaphores;
+    while (semaphore_ptr!=NULL && !myStrcmp(semaphore_ptr->id, sem_id))
+        semaphore_ptr = semaphore_ptr->next;
+    if(semaphore_ptr==NULL) {
+        return 0;
+    }
+    sem_info_wrapper * info = alloc(sizeof(sem_info_wrapper));
+    sem_list_wrapper * aux = semaphore_ptr->channel;
+    info->id = alloc((myStrlen(semaphore_ptr->id)+1)* sizeof(char));
+    myStrcpy((info->id), semaphore_ptr->id);
+    info->value = semaphore_ptr->value;
+    info->pids = alloc(semaphore_ptr->p_waiting);
+    info->nPids = semaphore_ptr->p_waiting;
+    int j=0;
+    while (aux!=NULL){
+        info->pids[j++] = aux->process;
+        aux = aux->next;
     }
     return info;
 }

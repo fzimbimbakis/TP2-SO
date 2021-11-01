@@ -30,4 +30,10 @@ int pipeWrite(int fd, char* buffer, int count);
 int pipeRead(int fd, char* buffer, int count);
 int pipeClose(int fd);
 int dup(char oldId, char id);
+typedef struct pipe_info_wrapper{
+    char id;
+    struct sem_info_wrapper * semR;
+    struct sem_info_wrapper * semW;
+}pipe_info_wrapper;
+pipe_info_wrapper * infoPipe(int * length);
 #endif //TP2_SO_PIPES_H
