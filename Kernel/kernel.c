@@ -5,7 +5,7 @@
 #include <naiveConsole.h>
 #include <interrupts.h>
 #include <keyboard.h>
-#include "memoryManager.h"
+#include "include/memoryManager.h"
 #include "./interruptions/process.h"
 #include "./interruptions/contextHandler.h"
 
@@ -86,7 +86,7 @@ void * initializeKernelBinary()
 }
 
 int main()
-{	
+{
 	ncPrint("[Kernel Main]");
 	ncNewline();
 	ncPrint("  Sample code module at 0x");

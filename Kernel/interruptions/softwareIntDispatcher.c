@@ -1,7 +1,7 @@
 #include "../include/naiveConsole.h"
 #include <interrupts.h>
 #include <keyboard.h>
-#include "../memoryManager.h"
+#include "../include/memoryManager.h"
 #include "contextHandler.h"
 #include "../semaphore.h"
 #include "process.h"
