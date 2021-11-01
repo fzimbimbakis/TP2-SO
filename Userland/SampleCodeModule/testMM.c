@@ -15,10 +15,13 @@ void testmm0(){
     for (int i = 0; i < nroA; ++i) {
         ptrA[i] = 'A';
     }
-    ptrA = (char *)BEGIN_MEM+100;
+    printf("BeginMem: ");
+    printHex(BEGIN_MEM);
+    printf("\n");
+    ptrA = (char *)BEGIN_MEM;
     for (int i = 0; i < nroA; ++i) {
         if(ptrA[i]!='A'){
-            printf("ERROR: Set all memory and check it.\n");
+            printf("ERROR: Set all memory and check it. %d\n", i);
             return;
         }
     }
@@ -26,7 +29,7 @@ void testmm0(){
     free(ptrA);
 }
 void testmm1(){
-    int nro = END_MEM - (BEGIN_MEM+100);
+    int nro = END_MEM - (BEGIN_MEM) + 1;
     char * ptr = (char *)alloc(nro);
     if(alloc(nro) != NULL){
         printf("ERROR: alloc sin espacio no dio null.\n");
