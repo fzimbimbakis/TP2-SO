@@ -20,6 +20,7 @@ uint32_t sysGetpid();
 void sysPs();
 int sysPipe(int* array);
 int sysDupPipe(int oldId, char id);
+int sysClosePipe(int fd);
 int sysSemCreate(char * id, uint64_t value);
 int sysSemWait(char * id);
 int sysSemClose(char * id);

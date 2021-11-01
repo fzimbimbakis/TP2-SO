@@ -163,6 +163,7 @@ struct sem_info_wrapper * sem_info(int * qty){
             info[i].pids[j] = aux->process;
             aux = aux->next;
         }
+        semaphore_ptr = semaphore_ptr->next;
     }
     return info;
 }

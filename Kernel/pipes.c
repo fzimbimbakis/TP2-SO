@@ -29,8 +29,8 @@ void initialPipes(PCB * pcb){
         ncPrint("pipeOpen --> first sem_create returned -1.");
         return -1;
     }
-    pipe_t* stdin = newPipe(READ, lastID++, NULL, 0, 0, sem, 0, NULL);
-    pipe_t* stdout = newPipe(WRITE, lastID++, NULL, 0, 0, sem, 0, stdin);
+    pipe_t* stdin = newPipe(READ, lastID++, NULL, 0, 0, sem, 0, NULL, NULL, NULL);
+    pipe_t* stdout = newPipe(WRITE, lastID++, NULL, 0, 0, sem, 0, stdin, NULL, NULL);
 //    pipe_t * stderr = newPipe(WRITE, lastID++, NULL, 0, 0, 0, 0, stdout);
     setReverseSide(stdout, stdin);
     setReverseSide(stdin, stdout);
@@ -41,7 +41,7 @@ void initialPipes(PCB * pcb){
 
 
 
-pipe_t * newPipe(char type, int id, char * buffer, int * nRead, int * nWrite, char * sem_R, char * sem_W, pipe_t * next){
+pipe_t * newPipe(char type, int id, char * buffer, int * nRead, int * nWrite, char * sem_R, char * sem_W, pipe_t * next, int * read_waiting, int * write_waiting){
     pipe_t* pipe = alloc(sizeof(pipe_t));
     if (pipe == NULL)
         return NULL;
@@ -51,9 +51,9 @@ pipe_t * newPipe(char type, int id, char * buffer, int * nRead, int * nWrite, ch
     pipe->nRead = nRead;
     pipe->nWrite = nWrite;
     pipe->sem_R = sem_R;
-    pipe->read_waiting = 0;
+    pipe->read_waiting = read_waiting;
     pipe->sem_W = sem_W;
-    pipe->write_waiting= 0;
+    pipe->write_waiting= write_waiting;
     pipe->next = next;
     pipe->reverse_side = NULL;
     return pipe;
@@ -83,7 +83,7 @@ int pipeOpen(int * array){
     }
 //    ncPrint("despues semCreatew\n");
 
-    char* buffer = alloc(STARTING_PIPES_SPACE * sizeof (char ));
+    char* buffer = alloc(PIPE_SIZE * sizeof (char));
     if(buffer==0){
         free(Wid);
         free(Rid);
@@ -95,25 +95,34 @@ int pipeOpen(int * array){
     *nRead = 0;
     *nWrite = 0;
 
+    int * rWaiting = alloc(sizeof(int));
+    int * wWaiting = alloc(sizeof(int));
+    *rWaiting = 0;
+    *wWaiting = 0;
+
 //    ncPrint("antes de newPipe\n");
-    pipe_t* readPipe = newPipe(READ, lastID++, buffer, nRead, nWrite, Rid, Wid, firstPipe);
+    pipe_t* readPipe = newPipe(READ, lastID++, buffer, nRead, nWrite, Rid, Wid, firstPipe, rWaiting, wWaiting);
     if (readPipe == NULL){
+        free(rWaiting);
+        free(wWaiting);
+        free(nWrite);
+        free(nRead);
         free(Wid);
         free(Rid);
         free(buffer);
+        ncPrint("No se pudo crear el pipe.");
         return -1;
     }
-    pipe_t* writePipe = newPipe(WRITE, lastID++, buffer, nRead, nWrite, Rid, Wid, readPipe);
+    pipe_t* writePipe = newPipe(WRITE, lastID++, buffer, nRead, nWrite, Rid, Wid, readPipe, rWaiting, wWaiting);
     if (writePipe == NULL){
-        free(Wid);
-        free(Rid);
-        free(buffer);
-        free(readPipe);
+        pipeClose(readPipe->id);
+        ncPrint("No se pudo crear el pipe.");
         return -1;
     }
 //    ncPrint("despues de newPipe\n");
     firstPipe = writePipe;
-
+    setReverseSide(readPipe, writePipe);
+    setReverseSide(writePipe, readPipe);
     array[0]=readPipe->id;
     array[1]=writePipe->id;
 
@@ -155,26 +164,26 @@ int pipeWrite(int fd, char * buffer, int count){
 //        ncPrintDec(i);
 //        ncPrintChar(' ');
         while ((*(aux->nWrite)) == (*(aux->nRead)) + PIPE_SIZE) {      // TODO:Si otro write me gana, se me solapa lo que escribo
-            if (aux->read_waiting > 0) {
-                for (int j = 0; j < aux->read_waiting; ++j)
+            if ((*(aux->read_waiting)) > 0) {
+                for (int j = 0; j < (*(aux->read_waiting)); ++j)
                     sem_post(aux->sem_R);
-                aux->read_waiting = 0;
+                (*(aux->read_waiting)) = 0;
             }
             ncPrint("A esperar write?\n");
-            aux->write_waiting++;
+            (*(aux->write_waiting))++;
             sem_wait(aux->sem_W);
         }
-        ncPrintDec((*(aux->nWrite)) % PIPE_SIZE);
-        ncPrintChar(' ');
+//        ncPrintDec((*(aux->nWrite)) % PIPE_SIZE);
+//        ncPrintChar(' ');
         aux->buffer[(*(aux->nWrite))++ % PIPE_SIZE] = buffer[i];
 //        ncPrint("nWrite: ");
 //        ncPrintDec((*(aux->nWrite)));
 //        ncPrintChar(' ');
     }
-    if (aux->read_waiting > 0) {
-        ncPrint("read waiting?\n");
-        for (int j = 0; j < aux->read_waiting; ++j)
+    if ((*(aux->read_waiting)) > 0) {
+        for (int j = 0; j < (*(aux->read_waiting)); ++j)
             sem_post(aux->sem_R);
+        (*(aux->read_waiting)) = 0;
     }
 }
 
@@ -182,7 +191,6 @@ int pipeClose(int fd){
     pipe_t * aux = firstPipe->next;
     pipe_t * prev = firstPipe;
     if(prev->id==fd){
-
         if(prev->reverse_side==NULL){
             free(prev->buffer);
             sem_close(prev->sem_W);
@@ -263,23 +271,13 @@ int pipeRead(int fd, char * buffer, int count){
     }
 //    ncPrint("SALIO\n");
         for (int i = 0; i < count; ++i) {
-//            ncPrintDec(i);
-//            ncPrint(" i ");
-//            ncPrintChar(' ');
-//            ncPrintDec((*(aux->nWrite)));
-//            ncPrint("nWrite ");
-//            ncPrintChar(' ');
-//            ncPrintDec((*(aux->nRead)));
-//            ncPrint("nRead ");
-//            ncPrint(" | ");
             while ((*(aux->nRead)) == (*(aux->nWrite))){      // TODO:Si otro write me gana, se me solapa lo que escribo
-                if(aux->write_waiting>0) {
-                    for (int j = 0; j < aux->write_waiting; ++j)
+                if((*(aux->write_waiting))>0) {
+                    for (int j = 0; j < (*(aux->write_waiting)); ++j)
                         sem_post(aux->sem_W);
-                    aux->write_waiting = 0;
+                    (*(aux->write_waiting)) = 0;
                 }
-                ncPrint("A esperar read?");
-                aux->read_waiting++;
+                (*(aux->read_waiting))++;
                 sem_wait(aux->sem_R);
             }
 //            ncPrintChar(aux->buffer[(*(aux->nRead)) % PIPE_SIZE]);
@@ -287,9 +285,10 @@ int pipeRead(int fd, char * buffer, int count){
             buffer[i] = aux->buffer[(*(aux->nRead))++ % PIPE_SIZE];
         }
 
-        if(aux->write_waiting>0) {
-            for (int j = 0; j < aux->write_waiting; ++j)
+        if((*(aux->write_waiting))>0) {
+            for (int j = 0; j < (*(aux->write_waiting)); ++j)
                 sem_post(aux->sem_W);
+            (*(aux->write_waiting)) = 0;
         }
 }
 

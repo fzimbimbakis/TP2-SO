@@ -102,10 +102,14 @@ void pipeCommand(char* buffer, int idx, char isBackground){
     sysPipe(pipes);
 //    printf("pipe 1:%d pipe 2: %d\n", pipes[0], pipes[1]);
 //    printf("Despues de sysPipe\n");
-    if(!isBackground){
-        char * semID = alloc(2* sizeof(char));
-        semID[0] = semForPipesID++;
-        semID[1] = 0;
+//    if(!isBackground){
+        char * semID = alloc(6* sizeof(char));
+        semID[0] = 'p';
+        semID[1] = 'i';
+        semID[2] = 'p';
+        semID[3] = 'e';
+        semID[4] = semForPipesID++;
+        semID[5] = 0;
         create_sem(semID,0);
 
 
@@ -114,12 +118,13 @@ void pipeCommand(char* buffer, int idx, char isBackground){
 
         wait_sem(semID);
         wait_sem(semID);
-//        printf("Desbloqueo\n");
-
+        close_sem(semID);
         free(semID);
-    } else{
-        newPipedProcess(&process1, 0, buffer, pipes[0], 0); // No se como. Cambia el stdin o out
-        newPipedProcess(&process2, 0, buffer+idx+2, pipes[1], 0); // No se como. Cambia el stdin o out
-    }
+        sysClosePipe(pipes[0]);
+        sysClosePipe(pipes[1]);
+//    } else{
+//        newPipedProcess(&process1, 0, buffer, pipes[0], 0); // No se como. Cambia el stdin o out
+//        newPipedProcess(&process2, 0, buffer+idx+2, pipes[1], 0); // No se como. Cambia el stdin o out
+//    }
 
 }
