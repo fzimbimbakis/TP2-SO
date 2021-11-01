@@ -1,6 +1,6 @@
 include Makefile.inc
 
-MEM_MANAGER=buddy # buddy o mm_manager
+#MEM_MANAGER=buddy # buddy o mm_manager
 KERNEL=kernel.bin
 SOURCES=$(wildcard *.c)
 SOURCES_INTERRUPTIONS=$(wildcard interruptions/*.c)
@@ -17,7 +17,11 @@ STATICLIBS=
 
 ALL_OBJECTS= $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(OBJECTS_INTERRUPTIONS) $(OBJECTS_INTERRUPTIONS_ASM)
 
-all: $(MEM_MANAGER) $(KERNEL)
+
+
+all: mm_manager $(KERNEL)
+
+all_buddy: buddy $(KERNEL)
 
 $(KERNEL): $(STATICLIBS) $(ALL_OBJECTS)
 	$(LD) $(LDFLAGS) -T kernel.ld -o $@ $^ memoryManager.o
@@ -40,4 +44,4 @@ $(LOADEROBJECT):
 clean:
 	rm -rf $(ALL_OBJECTS) *.bin memoryManager.o
 
-.PHONY: all clean
+.PHONY: all clean all_buddy buddy mm_manager
