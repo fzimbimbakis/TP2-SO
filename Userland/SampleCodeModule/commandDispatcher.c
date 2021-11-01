@@ -113,8 +113,8 @@ void pipeCommand(char* buffer, int idx){
         create_sem(semID,0);
 
 
-        newPipedProcess(&process1, 0, buffer, pipes[0], semID);
-        newPipedProcess(&process2, 0, buffer+idx+2, pipes[1], semID);
+        newPipedProcess((uint64_t)&process1, 0, buffer, pipes[0], semID);
+        newPipedProcess((uint64_t)&process2, 0, buffer+idx+2, pipes[1], semID);
 
         wait_sem(semID);
         wait_sem(semID);
@@ -149,9 +149,9 @@ void backgroundCommand(char * buffer, int pipeIdx, int isPiped){
     }
     myBuffer[length+1] = 0;
     if(isPiped){
-        newPipedProcess(&bgPipedProcess, 0, myBuffer, pipeIdx, 0);
+        newPipedProcess((uint64_t)&bgPipedProcess, 0, myBuffer, pipeIdx, 0);
     } else{
-        newBufferProcess(&bgCommand, 0, myBuffer);
+        newBufferProcess((uint64_t)&bgCommand, 0, myBuffer);
     }
     yield();       // TODO: VER PORQUE NO LIBERA LA MEMORIA
 }
