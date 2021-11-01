@@ -3,7 +3,7 @@
 #define TP2_SO_SEMAPHORE_H
 #include <stdint.h>
 #include "interruptions/contextHandler.h"
-#include "memoryManager.h"
+#include "include/memoryManager.h"
 #include "include/lib.h"
 #include "include/spinlock.h"
 #include <naiveConsole.h>

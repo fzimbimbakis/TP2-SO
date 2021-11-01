@@ -1,5 +1,5 @@
-#include "memoryManager.h"
-#include "./include/naiveConsole.h"
+#include "../include/memoryManager.h"
+#include "../include/naiveConsole.h"
 struct header{
 	struct header * ptr;
 	unsigned size;
