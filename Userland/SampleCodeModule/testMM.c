@@ -12,6 +12,10 @@ void testmm0(){
         free(ptrA);
         return;
     }
+//    printf("nroA = %d", nroA);
+    printf("ptr del alloc: ");
+    printHex(ptrA);
+    printf("\n");
     for (int i = 0; i < nroA; ++i) {
         ptrA[i] = 'A';
     }
