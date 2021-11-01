@@ -187,16 +187,28 @@ int pipeWrite(int fd, char * buffer, int count){
     }
 }
 
+void freePipe(pipe_t * pipe){       // NO LIBERA LA ESTRUCTURA DEL PIPE!!!!!
+    sem_close(pipe->sem_R);
+    sem_close(pipe->sem_W);
+    free(pipe->sem_R);
+    free(pipe->sem_W);
+    free(pipe->buffer);
+    free(pipe->nRead);
+    free(pipe->nWrite);
+    free(pipe->write_waiting);
+    free(pipe->read_waiting);
+}
+
 int pipeClose(int fd){
+    if(firstPipe==NULL) {
+        ncPrint("Pipe not found in pipe close.\n");
+        return -1;
+    }
     pipe_t * aux = firstPipe->next;
     pipe_t * prev = firstPipe;
     if(prev->id==fd){
         if(prev->reverse_side==NULL){
-            free(prev->buffer);
-            sem_close(prev->sem_W);
-            sem_close(prev->sem_R);
-            free(prev->nWrite);
-            free(prev->nRead);
+            freePipe(prev);
             firstPipe = prev->next;
             free(prev);
             return 0;
@@ -214,16 +226,14 @@ int pipeClose(int fd){
         prev = aux;
         aux = aux->next;
     }
-    if(aux==NULL)
+    if(aux==NULL) {
+        ncPrint("Pipe not found in pipe close.\n");
         return -1;
+    }
 
     if(aux->reverse_side == NULL){
         prev->next=aux->next;
-        sem_close(aux->sem_W);
-        sem_close(aux->sem_R);
-        free(aux->nWrite);
-        free(aux->nRead);
-        free(aux->buffer);
+        freePipe(aux);
         free(aux);
         return 0;
     } else{
