@@ -13,10 +13,8 @@ void commandSelector(char* buffer){
         printmemCommand(buffer);
     }else if(isCommand("date", buffer)){
         dateCommand();
-    }else if(isCommandWithArg("exceptiontest",buffer)){
-        exceptionTestCommando(buffer);
-    }else if(isCommandWithArg("testmm", buffer)){
-        testMMCommand(buffer);
+    }else if(isCommand("testmm", buffer)){
+        testMMCommand();
     } else if(isCommand("mem", buffer)){
         memInfoCommand();
     }else if(isCommandWithArg("block", buffer)){
