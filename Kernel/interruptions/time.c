@@ -20,7 +20,7 @@ void sleep(int seconds){
 	unsigned long intialTicks = ticks;
 	for (int i = 1; i <= seconds; i++)
 	{
-		while(ticks!=(intialTicks+18*i))
+		while(ticks<(intialTicks+18*i))
             _hlt();
 
 	}

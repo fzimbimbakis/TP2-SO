@@ -9,6 +9,7 @@ int printerPID;
 
 void phyloCommand() {
 //    create_sem("PhyloTable", 1);
+    printf("Welcome to the phylosofers table.\n Press 'a' to add a Phylosofer.\nPress 'r' to remove a Phylosofer.\nPress 'k' to kill all phylosofers.\n");
     create_sem("PhyloMutex", 1);
 //    printerPID = newP(&printerProcess);
     while (currentPhylos < INITIAL_PHYLO) {
@@ -53,7 +54,7 @@ void phyloCycle(char* id){
         putFork(phylos[idx]);
     }*/
     int idx = strToNum(id);
-    printf("idx en cycle: %d ", idx);
+//    printf("idx en cycle: %d ", idx);
     //    for (int i = 0; i < currentPhylos; ++i) {
 //        if (phylos[i]->pid==pid)
 //            idx = i;
@@ -68,9 +69,9 @@ void phyloCycle(char* id){
 }
 
 void think(){
-    printf("thinking \n");
+//    printf("thinking \n");
     sleep(1);
-    printf(" end th\n");
+//    printf(" end th\n");
 }
 
 void removePhylo() {
@@ -121,8 +122,8 @@ void addPhylo(uint32_t pid) {
         newPhylo->idx = currentPhylos;
         newPhylo->sem = sem;
         phylos[currentPhylos++] = newPhylo;
-        printf("pid: %d", pid);
-        printf("idx: %d\n", newPhylo->idx);
+//        printf("pid: %d", pid);
+//        printf("idx: %d\n", newPhylo->idx);
 
 
     } else printf("Error de memoria");
@@ -145,7 +146,7 @@ void eat() {
 }
 
 void takeFork(phylo* p) {
-    printf("phylo %d agarrando\n", p->idx);
+//    printf("phylo %d agarrando\n", p->idx);
     wait_sem("PhyloMutex");
     p->state=WAITING;
     test(p);

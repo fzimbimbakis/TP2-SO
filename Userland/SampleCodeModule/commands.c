@@ -88,7 +88,8 @@ void helpCommand(){
         {"cat: Receives standard input and prints it.\nThe command stops when a ';' is received.\n", "&> cat\n"},
         {"wc: Receives standar input, prints it and when it receives a ';' it prints the lines of the input.\n", "&> wc\n"},
         {"seminfo: Prints all semaphores information.\n", "&> seminfo\n"},
-        {"pipeinfo: Prints all semaphores information.\n", "&> pipeinfo\n"}
+        {"pipeinfo: Prints all semaphores information.\n", "&> pipeinfo\n"},
+        {"phylo: Dinning phylosofers problem. \n", "&> phylo\n"}
     };
     static int i;
     for (i = 0; i < commandsQuantity; i++)

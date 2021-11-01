@@ -6,7 +6,7 @@
 #define THINKING 1
 #define WAITING 2
 #define MAX_PHYLO 10
-#define INITIAL_PHYLO 6
+#define INITIAL_PHYLO 5
 
 #define LEFT ((p->idx + currentPhylos-1) % currentPhylos)
 #define RIGHT ((p->idx + 1) % currentPhylos)
