@@ -69,7 +69,7 @@ int sem_wait(char * sem_id){
     if(semaphore_ptr->value > 0){
         semaphore_ptr->value--;
     } else{
-        char process = getCurrentPID();
+        uint32_t process = getCurrentPID();
         if(semaphore_ptr->channel == NULL){
             semaphore_ptr->channel = alloc(sizeof (sem_list_wrapper));
             semaphore_ptr->channel->process = process;
@@ -108,7 +108,7 @@ int sem_post(char * sem_id){
     acquire(&(semaphore_ptr->lock)); // spinlock
 
     if(semaphore_ptr->channel!=NULL){
-        char pid = semaphore_ptr->channel->process;
+        uint32_t pid = semaphore_ptr->channel->process;
         sem_list_wrapper * aux = semaphore_ptr->channel->next;
         free(semaphore_ptr->channel);
         semaphore_ptr->channel = aux;
@@ -165,7 +165,7 @@ struct sem_info_wrapper * sem_info(int * qty){
         info[i].id = alloc((myStrlen(semaphore_ptr->id)+1)* sizeof(char));
         myStrcpy((info[i].id), semaphore_ptr->id);
         info[i].value = semaphore_ptr->value;
-        info[i].pids = alloc(semaphore_ptr->p_waiting);
+        info[i].pids = alloc((semaphore_ptr->p_waiting)*sizeof(uint32_t));
         info[i].nPids = semaphore_ptr->p_waiting;
         j=0;
         while (aux!=NULL){
@@ -201,7 +201,7 @@ sem_info_wrapper * getSemInfo(char * sem_id){
     info->id = alloc((myStrlen(semaphore_ptr->id)+1)* sizeof(char));
     myStrcpy((info->id), semaphore_ptr->id);
     info->value = semaphore_ptr->value;
-    info->pids = alloc(semaphore_ptr->p_waiting);
+    info->pids = alloc((semaphore_ptr->p_waiting)* sizeof(uint32_t));
     info->nPids = semaphore_ptr->p_waiting;
     int j=0;
     while (aux!=NULL){

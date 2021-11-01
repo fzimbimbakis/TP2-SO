@@ -89,7 +89,9 @@ void helpCommand(){
         {"wc: Receives standar input, prints it and when it receives a ';' it prints the lines of the input.\n", "&> wc\n"},
         {"seminfo: Prints all semaphores information.\n", "&> seminfo\n"},
         {"pipeinfo: Prints all semaphores information.\n", "&> pipeinfo\n"},
-        {"phylo: Dinning phylosofers problem. \n", "&> phylo\n"}
+        {"phylo: Dinning phylosofers problem.\n", "&> phylo\n"},
+        {"Run command in background.\n", "&> .[command]"},
+        {"Pipe two commands.\n", "&> [command 1] - [command 2]"}
     };
     static int i;
     for (i = 0; i < commandsQuantity; i++)
