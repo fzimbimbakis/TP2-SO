@@ -14,10 +14,8 @@ void commandSelector(char* buffer){
         printmemCommand(buffer);
     }else if(isCommand("date", buffer)){
         dateCommand();
-    }else if(isCommandWithArg("exceptiontest",buffer)){
-        exceptionTestCommando(buffer);
-    }else if(isCommandWithArg("testmm", buffer)){
-        testMMCommand(buffer);
+    }else if(isCommand("testmm", buffer)){
+        testMMCommand();
     } else if(isCommand("mem", buffer)){
         memInfoCommand();
     }else if(isCommandWithArg("block", buffer)){
@@ -56,6 +54,8 @@ void commandSelector(char* buffer){
         catCommand();
     } else if(isCommand("wc", buffer)){
         wcCommand();
+    } else if(isCommand("pipeinfo", buffer)){
+        pipeInfoCommand();
     } else if (isCommand("phylo", buffer)){
         phyloCommand();
     }
@@ -97,7 +97,7 @@ void process2(char * buffer,int fd, char* sem){
 }
 
 static char semForPipesID = 1;
-void pipeCommand(char* buffer, int idx, char isBackground){
+void pipeCommand(char* buffer, int idx){
     buffer[idx]=0;
     buffer[idx-1]='\n';
     int pipes[2];
@@ -130,4 +130,31 @@ void pipeCommand(char* buffer, int idx, char isBackground){
 //        newPipedProcess(&process2, 0, buffer+idx+2, pipes[1], 0); // No se como. Cambia el stdin o out
 //    }
 
+}
+
+void bgPipedProcess(char * buffer, int pipeIdx){
+    pipeCommand(buffer, pipeIdx);
+    free(buffer);
+    exit();
+}
+
+void bgCommand(char * buffer){
+    commandSelector(buffer);
+    free(buffer);
+    exit();
+}
+
+void backgroundCommand(char * buffer, int pipeIdx, int isPiped){
+    int length = strlen(buffer);
+    char * myBuffer = alloc(length+1);
+    for (int i = 0; i < length; ++i) {
+        myBuffer[i] = buffer[i];
+    }
+    myBuffer[length+1] = 0;
+    if(isPiped){
+        newPipedProcess(&bgPipedProcess, 0, myBuffer, pipeIdx, 0);
+    } else{
+        newBufferProcess(&bgCommand, 0, myBuffer);
+    }
+    yield();       // TODO: VER PORQUE NO LIBERA LA MEMORIA
 }

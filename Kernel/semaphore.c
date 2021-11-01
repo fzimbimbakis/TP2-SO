@@ -4,8 +4,10 @@
 
 static semaphore_t * semaphores = NULL;
 int sem_create(char * newId, uint64_t value){
-    char * id = alloc(myStrlen(newId)* sizeof(char));
+    int length = myStrlen(newId);
+    char * id = alloc((length+1)* sizeof(char));
     myStrcpy(id, newId);
+    id[length] = 0;
         if(semaphores==NULL){
         semaphores = alloc(sizeof(semaphore_t));
         semaphores->id=id;
@@ -33,6 +35,13 @@ int sem_create(char * newId, uint64_t value){
                     return -1;
                 }
                 aux = aux->next;
+            }
+            if(myStrcmp(aux->id, id)) {
+                ncPrint("Sem already exists.\n");
+                ncPrint(id);
+                ncPrintChar('\n');
+                free(id);
+                return -1;
             }
             aux->next = alloc(sizeof(semaphore_t));
             aux->next->value = value;
@@ -153,17 +162,51 @@ struct sem_info_wrapper * sem_info(int * qty){
     int j;
     sem_list_wrapper * aux= semaphore_ptr->channel;
     for (int i = 0; i < (*qty); ++i) {
-        info[i].id = alloc(myStrlen(semaphore_ptr->id)* sizeof(char));
+        info[i].id = alloc((myStrlen(semaphore_ptr->id)+1)* sizeof(char));
         myStrcpy((info[i].id), semaphore_ptr->id);
         info[i].value = semaphore_ptr->value;
         info[i].pids = alloc(semaphore_ptr->p_waiting);
         info[i].nPids = semaphore_ptr->p_waiting;
         j=0;
         while (aux!=NULL){
-            info[i].pids[j] = aux->process;
+            info[i].pids[j++] = aux->process;
             aux = aux->next;
         }
         semaphore_ptr = semaphore_ptr->next;
+        aux = semaphore_ptr->channel;
+    }
+    return info;
+}
+
+int alterSem(char * sem_id, uint16_t value){
+    semaphore_t * semaphore_ptr = semaphores;
+    while (semaphore_ptr!=NULL && !myStrcmp(semaphore_ptr->id, sem_id))
+        semaphore_ptr = semaphore_ptr->next;
+    if(semaphore_ptr==NULL) {
+        return -1;
+    }
+    semaphore_ptr->value = value;
+    return 0;
+}
+
+sem_info_wrapper * getSemInfo(char * sem_id){
+    semaphore_t * semaphore_ptr = semaphores;
+    while (semaphore_ptr!=NULL && !myStrcmp(semaphore_ptr->id, sem_id))
+        semaphore_ptr = semaphore_ptr->next;
+    if(semaphore_ptr==NULL) {
+        return 0;
+    }
+    sem_info_wrapper * info = alloc(sizeof(sem_info_wrapper));
+    sem_list_wrapper * aux = semaphore_ptr->channel;
+    info->id = alloc((myStrlen(semaphore_ptr->id)+1)* sizeof(char));
+    myStrcpy((info->id), semaphore_ptr->id);
+    info->value = semaphore_ptr->value;
+    info->pids = alloc(semaphore_ptr->p_waiting);
+    info->nPids = semaphore_ptr->p_waiting;
+    int j=0;
+    while (aux!=NULL){
+        info->pids[j++] = aux->process;
+        aux = aux->next;
     }
     return info;
 }

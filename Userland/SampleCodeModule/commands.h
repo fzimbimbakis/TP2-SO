@@ -27,6 +27,7 @@ void filterCommand();
 void catCommand();
 void wcCommand();
 void dateCommand();
+void pipeInfoCommand();
 void semInfoCommand();
 #include "testSem.h"
 void testsemCommand(char * buffer);

@@ -129,10 +129,10 @@ char getChar(){
 int newPipedProcess(uint64_t fPtr, char priority, char * buffer, int pipeId, char * sem_id){
 	return sysNewP(fPtr , priority, buffer, pipeId, sem_id);  // No devuelve nada.
 }
-int newBufferProcess(void* fPtr, char priority, char * buffer){
-    return sysNewP(fPtr , priority, buffer, -1, -1);  // No devuelve nada.
+int newBufferProcess(uint64_t fPtr, char priority, char * buffer){
+    return sysNewP(fPtr , priority, buffer, -1, 0);  // No devuelve nada.
 }
-int newP(void* fPtr){
+int newP(uint64_t fPtr){
     return sysNewP(fPtr , 0, NULL, -1, -1);  // No devuelve nada.
 }
 

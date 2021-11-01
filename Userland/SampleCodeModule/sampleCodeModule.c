@@ -36,32 +36,35 @@ int main() {
     while(1){
 		while((c=getChar())!='\n'){
 			putChar(c);
-			if(c=='\b'){
-			if((idx)!=0)
-			(idx)--;
-			}
-			else{
-                if(c=='-') {
-                    isPipedCmd = 1;
-                    pipeIdx = idx;
+            if(idx==0 && c=='.'){
+                isBackground = 1;
+            } else{
+                if (c == '\b') {
+                    if ((idx) != 0)
+                        (idx)--;
+                } else {
+                    if (c == '-') {
+                        isPipedCmd = 1;
+                        pipeIdx = idx;
+                    }
+                    buffer[idx] = c;
+                    (idx)++;
                 }
-                else if(c=='&'){
-                    isBackground = 1;
-                }
-			    buffer[idx]=c;
-			    (idx)++;
-			}
+            }
 
 		}
 		putChar('\n');
 		buffer[(idx)++]='\n';
 		buffer[(idx)++]=0;
 		idx=0;
-        if(isPipedCmd){
-            pipeCommand(buffer, pipeIdx, isBackground);
-        }
-		else {
-            commandSelector(buffer);
+        if(!isBackground){
+            if (isPipedCmd) {
+                pipeCommand(buffer, pipeIdx);
+            } else {
+                commandSelector(buffer);
+            }
+        } else{
+            backgroundCommand(buffer, pipeIdx, isPipedCmd);
         }
         isPipedCmd=0;
         isBackground = 0;

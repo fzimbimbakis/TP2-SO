@@ -22,6 +22,8 @@ GLOBAL sysKill
 GLOBAL sysPipe
 GLOBAL sysDupPipe
 GLOBAL sysClosePipe
+GLOBAL sysInfoPipe
+GLOBAL sysAlterSem
 section .text
 
 %macro pushState 0
@@ -145,6 +147,12 @@ sysPipe:
 sysClosePipe:
     pushStateNoRax
     mov rax, 23
+    int 80h
+    popStateNoRax
+    ret
+sysInfoPipe:
+    pushStateNoRax
+    mov rax, 24
     int 80h
     popStateNoRax
     ret
@@ -322,6 +330,12 @@ sysAlloc:
             int 80h
             popStateNoRax
             ret
+sysAlterSem:
+    pushStateNoRax
+    mov rax, 25
+    int 80h
+    popStateNoRax
+    ret
 
 sysYield:
 	pushState

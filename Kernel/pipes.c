@@ -4,8 +4,9 @@
 
 
 static pipe_t * firstPipe;
-static int lastID = 1;
-
+static int lastID = 0;
+static pipe_t * inputP;
+static pipe_t * outputP;
 void setReverseSide(pipe_t * myPipe, pipe_t * reverse_side){
     myPipe->reverse_side = reverse_side;
 }
@@ -21,7 +22,7 @@ void initialPipes(PCB * pcb){
 //    int OutSem_R = sem_create(0);
 //    int OutSem_W = sem_create(0);
     char * sem = alloc(3 * sizeof(char));
-    sem[0] = lastID;
+    sem[0] = lastID+1;
     sem[1] = 'R';
     sem[2] = 0;
     if (sem_create(sem, 0) == -1) {
@@ -35,6 +36,8 @@ void initialPipes(PCB * pcb){
     setReverseSide(stdout, stdin);
     setReverseSide(stdin, stdout);
 //    firstPipe = stdout;
+    inputP = stdin;
+    outputP = stdout;
     pcb->inputPipe = stdin;
     pcb->outputPipe = stdout;
 }
@@ -62,7 +65,7 @@ pipe_t * newPipe(char type, int id, char * buffer, int * nRead, int * nWrite, ch
 int pipeOpen(int * array){
 //    ncPrint("pipeOpen\n");
     char * Rid = alloc(3 * sizeof(char));
-    Rid[0] = lastID;
+    Rid[0] = lastID+1;
     Rid[1] = 'R';
     Rid[2] = 0;
     if (sem_create(Rid, 0) == -1) {
@@ -72,7 +75,7 @@ int pipeOpen(int * array){
     }
 //    ncPrint("despues semCreateR\n");
     char * Wid = alloc(3 * sizeof(char));
-    Wid[0] = lastID;
+    Wid[0] = lastID+1;
     Wid[1] = 'W';
     Wid[2] = 0;
     if (sem_create(Wid, 0) == -1) {
@@ -169,16 +172,10 @@ int pipeWrite(int fd, char * buffer, int count){
                     sem_post(aux->sem_R);
                 (*(aux->read_waiting)) = 0;
             }
-            ncPrint("A esperar write?\n");
             (*(aux->write_waiting))++;
             sem_wait(aux->sem_W);
         }
-//        ncPrintDec((*(aux->nWrite)) % PIPE_SIZE);
-//        ncPrintChar(' ');
         aux->buffer[(*(aux->nWrite))++ % PIPE_SIZE] = buffer[i];
-//        ncPrint("nWrite: ");
-//        ncPrintDec((*(aux->nWrite)));
-//        ncPrintChar(' ');
     }
     if ((*(aux->read_waiting)) > 0) {
         for (int j = 0; j < (*(aux->read_waiting)); ++j)
@@ -187,16 +184,28 @@ int pipeWrite(int fd, char * buffer, int count){
     }
 }
 
+void freePipe(pipe_t * pipe){       // NO LIBERA LA ESTRUCTURA DEL PIPE!!!!!
+    sem_close(pipe->sem_R);
+    sem_close(pipe->sem_W);
+    free(pipe->sem_R);
+    free(pipe->sem_W);
+    free(pipe->buffer);
+    free(pipe->nRead);
+    free(pipe->nWrite);
+    free(pipe->write_waiting);
+    free(pipe->read_waiting);
+}
+
 int pipeClose(int fd){
+    if(firstPipe==NULL) {
+        ncPrint("Pipe not found in pipe close.\n");
+        return -1;
+    }
     pipe_t * aux = firstPipe->next;
     pipe_t * prev = firstPipe;
     if(prev->id==fd){
         if(prev->reverse_side==NULL){
-            free(prev->buffer);
-            sem_close(prev->sem_W);
-            sem_close(prev->sem_R);
-            free(prev->nWrite);
-            free(prev->nRead);
+            freePipe(prev);
             firstPipe = prev->next;
             free(prev);
             return 0;
@@ -214,16 +223,14 @@ int pipeClose(int fd){
         prev = aux;
         aux = aux->next;
     }
-    if(aux==NULL)
+    if(aux==NULL) {
+        ncPrint("Pipe not found in pipe close.\n");
         return -1;
+    }
 
     if(aux->reverse_side == NULL){
         prev->next=aux->next;
-        sem_close(aux->sem_W);
-        sem_close(aux->sem_R);
-        free(aux->nWrite);
-        free(aux->nRead);
-        free(aux->buffer);
+        freePipe(aux);
         free(aux);
         return 0;
     } else{
@@ -293,9 +300,6 @@ int pipeRead(int fd, char * buffer, int count){
 }
 
 int dup(char oldId, char id){
-//    ncPrint("DUP\n");
-//    ncPrintDec(id);
-//    ncPrintChar('\n');
     pipe_t * aux = firstPipe;
     while (aux!=NULL){
         if(aux->id==id)
@@ -324,5 +328,39 @@ int dup(char oldId, char id){
     }
     return -1;
 }
+
+pipe_info_wrapper * infoPipe(int * length){
+    *length = 2;
+    pipe_t * aux = firstPipe;
+    while (aux!=NULL){
+        (*length)++;
+        aux = aux->next;
+    }
+    aux = firstPipe;
+    pipe_info_wrapper * info = alloc(sizeof(pipe_info_wrapper)*(*length));
+
+
+    // stdin pipe
+    info[0].id = inputP->id;
+    info[0].semR = getSemInfo(inputP->sem_R);
+    info[0].semW = 0;
+
+    // stdout pipe
+    info[1].id = outputP->id;
+    info[1].semW = 0;
+    info[1].semR = 0;
+
+    // other pipes
+    aux = firstPipe;
+    int i = 2;
+    while (aux!=NULL){
+        info[i].id = aux->id;
+        info[i].semR = getSemInfo(aux->sem_R);
+        info[i++].semW = getSemInfo(aux->sem_W);
+        aux = aux->next;
+    }
+    return info;
+}
+
 
 

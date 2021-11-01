@@ -65,16 +65,30 @@ void getArguments(char* buffer, char* arg){
     }
 }
 
-#define commandsQuantity 6
+#define commandsQuantity 21
 void helpCommand(){
     static char * strings[][2] = {
         {"help: display every command available\n","&> help\n"},
         {"inforeg: print every register with its value\n","&> inforeg\n"},
         {"printmem: 32bytes from the direction passed by argument\n","&> printmem [DIRECTION](hexa)\n"},
         {"date: show real time live\n","&> date\n"},
-        {"exceptiontest: Test exception routines. 0: Division by 0. 6: Invalid operation code.\n","&> exceptiontest [Exception ID]\n"},
-        {"testmm: Run Memory Manager functions tests. \n0: Runs all tests. \n1: Runs given test. \n2: Set all memory and check it.\n3: Basic test for free.\n4: Set and check ten blocks of size 1000.\n5: Set 10 blocks-> Free even blocks-> Ask for 5 more blocks-> Check 10 blocks.\n", "&> testmm [Test ID]\n"},
-        {"mem: Shows (Units: Bytes):\n- Total memory\n- Taken memory\n- Free memory\n", "&> meminfo"}
+        {"testmm: Runs a Memory Manager test.\n", "&> testmm\n"},
+        {"testsch: Runs a Scheduler test.\n", "&> testsch\n"},
+        {"testprio: Runs a Scheduler priority test.\n", "&> testprio\n"},
+        {"testsem: Runs a semaphore test.\nThis command can run with or without semaphores to appreciate the difference.\n0: Run test with semaphores.\n1: Run test without semaphores\n", "&> testsem [mode]\n"},
+        {"mem: Shows (Units: Bytes):\n- Total memory\n- Taken memory\n- Free memory\n", "&> meminfo\n"},
+        {"ps: Prints every running process information.\n", "&> ps\n"},
+        {"block: Sets a process state to BLOCKED.\n", "&> block [Process PID]\n"},
+        {"unblock: Sets a process state to READY.\n", "&> unblock [Process PID]\n"},
+        {"kill: Stops a process.\n", "&> kill [Process PID]\n"},
+        {"getpid: Prints actual process PID.\n", "&> getpid\n"},
+        {"nice: Change a process priority.\n", "&> nice [Process PID] [New Priority]\n"},
+        {"loop: Prints the process pid every N SECONDS.\n(Important: It can only be stopped with a kill.)\n", "&> loop [N SECONDS]\n"},
+        {"filter: Receives standard input and only prints vocals.\nThe command stops when a ';' is received.\n", "&> filter\n"},
+        {"cat: Receives standard input and prints it.\nThe command stops when a ';' is received.\n", "&> cat\n"},
+        {"wc: Receives standar input, prints it and when it receives a ';' it prints the lines of the input.\n", "&> wc\n"},
+        {"seminfo: Prints all semaphores information.\n", "&> seminfo\n"},
+        {"pipeinfo: Prints all semaphores information.\n", "&> pipeinfo\n"}
     };
     static int i;
     for (i = 0; i < commandsQuantity; i++)
@@ -184,41 +198,8 @@ void memInfoCommand(){      // TODO: Agregar debilidad al informe. Si le pasamos
     free(array);
 }
 
-void testMMCommand(char * buffer){
-    char arg[MAX_BUFFER];
-
-    getArguments(buffer,arg);
-    int num=strToNum(arg);
-    switch (num){
-        case 0:;
-            testmm0();
-            testmm1();
-            testmm2();
-            testmm3();
+void testMMCommand(){
             test_mm();
-            break;
-        case 1:   ;  
-            test_mm();
-            break;
-        case 2:;      
-            testmm0();
-            break;
-        case 3:;    
-            testmm1();
-            break;
-        case 4:;   
-            testmm2();
-            break;
-        case 5: ;
-        testmm3();
-            break;
-
-        default:
-            printf("Test ID is not valid");
-            printf("\n");
-            break;
-    }
-
 }
 
  void blockCommand(char* buffer){
@@ -400,5 +381,33 @@ void semInfoCommand(){
     }
     free(info);
 
+}
+
+void pipeInfoCommand(){
+    int qty;
+//    int * pipes = alloc(2* sizeof(int));
+//    sysPipe(pipes);
+    pipe_info_wrapper * info = sysInfoPipe(&qty);
+    for (int i = 0; i < qty; ++i) {
+        printf("ID: %d Process pids blocked: ", info[i].id);
+        if(info[i].semR!=0){
+            for (int j = 0; j < info[i].semR->nPids; ++j) {
+                printf("%d ", info[i].semR->pids[j]);
+            }
+            free(info[i].semR->pids);
+            free(info[i].semR->id);
+            free(info[i].semR);
+        }
+        if(info[i].semW!=0) {
+            for (int j = 0; j < info[i].semW->nPids; ++j) {
+                printf("%d ", info[i].semW->pids[j]);
+            }
+            free(info[i].semW->pids);
+            free(info[i].semW->id);
+            free(info[i].semW);
+        }
+        putChar('\n');
+    }
+    free(info);
 }
 
