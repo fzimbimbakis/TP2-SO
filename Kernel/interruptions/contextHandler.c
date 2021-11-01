@@ -23,10 +23,10 @@ void printProcesses(){ //TODO: agregar nombre a los procesos y background/foregr
         ncPrintDec(aux->priority);
         ncPrint("\t");
         ncPrint("RSP: ");
-        ncPrintDec(aux->rsp);
+        ncPrintDec((uint64_t)aux->rsp);
         ncPrint("\t");
         ncPrint("RBP: ");
-        ncPrintDec(aux->rbp);
+        ncPrintDec((uint64_t)aux->rbp);
         ncPrint("\n");
         aux=aux->next;
     }
@@ -288,7 +288,7 @@ uint64_t * firstProcess(uint64_t fPtr){ //deberia ser void????
     uint64_t * rbpHalt = alloc(1024*sizeof (uint64_t));
     halt = alloc(sizeof (PCB));
     halt->rbp=rbp;
-    halt->rsp= createStackContext((uint64_t) &rbpHalt[1023], &haltP, NULL, -1, NULL);
+    halt->rsp= createStackContext((uint64_t) &rbpHalt[1023], (uint64_t)&haltP, NULL, -1, NULL);
     halt->inputPipe = first->inputPipe;
     halt->outputPipe = first->outputPipe;
     halt->priority=0;

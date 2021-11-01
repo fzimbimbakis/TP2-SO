@@ -134,7 +134,16 @@ typedef struct MM_rq{
     void *address;
     uint32_t size;
 }mm_rq;
+void * myMemset(void * destination, int32_t c, uint64_t length)
+{
+    uint8_t chr = (uint8_t)c;
+    char * dst = (char*)destination;
 
+    while(length--)
+        dst[length] = chr;
+
+    return destination;
+}
 void test_mm(){
     mm_rq mm_rqs[MAX_BLOCKS];
     uint8_t rq;
@@ -160,7 +169,7 @@ void test_mm(){
     uint32_t i;
     for (i = 0; i < rq; i++)
         if (mm_rqs[i].address != NULL)
-            memset(mm_rqs[i].address, i, mm_rqs[i].size);
+            myMemset(mm_rqs[i].address, i, mm_rqs[i].size);
             // TODO: Chequear. No se que memset esta usando. Pero si lo defino arriba salta un error de redefinicion
 
     // Check

@@ -1,7 +1,7 @@
 
 #include "semaphore.h"
 #include "include/naiveConsole.h"
-
+static int nSems = 0;
 static semaphore_t * semaphores = NULL;
 int sem_create(char * newId, uint64_t value){
     int length = myStrlen(newId);

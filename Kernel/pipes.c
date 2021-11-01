@@ -28,7 +28,7 @@ void initialPipes(PCB * pcb){
     if (sem_create(sem, 0) == -1) {
         free(sem);
         ncPrint("pipeOpen --> first sem_create returned -1.");
-        return -1;
+        return;
     }
     pipe_t* stdin = newPipe(READ, lastID++, NULL, 0, 0, sem, 0, NULL, NULL, NULL);
     pipe_t* stdout = newPipe(WRITE, lastID++, NULL, 0, 0, sem, 0, stdin, NULL, NULL);
@@ -132,7 +132,7 @@ int pipeOpen(int * array){
     return 0;
 }
 
-int pipeWrite(int fd, char * buffer, int count){
+int pipeWrite(int fd, const char * buffer, int count){
 //    ncPrint("A");
     pipe_t * aux;
 //    ncPrint("B");
@@ -182,6 +182,7 @@ int pipeWrite(int fd, char * buffer, int count){
             sem_post(aux->sem_R);
         (*(aux->read_waiting)) = 0;
     }
+    return 0;
 }
 
 void freePipe(pipe_t * pipe){       // NO LIBERA LA ESTRUCTURA DEL PIPE!!!!!
@@ -297,6 +298,7 @@ int pipeRead(int fd, char * buffer, int count){
                 sem_post(aux->sem_W);
             (*(aux->write_waiting)) = 0;
         }
+    return 0;
 }
 
 int dup(char oldId, char id){

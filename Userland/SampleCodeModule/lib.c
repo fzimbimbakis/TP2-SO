@@ -41,7 +41,7 @@ unsigned long int hexToDec(char* string){
 static char hexArray[16]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 char* numToStr(unsigned long int num, int base){
 	cleanBuffer();
-    char aux = num%base;
+    int aux = num%base;
     int i = MAX_BUFFER;
     buffer[i]=0;
 	if(num==0)
@@ -75,7 +75,7 @@ void printf(char* string, ...){
 		i++;
 	}
 	va_list list;
-	va_start(list, argumentCount);
+	va_start(list, string);
 	while(*string){
 		if(*string=='\''){
 			string++;
@@ -93,7 +93,7 @@ void printf(char* string, ...){
 				break;
 			case 'c': putChar(va_arg(list, int));
 				break;
-			case 's': printf(va_arg(list, int));
+			case 's': printf(va_arg(list, char *));
 				break;
 			default:
 				break;
@@ -133,7 +133,7 @@ int newBufferProcess(uint64_t fPtr, char priority, char * buffer){
     return sysNewP(fPtr , priority, buffer, -1, 0);  // No devuelve nada.
 }
 int newP(uint64_t fPtr){
-    return sysNewP(fPtr , 0, NULL, -1, -1);  // No devuelve nada.
+    return sysNewP(fPtr , 0, NULL, -1, 0);  // No devuelve nada.
 }
 
 

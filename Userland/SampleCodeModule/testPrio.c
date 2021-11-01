@@ -9,7 +9,7 @@ uint64_t _getpid(){
 }
 
 uint64_t _create_process(void * name){
-  return newP(name);
+  return newP((uint64_t)name);
 }
 
 uint64_t _nice(uint64_t pid, uint64_t newPrio){

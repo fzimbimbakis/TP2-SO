@@ -8,7 +8,7 @@ void endless_loop(){
 }
 
 uint32_t my_create_process(void * name){
-  return newP(name);
+  return newP((uint64_t)name);
 }
 
 uint32_t my_kill(uint32_t pid){

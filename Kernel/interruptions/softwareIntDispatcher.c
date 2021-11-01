@@ -19,10 +19,10 @@ void * memoryAlloc(unsigned size);
 unsigned * memoryInfo();
 
 //EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo, &newProcess, &exit, &_hlt, &blockProcess};
-EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo,
-                             &newProcess, &exit, &blockProcessPID, &yield, &kill, &printProcesses,
-                             &getPid, &changePriority, &sem_create, &sem_wait, &sem_post, &sem_close,&sem_info, &dup,&pipeOpen, &unblockProcessPID, &sleep,
-                             &pipeClose, &infoPipe, &alterSem};
+EntryPoint functionPtrs[] = {(EntryPoint)&write, (EntryPoint)&read, (EntryPoint)&accessClock, (EntryPoint)&memoryAlloc, (EntryPoint)&memoryFree, (EntryPoint)&memoryInfo,
+                             (EntryPoint)&newProcess, (EntryPoint)&exit, (EntryPoint)&blockProcessPID, (EntryPoint)&yield, (EntryPoint)&kill, (EntryPoint)&printProcesses,
+                             (EntryPoint)&getPid, (EntryPoint)&changePriority, (EntryPoint)&sem_create, (EntryPoint)&sem_wait, (EntryPoint)&sem_post, (EntryPoint)&sem_close,(EntryPoint)&sem_info, (EntryPoint)&dup,(EntryPoint)&pipeOpen, (EntryPoint)&unblockProcessPID, (EntryPoint)&sleep,
+                             (EntryPoint)&pipeClose, (EntryPoint)&infoPipe, (EntryPoint)&alterSem};
 //EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo,
 //                             &newProcess, &exit, &blockProcessPID, &yield, &kill, &printProcesses,
 //                             &getPid, &changePriority, &sem_create, &sem_wait, &sem_post, &sem_close,&sem_info, NULL,NULL, &unblockProcessPID, &sleep };
