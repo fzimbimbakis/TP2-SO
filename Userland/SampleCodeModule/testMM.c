@@ -174,6 +174,7 @@ void test_mm(){
     }
 
     // Set
+      sleep(1);
       printf("SET\n");
     uint32_t i;
 
@@ -183,6 +184,7 @@ void test_mm(){
             // TODO: Chequear. No se que memset esta usando. Pero si lo defino arriba salta un error de redefinicion
 
     // Check
+      sleep(1);
       printf("CHECK\n");
     for (i = 0; i < rq; i++)
         if (mm_rqs[i].address != NULL)
@@ -190,10 +192,10 @@ void test_mm(){
                 printf("ERROR!\n");
 
     // Free
+      sleep(1);
       printf("FREE\n");
     for (i = 0; i < rq; i++)
         if (mm_rqs[i].address != NULL)
             free(mm_rqs[i].address);
   }
-    printf("Test passed.\n");
 }
