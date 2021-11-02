@@ -16,40 +16,51 @@ static PCB *firstP = NULL;
 static uint32_t lastPID = 0;
 static PCB *halt = NULL;
 
-void printProcesses() { 
+void printProcesses() {
     PCB *aux = firstP;
     while (aux != NULL) {
-        ncPrint(aux->name);
-        ncPrint("  ");
+        char n = myStrlen(aux->name);
+        pipeWrite(1, aux->name, n);
+//        ncPrint(aux->name);
+//        ncPrint("  ");
+        pipeWrite(1, "  ", 2);
 
-        ncPrint("Pid:");
-        ncPrintDec(aux->pid);
-        ncPrint("  ");
+        pipeWrite(1,"Pid:", 4);
+        char * nro = numToStrK(aux->pid, 10, &n);
+//        ncPrintDec(aux->pid);
+//        ncPrint("  ");
+        pipeWrite(1, nro+n, MAX_NRO_BUFFER-(n+1));
+        free(nro);
+        pipeWrite(1, "  ", 2);
+        pipeWrite(1,"Prio:",5);
+        nro = numToStrK(aux->priority, 10, &n);
+        pipeWrite(1, nro+n, MAX_NRO_BUFFER-(n+1));
+        free(nro);
+        pipeWrite(1, "  ", 2);
 
-        ncPrint("Prio:");
-        ncPrintDec(aux->priority);
-        ncPrint("   ");
-
-        ncPrint("Background:");
+        pipeWrite(1,"Background:",11);
         if (aux->isBackground) {
-            ncPrint("Yes");
-        } else ncPrint("No");
-        ncPrint("  ");
+            pipeWrite(1,"Yes",3);
+        } else pipeWrite(1,"No",2);
+        pipeWrite(1, "  ", 2);
 
 
-        ncPrint("Rsp:");
-        ncPrintHex((uint64_t) aux->rsp);
-        ncPrint("  ");
+        pipeWrite(1,"Rsp:",4);
+        nro = numToStrK((uint64_t)aux->rsp, 16, &n);
+        pipeWrite(1, nro+n, MAX_NRO_BUFFER-(n+1));
+        free(nro);
+        pipeWrite(1, "  ", 2);
 
-        ncPrint("Rbp:");
-        ncPrintHex((uint64_t) aux->rbp);
-        ncPrint("  ");
+        pipeWrite(1,"Rbp:",4);
+        nro = numToStrK((uint64_t)aux->rbp, 10, &n);
+        pipeWrite(1, nro+n, MAX_NRO_BUFFER-(n+1));
+        free(nro);
+        pipeWrite(1, "  ", 2);
 
         if (aux->state == BLOCKED)
-            ncPrint("Blocked");
+            pipeWrite(1,"Blocked\n",8);
         else
-            ncPrint("Ready");
-        ncPrint("\n");
+            pipeWrite(1,"Ready\n",6);
         aux = aux->next;
     }
 

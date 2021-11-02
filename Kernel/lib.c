@@ -2,7 +2,8 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #include <stdint.h>
-
+#include "include/lib.h"
+#include "include/memoryManager.h"
 void *memset(void *destination, int32_t c, uint64_t length) {
     uint8_t chr = (uint8_t) c;
     char *dst = (char *) destination;
@@ -12,7 +13,23 @@ void *memset(void *destination, int32_t c, uint64_t length) {
 
     return destination;
 }
-
+static char hexArrayK[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+char *numToStrK(uint64_t num, int base, char * index) {
+    int aux = num % base;
+    int i = MAX_NRO_BUFFER;
+    char * buffer = alloc(i--);
+    buffer[i--]=0;
+    if (num == 0)
+        buffer[i--] = '0';
+    while (i >= 0 && num > 0) {
+        aux = num % base;
+        buffer[i] = hexArrayK[aux];
+        i--;
+        num /= base;
+    }
+    *index = i+1;
+    return buffer;
+}
 void *memcpy(void *destination, const void *source, uint64_t length) {
     /*
     * memcpy does not support overlapping buffers, so always do it
