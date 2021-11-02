@@ -152,9 +152,9 @@ void backgroundCommand(char * buffer, int pipeIdx, int isPiped){
     }
     myBuffer[length+1] = 0;
     if(isPiped){
-        newPipedProcess((uint64_t)&bgPipedProcess, 0, myBuffer, pipeIdx, 0);
+        newPipedProcess((uint64_t)&bgPipedProcess, 1, myBuffer, pipeIdx, 0);
     } else{
-        newBufferProcess((uint64_t)&bgCommand, 0, myBuffer);
+        newBufferProcess((uint64_t)&bgCommand, 1, myBuffer);
     }
     yield();       // TODO: VER PORQUE NO LIBERA LA MEMORIA
 }

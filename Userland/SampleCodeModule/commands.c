@@ -26,7 +26,7 @@ int isCommand(char* command, char* buffer){ //1 si son iguales, 0 si no
 		if(buffer[i]== '\n' || command[i]!=buffer[i]) 
 			return 0;
 	}
-	if (buffer[i] == '\n')
+	if (buffer[i] == '\n' || buffer[i] == 0)
 		return 1;
 	return 0;
 }
@@ -57,7 +57,7 @@ void getArguments(char* buffer, char* arg){
     int flag=1;
 
     for(int j=0; j < MAX_BUFFER && i < buffLen && flag; j++, i++ ){
-        if(buffer[i]=='\n'){
+        if(buffer[i]=='\n' || buffer[i]==0){
             arg[j]=0; //final del string
             flag=0;
         }else
@@ -336,7 +336,7 @@ void filterCommand(){
     char c;
 
         while((c=getChar())!=';'){
-                if(c=='a' || c=='e' || c=='i' || c=='o' || c=='u'){
+                if(!(c=='a' || c=='e' || c=='i' || c=='o' || c=='u')){
                     putChar(c);
                 }
         }
