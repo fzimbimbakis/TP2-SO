@@ -74,24 +74,14 @@ createStackContext:
 startFirstP:
     mov rdi, 0 ; pasaje de parametro
     	call irqDispatcher
-        ;mov rdi, 65; A
-        ;call ncPrintChar
+
 
     	call getCurrentSP;
-    	mov rsp , rax ;; cambio de contexto.
-    	;mov rdi, rax
-    	;call ncPrintHex
-        ;mov rdi, 66; B
-        ;call ncPrintChar
+    	mov rsp , rax
     	popState
-    	;pop rdi
-        ;call ncPrintHex
-    	;sti ;;set interrupts
     	iretq
 
 haltP:
-	;mov rdi, 43; +
-    ;call ncPrintChar
 	sti
 	hlt
 	jmp haltP

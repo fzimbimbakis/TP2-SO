@@ -41,14 +41,9 @@ void keyboard_handler() {
         capsLock = 1 - capsLock;
     else {
         char toPrint = keyTable[idx];
-        currentBuffer[bufferIdx++]=(capsLock && IS_LETTER(toPrint))?toPrint-'a'+'A':toPrint;
-        }
-//        unblockShell();
-//    ncPrint("Desbloqueo\n");
-//    ncPrintDec(getCurrentPCB()->pid);
-//    ncPrint("\n");
+        currentBuffer[bufferIdx++] = (capsLock && IS_LETTER(toPrint)) ? toPrint - 'a' + 'A' : toPrint;
+    }
     sem_post(getCurrentPCB()->inputPipe->sem_R);
-//    ncPrint("Paso\n");
 }
 
 void cleanBuffer() {

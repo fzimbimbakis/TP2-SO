@@ -2,7 +2,6 @@
 // PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #include <stdint.h>
-//#include <string.h>
 #include <lib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
@@ -107,9 +106,7 @@ int main() {
     ncClear();
     _cli();
     load_idt();
-    firstProcess((uint64_t)sampleCodeModuleAddress);
-    ncPrint("si llego aca es porque esta mal :( ");
-//	((EntryPoint)sampleCodeModuleAddress)();	// Aca se llama a userland
-	ncPrint("si llego aca es porque esta mal :(");
-	return 0;
+    firstProcess((uint64_t) sampleCodeModuleAddress);
+
+    return 0;
 }

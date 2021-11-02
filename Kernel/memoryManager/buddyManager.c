@@ -49,9 +49,9 @@ static unsigned fixsize(unsigned size) {
 }
 
 
-node* createSons(node* parent){
-    unsigned idx=parent->index*2+1;
-    parent->left=parent + idx; //si no funciona, probar sizeof(node)
+void createSons(node *parent) {
+    unsigned idx = parent->index * 2 + 1;
+    parent->left = parent + idx;
 
     if ((uint64_t) parent->left >= BUDDY_START) {
         return NULL;
@@ -61,7 +61,7 @@ node* createSons(node* parent){
     parent->left->memPtr = parent->memPtr;
     parent->left->state = EMPTY;
 
-    uint64_t aux=(uint64_t)(parent->memPtr)+(parent->size/2); //chequear
+    uint64_t aux = (uint64_t)(parent->memPtr) + (parent->size / 2);
 
 
     parent->right = parent + idx + 1;
@@ -91,21 +91,18 @@ void stateUpdate(node *actual) {
 
 void *allocRec(node *actual, unsigned size) {
 
-    //ncPrintHex(actual->memPtr);
 
     if (actual->state == FULL) {
         //ncPrint("FULL\n");
         return NULL;
     }
 
-        if(actual->left!=NULL || actual->right!=NULL){ //si tiene hijos es porque este nodo ya esta particionado
-            //entonces debo tratar de alocar dentro de ellos
-            //ncPrint("left-> ");
-            void* aux= allocRec(actual->left, size);
-            if(aux==NULL) {
-                //ncPrint("right-> ");
-                aux = allocRec(actual->right, size);
-            }
+    if (actual->left != NULL || actual->right != NULL) { //si tiene hijos es porque este nodo ya esta particionado
+        //entonces debo tratar de alocar dentro de ellos
+        void *aux = allocRec(actual->left, size);
+        if (aux == NULL) {
+            aux = allocRec(actual->right, size);
+        }
 
         stateUpdate(actual);
 
@@ -113,35 +110,27 @@ void *allocRec(node *actual, unsigned size) {
 
     } else {//no tiene hijos y no esta lleno => está vacío
 
-            if(size > actual->size){//no alcanza el espacio
-                //ncPrint("Size is not enough\n");
-                return NULL;
-            }
-
-            if(actual->size/2 >= size) {//entra en los hijos
-                createSons(actual);
-                //ncPrint("left-> ");
-                void* aux= allocRec(actual->left, size); //no hace falta llamar al right porque son iguales y estan vacios
-                stateUpdate(actual);
-                return aux;
-
-            }
-
-            //si llegamos aca es porque el size no entra en los hijos pero si en el actual
-            //ncPrintDec(actual->size);
-            //ncPrint("\n");
-
-            actual->state=FULL;
-            memoryAllocated+=size;
-            return actual->memPtr;
+        if (size > actual->size) {//no alcanza el espacio
+            return NULL;
         }
+
+        if (actual->size / 2 >= size) {//entra en los hijos
+            createSons(actual);
+            void *aux = allocRec(actual->left, size); //no hace falta llamar al right porque son iguales y estan vacios
+            stateUpdate(actual);
+            return aux;
+
+        }
+        //si llegamos aca es porque el size no entra en los hijos pero si en el actual
+        actual->state = FULL;
+        memoryAllocated += size;
+        return actual->memPtr;
+    }
 
 }
 
 
-void * alloc(unsigned size){
-
-    //ncPrintHex(root->memPtr);
+void *alloc(unsigned size) {
 
     if (size > root->size) {
         ncPrint("Alloc fail: Illegal size.\n");
@@ -151,21 +140,11 @@ void * alloc(unsigned size){
     if (size < MIN_ALLOC)
         size = MIN_ALLOC;
 
-    //ncPrint("Requested: ");
-    //ncPrintDec(size);
-    //ncPrint("\n");
-    if(!IS_POWER_OF_2(size)){
-        size=fixsize(size);
+    if (!IS_POWER_OF_2(size)) {
+        size = fixsize(size);
     }
-//    ncPrint("Taken: ");
-//    ncPrintDec(size);
-//    ncPrint("\n");
 
-    //ncPrint("Root-> ");
-    void * puntero = allocRec(root, size);
-    //ncPrint("puntero: ");
-    //ncPrintHex(puntero);
-    //ncPrint("\n");
+    void *puntero = allocRec(root, size);
     return puntero;
 }
 
@@ -178,8 +157,7 @@ int freeRec(node *actual, void *block) {
             ret = freeRec(actual->left, block);
 
         } else {
-            //ncPrint("right-> ");
-            ret=freeRec(actual->right, block);
+            ret = freeRec(actual->right, block);
         }
 
         stateUpdate(actual);
@@ -192,9 +170,8 @@ int freeRec(node *actual, void *block) {
         return ret;
 
 
-    }else if(actual->state==FULL){
-        if(actual->memPtr==block) {
-            //ncPrint("Libero un bloque FULL\n");
+    } else if (actual->state == FULL) {
+        if (actual->memPtr == block) {
             actual->state = EMPTY;
             memoryAllocated -= actual->size;
             return 0;

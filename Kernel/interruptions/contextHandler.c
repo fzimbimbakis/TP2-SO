@@ -82,47 +82,14 @@ void yield() {
     return;
 }
 
-//void unblockShell(){
-//    PCB* aux=currentProcess;
-//    while(aux->pid!=0){
-//        aux=aux->next;
-//        //ncPrintDec(aux->pid);
-//    }
-////    ncPrint("Desbloqueo shell\n");
-//    aux->state=READY;
-//}
 
-//int blockProcessPID(char pid){
-//    PCB * aux = firstP;
-//    while(aux!=NULL){
-//        if(aux->pid==pid){
-//            aux->state=BLOCKED;
-//            if(currentProcess==aux)
-//                int20();
-//            return 0;
-//        }
-//        aux = aux->next;
-//    }
-//    return -1;
-//}
-//int unblockProcessPID(char pid){
-//    PCB * aux = firstP;
-//    while(aux!=NULL){
-//        if(aux->pid==pid){
-//            aux->state=READY;
-//            return 0;
-//        }
-//        aux = aux->next;
-//    }
-//    return -1;
-//}
-int unblockProcessPID(uint32_t pid){
-    PCB * aux = firstP;
-    while(aux!=NULL){
-        if(aux->pid==pid){
-            aux->state=READY;
-            if(currentProcess==halt){
-                currentProcess=aux;
+int unblockProcessPID(uint32_t pid) {
+    PCB *aux = firstP;
+    while (aux != NULL) {
+        if (aux->pid == pid) {
+            aux->state = READY;
+            if (currentProcess == halt) {
+                currentProcess = aux;
                 updateStack();
             }
 
@@ -133,15 +100,14 @@ int unblockProcessPID(uint32_t pid){
     return -1;
 }
 
-int blockProcessPID(uint32_t pid){
-    //ncPrint("BLOCK\n");
-    PCB* aux=firstP;
-    while(aux!=NULL){
-        //ncPrintDec(aux->pid);
-        //ncPrint(" AUX\n");
-        if(aux->pid==pid){
-            aux->state=BLOCKED;
-            if(currentProcess==aux)
+int blockProcessPID(uint32_t pid) {
+
+    PCB *aux = firstP;
+    while (aux != NULL) {
+
+        if (aux->pid == pid) {
+            aux->state = BLOCKED;
+            if (currentProcess == aux)
                 int20();
 
             return 0;
@@ -153,12 +119,8 @@ int blockProcessPID(uint32_t pid){
     return -1;
 }
 
-void blockProcess(){
-    currentProcess->state=BLOCKED;
-//    ncPrint("Bloqueo shell\n");
-    //ncPrintDec(currentProcess->pid);
-    //ncPrint("\n");
-    
+void blockProcess() {
+    currentProcess->state = BLOCKED;
     int20();
     return;
 }
@@ -182,17 +144,12 @@ void exit() {
         free(currentProcess);
         currentProcess = firstP;
     }
-//    ncPrint("prehandl\n");
     updateStack();
 }
 
 
-int kill(uint32_t pid){
-    //ncPrintDec(pid);
-    //ncPrint(" KILL\n");
-
-
-    if(currentProcess->pid==pid)
+int kill(uint32_t pid) {
+    if (currentProcess->pid == pid)
         exit();
 
     PCB *aux = firstP;
@@ -222,7 +179,6 @@ void killProcess(PCB *process) {
 
 
 void handler() {
-//    ncPrintChar('5');
     timer_handler();
     if (currentProcess != halt) {
         uint32_t currentPid = currentProcess->pid;
@@ -250,8 +206,6 @@ void addProcessToList(PCB *newP) {
         newP->prev = 0;
         firstP = newP;
         currentProcess = newP;
-
-        //ncPrintChar('3');
         return;
     }
 
@@ -282,19 +236,18 @@ char newProcess(uint64_t fPtr, char isBackgroud, char *arg1, int arg2,
     return (newP->pid);
 }
 
-uint64_t * firstProcess(uint64_t fPtr){ //deberia ser void????
-    //ncPrintChar('1');
-    uint64_t * rbp = alloc(1024*sizeof (uint64_t));
-    PCB* first = alloc(sizeof (PCB));
-    first->rbp=rbp;
-    first->pid=lastPID++;
-    first->rsp= createStackContext((uint64_t) &rbp[1023], fPtr, NULL, -1, NULL);
+uint64_t *firstProcess(uint64_t fPtr) { //deberia ser void????
 
-    first->priority=MAX_PRIORITY;
-    first->next=0;
-    first->prev=0;
-    myStrcpy( first->name, "Shell");
-//    ncPrint(first->name);
+    uint64_t *rbp = alloc(1024 * sizeof(uint64_t));
+    PCB *first = alloc(sizeof(PCB));
+    first->rbp = rbp;
+    first->pid = lastPID++;
+    first->rsp = createStackContext((uint64_t) & rbp[1023], fPtr, NULL, -1, NULL);
+
+    first->priority = MAX_PRIORITY;
+    first->next = 0;
+    first->prev = 0;
+    myStrcpy(first->name, "Shell");
     initialPipes(first);
     uint64_t *rbpHalt = alloc(1024 * sizeof(uint64_t));
     halt = alloc(sizeof(PCB));
@@ -307,10 +260,7 @@ uint64_t * firstProcess(uint64_t fPtr){ //deberia ser void????
     halt->prev = 0;
 
     addProcessToList(first);
-//    ncPrintChar('4');
-    //newProcess(&haltP, MAX_PRIORITY); //creo proceso halt
     startFirstP();
-    ncPrintChar('F');   //aca no dberia llegar
     return 0;
 };
 

@@ -15,18 +15,10 @@ void setReverseSide(pipe_t *myPipe, pipe_t *reverse_side) {
     myPipe->reverse_side = reverse_side;
 }
 
-void initialPipes(PCB * pcb){
+void initialPipes(PCB *pcb) {
 
-    // Creo estructuras de pipes
-//    char * InBuffer = alloc(sizeof(char)*PIPE_SIZE);
-//    char * OutBuffer = alloc(sizeof(char)*PIPE_SIZE);
-    // Semaforos de std
-//    int InSem_R = sem_create(0);
-//    int InSem_W = sem_create(0);
-//    int OutSem_R = sem_create(0);
-//    int OutSem_W = sem_create(0);
-    char * sem = alloc(3 * sizeof(char));
-    sem[0] = lastID+1;
+    char *sem = alloc(3 * sizeof(char));
+    sem[0] = lastID + 1;
     sem[1] = 'R';
     sem[2] = 0;
     if (sem_create(sem, 0) == -1) {
@@ -34,12 +26,11 @@ void initialPipes(PCB * pcb){
         ncPrint("pipeOpen --> first sem_create returned -1.");
         return;
     }
-    pipe_t* stdin = newPipe(READ, lastID++, NULL, 0, 0, sem, 0, NULL, NULL, NULL);
-    pipe_t* stdout = newPipe(WRITE, lastID++, NULL, 0, 0, sem, 0, stdin, NULL, NULL);
-//    pipe_t * stderr = newPipe(WRITE, lastID++, NULL, 0, 0, 0, 0, stdout);
+    pipe_t *stdin = newPipe(READ, lastID++, NULL, 0, 0, sem, 0, NULL, NULL, NULL);
+    pipe_t *stdout = newPipe(WRITE, lastID++, NULL, 0, 0, sem, 0, stdin, NULL, NULL);
+
     setReverseSide(stdout, stdin);
     setReverseSide(stdin, stdout);
-//    firstPipe = stdout;
     inputP = stdin;
     outputP = stdout;
     pcb->inputPipe = stdin;
@@ -66,10 +57,9 @@ pipe_t *newPipe(char type, int id, char *buffer, int *nRead, int *nWrite, char *
     return pipe;
 }
 
-int pipeOpen(int * array){
-//    ncPrint("pipeOpen\n");
-    char * Rid = alloc(3 * sizeof(char));
-    Rid[0] = lastID+1;
+int pipeOpen(int *array) {
+    char *Rid = alloc(3 * sizeof(char));
+    Rid[0] = lastID + 1;
     Rid[1] = 'R';
     Rid[2] = 0;
     if (sem_create(Rid, 0) == -1) {
@@ -77,9 +67,8 @@ int pipeOpen(int * array){
         ncPrint("pipeOpen --> first sem_create returned -1.");
         return -1;
     }
-//    ncPrint("despues semCreateR\n");
-    char * Wid = alloc(3 * sizeof(char));
-    Wid[0] = lastID+1;
+    char *Wid = alloc(3 * sizeof(char));
+    Wid[0] = lastID + 1;
     Wid[1] = 'W';
     Wid[2] = 0;
     if (sem_create(Wid, 0) == -1) {
@@ -88,7 +77,6 @@ int pipeOpen(int * array){
         ncPrint("pipeOpen --> second sem_create returned -1.");
         return -1;
     }
-//    ncPrint("despues semCreatew\n");
 
     char *buffer = alloc(PIPE_SIZE * sizeof(char));
     if (buffer == 0) {
@@ -107,9 +95,9 @@ int pipeOpen(int * array){
     *rWaiting = 0;
     *wWaiting = 0;
 
-//    ncPrint("antes de newPipe\n");
-    pipe_t* readPipe = newPipe(READ, lastID++, buffer, nRead, nWrite, Rid, Wid, firstPipe, rWaiting, wWaiting);
-    if (readPipe == NULL){
+
+    pipe_t *readPipe = newPipe(READ, lastID++, buffer, nRead, nWrite, Rid, Wid, firstPipe, rWaiting, wWaiting);
+    if (readPipe == NULL) {
         free(rWaiting);
         free(wWaiting);
         free(nWrite);
@@ -126,7 +114,6 @@ int pipeOpen(int * array){
         ncPrint("No se pudo crear el pipe.");
         return -1;
     }
-//    ncPrint("despues de newPipe\n");
     firstPipe = writePipe;
     setReverseSide(readPipe, writePipe);
     setReverseSide(writePipe, readPipe);
@@ -136,11 +123,11 @@ int pipeOpen(int * array){
     return 0;
 }
 
-int pipeWrite(int fd, const char * buffer, int count){
-//    ncPrint("A");
-    pipe_t * aux;
-//    ncPrint("B");
-    if (fd==1) {
+int pipeWrite(int fd, const char *buffer, int count) {
+
+    pipe_t *aux;
+
+    if (fd == 1) {
         aux = getCurrentPCB()->outputPipe;
         if (aux == NULL || aux->type == READ) {//porl
             ncPrint("Error en pipe Write. Pipe no existe o es de lectura.");
@@ -166,10 +153,9 @@ int pipeWrite(int fd, const char * buffer, int count){
         }
     }
     for (int i = 0; i < count; ++i) {
-//        ncPrint("i: ");
-//        ncPrintDec(i);
-//        ncPrintChar(' ');
-        while ((*(aux->nWrite)) == (*(aux->nRead)) + PIPE_SIZE) {      // TODO:Si otro write me gana, se me solapa lo que escribo
+
+        while ((*(aux->nWrite)) ==
+               (*(aux->nRead)) + PIPE_SIZE) {
             if ((*(aux->read_waiting)) > 0) {
                 for (int j = 0; j < (*(aux->read_waiting)); ++j)
                     sem_post(aux->sem_R);
@@ -247,16 +233,14 @@ int pipeClose(int fd) {
 
 }
 
-int pipeRead(int fd, char * buffer, int count){
-//    ncPrint("R1\n");
-    pipe_t * aux;
-    if(fd==0){
+int pipeRead(int fd, char *buffer, int count) {
+
+    pipe_t *aux;
+    if (fd == 0) {
         aux = getCurrentPCB()->inputPipe;
         if (aux->buffer == NULL) {
             cleanBuffer();
             while (getEndBuffer() < count) {
-//                ncPrint("Se bloquea\n");
-//                blockProcess();
                 sem_wait(aux->sem_R);
             }
             char *inBuffer = getBuffer();
@@ -280,21 +264,20 @@ int pipeRead(int fd, char * buffer, int count){
             return -1;
         }
     }
-//    ncPrint("SALIO\n");
-        for (int i = 0; i < count; ++i) {
-            while ((*(aux->nRead)) == (*(aux->nWrite))){      // TODO:Si otro write me gana, se me solapa lo que escribo
-                if((*(aux->write_waiting))>0) {
-                    for (int j = 0; j < (*(aux->write_waiting)); ++j)
-                        sem_post(aux->sem_W);
-                    (*(aux->write_waiting)) = 0;
-                }
-                (*(aux->read_waiting))++;
-                sem_wait(aux->sem_R);
+
+    for (int i = 0; i < count; ++i) {
+        while ((*(aux->nRead)) == (*(aux->nWrite))) {
+            if ((*(aux->write_waiting)) > 0) {
+                for (int j = 0; j < (*(aux->write_waiting)); ++j)
+                    sem_post(aux->sem_W);
+                (*(aux->write_waiting)) = 0;
             }
-//            ncPrintChar(aux->buffer[(*(aux->nRead)) % PIPE_SIZE]);
-//            ncPrintChar(' ');
-            buffer[i] = aux->buffer[(*(aux->nRead))++ % PIPE_SIZE];
+            (*(aux->read_waiting))++;
+            sem_wait(aux->sem_R);
         }
+
+        buffer[i] = aux->buffer[(*(aux->nRead))++ % PIPE_SIZE];
+    }
 
     if ((*(aux->write_waiting)) > 0) {
         for (int j = 0; j < (*(aux->write_waiting)); ++j)

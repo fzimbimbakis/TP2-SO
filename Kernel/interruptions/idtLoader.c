@@ -35,9 +35,8 @@ void load_idt() {
     setup_IDT_entry(0x80, (uint64_t) & _softwareHandler);
 
 
-	// Habilita solo teclado
-	picMasterMask(0xFC);  // 1111 1101
-	picSlaveMask(0xFF);
+    picMasterMask(0xFC);  // 1111 1100
+    picSlaveMask(0xFF);
 }
 
 static void setup_IDT_entry(int index, uint64_t offset) {

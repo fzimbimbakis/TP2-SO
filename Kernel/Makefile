@@ -1,6 +1,5 @@
 include Makefile.inc
 
-#MEM_MANAGER=buddy # buddy o mm_manager
 KERNEL=kernel.bin
 SOURCES=$(wildcard *.c)
 SOURCES_INTERRUPTIONS=$(wildcard interruptions/*.c)

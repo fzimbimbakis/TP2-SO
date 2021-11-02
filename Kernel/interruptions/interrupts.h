@@ -1,9 +1,4 @@
- /*
- *   interrupts.h
- *
- *  Created on: Apr 18, 2010
- *      Author: anizzomc
- */
+
 
 #ifndef INTERRUPS_H_
 #define INTERRUPS_H_
