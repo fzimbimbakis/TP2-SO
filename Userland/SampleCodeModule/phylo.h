@@ -1,5 +1,6 @@
 #ifndef TP2_SO_PHYLO_H
 #define TP2_SO_PHYLO_H
+
 #include "inttypes.h"
 
 #define EATING 0
@@ -11,22 +12,33 @@
 #define LEFT ((p->idx + currentPhylos-1) % currentPhylos)
 #define RIGHT ((p->idx + 1) % currentPhylos)
 
-typedef struct phylo{
+typedef struct phylo {
     int pid;
-    char* sem;
+    char *sem;
     int idx;
     int state;
-}phylo;
+} phylo;
 
 void phyloCommand();
+
 void think();
+
 void eat();
+
 void takeFork();
+
 void putFork();
+
 void addPhylo(uint32_t pid);
+
 void printerProcess();
+
 void removePhylo();
+
 void phyloCycle();
+
 void killPhylos();
+
 void test();
+
 #endif //TP2_SO_PHYLO_H

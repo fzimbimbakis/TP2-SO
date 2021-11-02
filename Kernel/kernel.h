@@ -1,1 +1,1 @@
-void * getStackBase();
+void *getStackBase();

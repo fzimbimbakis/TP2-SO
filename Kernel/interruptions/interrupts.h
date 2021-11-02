@@ -11,13 +11,21 @@
 #include <idtLoader.h>
 
 void _irq00Handler(void);
+
 void _irq01Handler(void);
+
 void _irq02Handler(void);
+
 void _irq03Handler(void);
+
 void _irq04Handler(void);
+
 void _irq05Handler(void);
+
 void _softwareHandler(void);
+
 void _exception0Handler(void);
+
 void _exception6Handler(void);
 
 void _cli(void);

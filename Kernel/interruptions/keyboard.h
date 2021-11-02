@@ -3,10 +3,14 @@
 
 
 void keyboard_handler();
+
 int _keyHandler();
+
 void cleanBuffer();
+
 int getEndBuffer();
-char * getBuffer();
+
+char *getBuffer();
 
 
 #endif

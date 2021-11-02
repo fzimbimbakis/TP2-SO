@@ -1,3 +1,6 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 #include "../include/naiveConsole.h"
 #include <interrupts.h>
 #include <keyboard.h>
@@ -9,14 +12,20 @@
 #include "../pipes.h"
 
 #define RED 4
+
 typedef int (*EntryPoint)(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int);
 
-void write(unsigned int fd, const char * buffer, unsigned int count);
-void read(unsigned int fd, char * buffer, unsigned int count);
+void write(unsigned int fd, const char *buffer, unsigned int count);
+
+void read(unsigned int fd, char *buffer, unsigned int count);
+
 int accessClock(unsigned int mode);
-void memoryFree(void * ptr);
-void * memoryAlloc(unsigned size);
-unsigned * memoryInfo();
+
+void memoryFree(void *ptr);
+
+void *memoryAlloc(unsigned size);
+
+unsigned *memoryInfo();
 
 //EntryPoint functionPtrs[] = {&write, &read, &accessClock, &memoryAlloc, &memoryFree, &memoryInfo, &newProcess, &exit, &_hlt, &blockProcess};
 EntryPoint functionPtrs[] = {(EntryPoint)&write, (EntryPoint)&read, (EntryPoint)&accessClock, (EntryPoint)&memoryAlloc, (EntryPoint)&memoryFree, (EntryPoint)&memoryInfo,
@@ -27,21 +36,21 @@ EntryPoint functionPtrs[] = {(EntryPoint)&write, (EntryPoint)&read, (EntryPoint)
 //                             &newProcess, &exit, &blockProcessPID, &yield, &kill, &printProcesses,
 //                             &getPid, &changePriority, &sem_create, &sem_wait, &sem_post, &sem_close,&sem_info, NULL,NULL, &unblockProcessPID, &sleep };
 
-int int_80(unsigned int arg1, unsigned int arg2, unsigned int arg3, unsigned int arg4, unsigned int arg5, int sysCall){
-    int ret=functionPtrs[sysCall](arg1, arg2, arg3, arg4, arg5);
+int int_80(unsigned int arg1, unsigned int arg2, unsigned int arg3, unsigned int arg4, unsigned int arg5, int sysCall) {
+    int ret = functionPtrs[sysCall](arg1, arg2, arg3, arg4, arg5);
     return ret;
 }
 
-void * memoryAlloc(unsigned size){
+void *memoryAlloc(unsigned size) {
     return alloc(size);
 }
 
-void memoryFree(void * ptr){
+void memoryFree(void *ptr) {
     free(ptr);
 }
 
-unsigned * memoryInfo(){
-    unsigned * array = memoryInfoMM();
+unsigned *memoryInfo() {
+    unsigned *array = memoryInfoMM();
     return array;
 }
 

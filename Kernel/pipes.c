@@ -1,13 +1,17 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
+
 
 
 #include "pipes.h"
 
 
-static pipe_t * firstPipe;
+static pipe_t *firstPipe;
 static int lastID = 0;
-static pipe_t * inputP;
-static pipe_t * outputP;
-void setReverseSide(pipe_t * myPipe, pipe_t * reverse_side){
+static pipe_t *inputP;
+static pipe_t *outputP;
+
+void setReverseSide(pipe_t *myPipe, pipe_t *reverse_side) {
     myPipe->reverse_side = reverse_side;
 }
 
@@ -43,9 +47,9 @@ void initialPipes(PCB * pcb){
 }
 
 
-
-pipe_t * newPipe(char type, int id, char * buffer, int * nRead, int * nWrite, char * sem_R, char * sem_W, pipe_t * next, int * read_waiting, int * write_waiting){
-    pipe_t* pipe = alloc(sizeof(pipe_t));
+pipe_t *newPipe(char type, int id, char *buffer, int *nRead, int *nWrite, char *sem_R, char *sem_W, pipe_t *next,
+                int *read_waiting, int *write_waiting) {
+    pipe_t *pipe = alloc(sizeof(pipe_t));
     if (pipe == NULL)
         return NULL;
     pipe->id = id;
@@ -56,7 +60,7 @@ pipe_t * newPipe(char type, int id, char * buffer, int * nRead, int * nWrite, ch
     pipe->sem_R = sem_R;
     pipe->read_waiting = read_waiting;
     pipe->sem_W = sem_W;
-    pipe->write_waiting= write_waiting;
+    pipe->write_waiting = write_waiting;
     pipe->next = next;
     pipe->reverse_side = NULL;
     return pipe;
@@ -86,20 +90,20 @@ int pipeOpen(int * array){
     }
 //    ncPrint("despues semCreatew\n");
 
-    char* buffer = alloc(PIPE_SIZE * sizeof (char));
-    if(buffer==0){
+    char *buffer = alloc(PIPE_SIZE * sizeof(char));
+    if (buffer == 0) {
         free(Wid);
         free(Rid);
         return -1;
     }
 
-    int * nWrite = alloc(sizeof(int));
-    int * nRead = alloc(sizeof(int));
+    int *nWrite = alloc(sizeof(int));
+    int *nRead = alloc(sizeof(int));
     *nRead = 0;
     *nWrite = 0;
 
-    int * rWaiting = alloc(sizeof(int));
-    int * wWaiting = alloc(sizeof(int));
+    int *rWaiting = alloc(sizeof(int));
+    int *wWaiting = alloc(sizeof(int));
     *rWaiting = 0;
     *wWaiting = 0;
 
@@ -116,8 +120,8 @@ int pipeOpen(int * array){
         ncPrint("No se pudo crear el pipe.");
         return -1;
     }
-    pipe_t* writePipe = newPipe(WRITE, lastID++, buffer, nRead, nWrite, Rid, Wid, readPipe, rWaiting, wWaiting);
-    if (writePipe == NULL){
+    pipe_t *writePipe = newPipe(WRITE, lastID++, buffer, nRead, nWrite, Rid, Wid, readPipe, rWaiting, wWaiting);
+    if (writePipe == NULL) {
         pipeClose(readPipe->id);
         ncPrint("No se pudo crear el pipe.");
         return -1;
@@ -126,8 +130,8 @@ int pipeOpen(int * array){
     firstPipe = writePipe;
     setReverseSide(readPipe, writePipe);
     setReverseSide(writePipe, readPipe);
-    array[0]=readPipe->id;
-    array[1]=writePipe->id;
+    array[0] = readPipe->id;
+    array[1] = writePipe->id;
 
     return 0;
 }
@@ -138,18 +142,17 @@ int pipeWrite(int fd, const char * buffer, int count){
 //    ncPrint("B");
     if (fd==1) {
         aux = getCurrentPCB()->outputPipe;
-        if(aux==NULL || aux->type==READ) {//porl
+        if (aux == NULL || aux->type == READ) {//porl
             ncPrint("Error en pipe Write. Pipe no existe o es de lectura.");
             return -1;
         }
-        if(aux->buffer==NULL){      // Salida estandar posta
+        if (aux->buffer == NULL) {      // Salida estandar posta
             for (int i = 0; i < count; ++i) {
                 ncPrintChar(buffer[i]);
             }
             return 0;
         }
-    }
-    else {
+    } else {
         aux = firstPipe;
         while (aux != NULL) {
             if (aux->id == fd)
@@ -185,7 +188,7 @@ int pipeWrite(int fd, const char * buffer, int count){
     return 0;
 }
 
-void freePipe(pipe_t * pipe){       // NO LIBERA LA ESTRUCTURA DEL PIPE!!!!!
+void freePipe(pipe_t *pipe) {       // NO LIBERA LA ESTRUCTURA DEL PIPE!!!!!
     sem_close(pipe->sem_R);
     sem_close(pipe->sem_W);
     free(pipe->sem_R);
@@ -197,20 +200,20 @@ void freePipe(pipe_t * pipe){       // NO LIBERA LA ESTRUCTURA DEL PIPE!!!!!
     free(pipe->read_waiting);
 }
 
-int pipeClose(int fd){
-    if(firstPipe==NULL) {
+int pipeClose(int fd) {
+    if (firstPipe == NULL) {
         ncPrint("Pipe not found in pipe close.\n");
         return -1;
     }
-    pipe_t * aux = firstPipe->next;
-    pipe_t * prev = firstPipe;
-    if(prev->id==fd){
-        if(prev->reverse_side==NULL){
+    pipe_t *aux = firstPipe->next;
+    pipe_t *prev = firstPipe;
+    if (prev->id == fd) {
+        if (prev->reverse_side == NULL) {
             freePipe(prev);
             firstPipe = prev->next;
             free(prev);
             return 0;
-        } else{
+        } else {
             prev->reverse_side->reverse_side = NULL;
             firstPipe = prev->next;
             free(prev);
@@ -218,25 +221,25 @@ int pipeClose(int fd){
         }
 
     }
-    while (aux!=NULL){
-        if(aux->id==fd)
+    while (aux != NULL) {
+        if (aux->id == fd)
             break;
         prev = aux;
         aux = aux->next;
     }
-    if(aux==NULL) {
+    if (aux == NULL) {
         ncPrint("Pipe not found in pipe close.\n");
         return -1;
     }
 
-    if(aux->reverse_side == NULL){
-        prev->next=aux->next;
+    if (aux->reverse_side == NULL) {
+        prev->next = aux->next;
         freePipe(aux);
         free(aux);
         return 0;
-    } else{
-        prev->next=aux->next;
-        aux->reverse_side->reverse_side=NULL;
+    } else {
+        prev->next = aux->next;
+        aux->reverse_side->reverse_side = NULL;
         free(aux);
         return 0;
     }
@@ -249,7 +252,7 @@ int pipeRead(int fd, char * buffer, int count){
     pipe_t * aux;
     if(fd==0){
         aux = getCurrentPCB()->inputPipe;
-        if(aux->buffer==NULL){
+        if (aux->buffer == NULL) {
             cleanBuffer();
             while (getEndBuffer() < count) {
 //                ncPrint("Se bloquea\n");
@@ -293,35 +296,35 @@ int pipeRead(int fd, char * buffer, int count){
             buffer[i] = aux->buffer[(*(aux->nRead))++ % PIPE_SIZE];
         }
 
-        if((*(aux->write_waiting))>0) {
-            for (int j = 0; j < (*(aux->write_waiting)); ++j)
-                sem_post(aux->sem_W);
-            (*(aux->write_waiting)) = 0;
-        }
+    if ((*(aux->write_waiting)) > 0) {
+        for (int j = 0; j < (*(aux->write_waiting)); ++j)
+            sem_post(aux->sem_W);
+        (*(aux->write_waiting)) = 0;
+    }
     return 0;
 }
 
-int dup(char oldId, char id){
-    pipe_t * aux = firstPipe;
-    while (aux!=NULL){
-        if(aux->id==id)
+int dup(char oldId, char id) {
+    pipe_t *aux = firstPipe;
+    while (aux != NULL) {
+        if (aux->id == id)
             break;
         aux = aux->next;
     }
-    if(aux==NULL) {
+    if (aux == NULL) {
         ncPrint("Error pipe not found in dup\n");
         return -1;
     }
-    if(oldId==0){
-        if(aux->type!=READ) {
+    if (oldId == 0) {
+        if (aux->type != READ) {
             ncPrint("Pipe not same type.\n");
             return -1;
         }
         getCurrentPCB()->inputPipe = aux;
         return 0;
     }
-    if(oldId==1){
-        if(aux->type!=WRITE) {
+    if (oldId == 1) {
+        if (aux->type != WRITE) {
             ncPrint("Pipe not same type.\n");
             return -1;
         }
@@ -331,15 +334,15 @@ int dup(char oldId, char id){
     return -1;
 }
 
-pipe_info_wrapper * infoPipe(int * length){
+pipe_info_wrapper *infoPipe(int *length) {
     *length = 2;
-    pipe_t * aux = firstPipe;
-    while (aux!=NULL){
+    pipe_t *aux = firstPipe;
+    while (aux != NULL) {
         (*length)++;
         aux = aux->next;
     }
     aux = firstPipe;
-    pipe_info_wrapper * info = alloc(sizeof(pipe_info_wrapper)*(*length));
+    pipe_info_wrapper *info = alloc(sizeof(pipe_info_wrapper) * (*length));
 
 
     // stdin pipe
@@ -353,9 +356,8 @@ pipe_info_wrapper * infoPipe(int * length){
     info[1].semR = 0;
 
     // other pipes
-    aux = firstPipe;
     int i = 2;
-    while (aux!=NULL){
+    while (aux != NULL) {
         info[i].id = aux->id;
         info[i].semR = getSemInfo(aux->sem_R);
         info[i++].semW = getSemInfo(aux->sem_W);

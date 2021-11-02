@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 
-uint64_t* _createStack( uint64_t sp, void* fPtr);
+uint64_t *_createStack(uint64_t sp, void *fPtr);
 
 void startFirstP();
 
