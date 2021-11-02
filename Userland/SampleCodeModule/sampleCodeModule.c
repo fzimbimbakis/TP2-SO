@@ -54,7 +54,7 @@ int main() {
 
 		}
 		putChar('\n');
-		buffer[(idx)++]='\n';
+//		buffer[(idx)++]='\n';
 		buffer[(idx)++]=0;
 		idx=0;
         if(!isBackground){

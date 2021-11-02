@@ -126,14 +126,14 @@ char getChar(){
 	return ret;
 }
 
-int newPipedProcess(uint64_t fPtr, char priority, char * buffer, int pipeId, char * sem_id){
-	return sysNewP(fPtr , priority, buffer, pipeId, sem_id);  // No devuelve nada.
+int newPipedProcess(uint64_t fPtr, char isBackground, char * buffer, int pipeId, char * sem_id){
+	return sysNewP(fPtr , isBackground, buffer, pipeId, sem_id);  // No devuelve nada.
 }
-int newBufferProcess(uint64_t fPtr, char priority, char * buffer){
-    return sysNewP(fPtr , priority, buffer, -1, 0);  // No devuelve nada.
+int newBufferProcess(uint64_t fPtr, char isBackground, char * buffer){
+    return sysNewP(fPtr , isBackground, buffer, -1, 0);  // No devuelve nada.
 }
-int newP(uint64_t fPtr){
-    return sysNewP(fPtr , 0, NULL, -1, 0);  // No devuelve nada.
+int newP(uint64_t fPtr, char * name){
+    return sysNewP(fPtr , 0, name, -1, 0);  // No devuelve nada.
 }
 
 

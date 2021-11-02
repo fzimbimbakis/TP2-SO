@@ -6,11 +6,14 @@
 #include "../pipes.h"
 #define MAX_PRIORITY 2
 #define SHELL 0
+#define NAME_LENGTH 20
 
 enum State {READY, BLOCKED,DEAD};
 
 typedef struct PCB{
     uint32_t pid;
+    char isBackground;
+    char name[NAME_LENGTH];
     enum State state;
     uint64_t* rsp;
     uint64_t* rbp;

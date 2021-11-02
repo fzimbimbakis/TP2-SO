@@ -121,8 +121,8 @@ void test_sync(){
         printf("CREATING PROCESSES...(WITH SEM)\n");
 
         for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-            newP((uint64_t)&incSemA);
-            newP((uint64_t)&incSemB);
+            newP((uint64_t)&incSemA, "testSem");
+            newP((uint64_t)&incSemB, "testSem");
         }
     }
     for (int j = 0; j < TOTAL_PAIR_PROCESSES; ++j) {
@@ -143,8 +143,8 @@ void test_no_sync(){
     if ((i = my_sem_open(AUX_SEM, 0)))
         printf("ERROR OPENING SEM: %d\n", i);
     for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-        newP((uint64_t)&incNoSemA);
-        newP((uint64_t)&incNoSemB);
+        newP((uint64_t)&incNoSemA, "testSem nosync");
+        newP((uint64_t)&incNoSemB, "testSem nosync");
     }
     for (int j = 0; j < TOTAL_PAIR_PROCESSES; ++j) {
         my_sem_wait(AUX_SEM);

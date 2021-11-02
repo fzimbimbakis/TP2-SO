@@ -16,20 +16,42 @@ static PCB* halt=NULL;
 void printProcesses(){ //TODO: agregar nombre a los procesos y background/foreground
     PCB* aux=firstP;
     while(aux != NULL){
-        ncPrint("PID: ");
+
+        ncPrint(aux->name);
+        ncPrint("  ");
+
+        ncPrint("Pid:");
         ncPrintDec(aux->pid);
-        ncPrint("\t");
-        ncPrint("Priority: ");
+        ncPrint("  ");
+
+        ncPrint("Prio:");
         ncPrintDec(aux->priority);
-        ncPrint("\t");
-        ncPrint("RSP: ");
-        ncPrintDec((uint64_t)aux->rsp);
-        ncPrint("\t");
-        ncPrint("RBP: ");
-        ncPrintDec((uint64_t)aux->rbp);
+        ncPrint("   ");
+
+        ncPrint("Background:");
+        if(aux->isBackground) {
+            ncPrint("Yes");
+        }
+        else ncPrint("No");
+        ncPrint("  ");
+
+
+        ncPrint("Rsp:");
+        ncPrintHex((uint64_t)aux->rsp);
+        ncPrint("  ");
+
+        ncPrint("Rbp:");
+        ncPrintHex((uint64_t)aux->rbp);
+        ncPrint("  ");
+
+        if(aux->state==BLOCKED)
+            ncPrint("Blocked");
+        else
+            ncPrint("Ready");
         ncPrint("\n");
         aux=aux->next;
     }
+
 }
 
 void updateRSP(uint64_t* sp){
@@ -255,14 +277,16 @@ void addProcessToList(PCB* newP){
 
 
 
-char newProcess(uint64_t fPtr, char priority, char * arg1, int arg2, char * arg3) {  // Los procesos pueden recibir tres argumentos mas. Son un char *, int e int.
+char newProcess(uint64_t fPtr, char isBackgroud, char * arg1, int arg2, char * arg3) {  // Los procesos pueden recibir tres argumentos mas. Son un char *, int e int.
     uint64_t *rbp = alloc(1024 * sizeof(uint64_t));
     PCB *newP = alloc(sizeof(PCB));
     newP->rbp=rbp;
     newP->pid = lastPID++;
     newP->prev=0;
     newP->rsp = createStackContext(((uint64_t) & rbp[1023]), fPtr, arg1, arg2, arg3);
-    newP->priority=priority;
+    newP->priority=0;
+    myStrcpy(newP->name, arg1);
+    newP->isBackground = isBackgroud;
     newP->times=0;
     newP->state=READY;
     newP->next = NULL;
@@ -283,7 +307,8 @@ uint64_t * firstProcess(uint64_t fPtr){ //deberia ser void????
     first->priority=MAX_PRIORITY;
     first->next=0;
     first->prev=0;
-
+    myStrcpy( first->name, "Shell");
+//    ncPrint(first->name);
     initialPipes(first);
     uint64_t * rbpHalt = alloc(1024*sizeof (uint64_t));
     halt = alloc(sizeof (PCB));
