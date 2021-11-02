@@ -287,9 +287,13 @@ void niceCommand(char *buffer) {
     uint32_t pid = strToNum(arg1);
 
     char priority = strToNum(arg2);
-
-    if (nice(pid, priority) == -1) {
+    char value = nice(pid, priority);
+    if (value == -1) {
         printf("Invalid PID");
+        printf("\n");
+    }
+    if (value == -2) {
+        printf("Invalid Priority");
         printf("\n");
     }
     putChar(';');

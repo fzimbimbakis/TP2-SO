@@ -65,6 +65,12 @@ uint32_t getPid() {
 }
 
 int changePriority(uint32_t pid, char newPrio) {
+    if (newPrio>MAX_PRIORITY){
+        ncPrint("Max Priority is : ");
+        ncPrintDec(MAX_PRIORITY);
+        ncPrintChar('\n');
+        return -2;
+    }
     PCB *aux = firstP;
     while (aux != NULL) {
         if (aux->pid == pid) {
