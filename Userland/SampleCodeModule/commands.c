@@ -85,9 +85,9 @@ void helpCommand() {
             {"getpid: Prints actual process PID.\n",                                                                                                                                           "&> getpid\n"},
             {"nice: Change a process priority.\n",                                                                                                                                             "&> nice [Process PID] [New Priority]\n"},
             {"loop: Prints the process pid every N SECONDS.\n(Important: It can only be stopped with a kill.)\n",                                                                              "&> loop [N SECONDS]\n"},
-            {"filter: Receives standard input and only prints consonants.\nThe command stops when a ';' is received.\n",                                                                       "&> filter\n"},
-            {"cat: Receives standard input and prints it.\nThe command stops when a ';' is received.\n",                                                                                       "&> cat\n"},
-            {"wc: Receives standar input, prints it and when it receives a ';' it prints the lines of the input.\n",                                                                           "&> wc\n"},
+            {"filter: Receives standard input and only prints consonants.\nThe command stops when a semicolon is received.\n",                                                                       "&> filter\n"},
+            {"cat: Receives standard input and prints it.\nThe command stops when a semicolon is received.\n",                                                                                       "&> cat\n"},
+            {"wc: Receives standar input, prints it and when it receives a semicolon it prints the lines of the input.\n",                                                                           "&> wc\n"},
             {"seminfo: Prints all semaphores information.\n",                                                                                                                                  "&> seminfo\n"},
             {"pipeinfo: Prints all semaphores information.\n",                                                                                                                                 "&> pipeinfo\n"},
             {"phylo: Dinning phylosofers problem.\n",                                                                                                                                          "&> phylo\n"},
@@ -106,7 +106,7 @@ void helpCommand() {
             putChar('\n');
         }
     }
-    printf("End of help.\n");
+    printf("End of help.;\n");
 }
 
 
@@ -118,10 +118,14 @@ void printRegName(int index) {
     printf(registersNames[14 - index]);
     printf(":");
     cleanBuffer();
+    putChar(';');
+
 }
 
 void inforegCommand() {
     printRegs();
+    putChar(';');
+
     printf("\n");
 }
 
@@ -149,6 +153,7 @@ void printmemCommand(char *buffer) {
         printf("\n");
     }
 
+    putChar(';');
 
 }
 
@@ -165,8 +170,8 @@ void dateCommand() {
     printHex(sysTime(MONTH));
     printf("/");
     printHex(sysTime(YEAR));
-    printf("\n");
     putChar(';');
+    printf("\n");
 
 }
 
@@ -181,11 +186,15 @@ memInfoCommand() {
     printf(" Free memory ");
     printDec(array[2]);
     putChar('\n');
+    putChar(';');
+
     free(array);
 }
 
 void testMMCommand() {
     test_mm();
+    putChar(';');
+
 }
 
 void blockCommand(char *buffer) {
@@ -197,6 +206,7 @@ void blockCommand(char *buffer) {
         printf("Invalid PID");
         printf("\n");
     }
+    putChar(';');
 
 }
 
@@ -209,6 +219,7 @@ void unblockCommand(char *buffer) {
         printf("Invalid PID");
         printf("\n");
     }
+    putChar(';');
 
 }
 
@@ -221,19 +232,26 @@ void killCommand(char *buffer) {
         printf("Invalid PID");
         printf("\n");
     }
+    putChar(';');
+
 }
 
 void testScheduler() {
     test_processes();
+    putChar(';');
+
 }
 
 void testPrio() {
     test_prio();
+    putChar(';');
+
 }
 
 void getpidCommand() {
     uint32_t pid = getpid();
-    printf("PID = %d\n", pid);
+    printf("PID = %d;\n", pid);
+
 }
 
 void getStrings(char *buffer, char *str1, char *str2) {
@@ -274,11 +292,14 @@ void niceCommand(char *buffer) {
         printf("Invalid PID");
         printf("\n");
     }
+    putChar(';');
 
 }
 
 void psCommand() {
     ps();
+    putChar(';');
+
 }
 
 
@@ -313,13 +334,15 @@ void testsemCommand(char *buffer) {
             printf("\n");
             break;
     }
+    putChar(';');
+
 }
 
 void filterCommand() {
     char c;
 
     while ((c = getChar()) != ';') {
-        if (!(c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')) {
+        if (!(c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U')) {
             putChar(c);
         }
     }
@@ -376,6 +399,7 @@ void semInfoCommand() {
         free(info[i].id);
     }
     free(info);
+    putChar(';');
 
 }
 
@@ -402,6 +426,7 @@ void pipeInfoCommand() {
         }
         putChar('\n');
     }
+    putChar(';');
     free(info);
 }
 

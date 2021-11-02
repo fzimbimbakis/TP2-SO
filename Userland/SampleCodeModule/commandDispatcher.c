@@ -83,7 +83,7 @@ static char semForPipesID = 1;
 
 void pipeCommand(char *buffer, int idx) {
     buffer[idx] = 0;
-    buffer[idx - 1] = '\n';
+    buffer[idx - 1] = 0;
     int pipes[2];
 
     sysPipe(pipes);

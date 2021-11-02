@@ -136,7 +136,7 @@ void putFork(phylo *p) {
 }
 
 void killPhylos() {
-    printf("Phylo ended\n");
+    printf("Phylo ended;\n");
     close_sem("PhyloMutex");
     return;
 }
