@@ -109,8 +109,8 @@ void incNoSemB() {
     exit();
 }
 
-void test_sync(){
-    uint64_t i;
+void test_sync() {
+    uint32_t i;
 
     global = 1000;
 
@@ -135,8 +135,8 @@ void test_sync(){
     return;
 }
 
-void test_no_sync(){
-    uint64_t i;
+void test_no_sync() {
+    uint32_t i;
 
     global = 1000;
 

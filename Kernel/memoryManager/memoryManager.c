@@ -72,17 +72,6 @@ header *resizeFreeBlock(header *Header, unsigned size) {
     return newHeader + 1;
 }
 
-// void * alloc(unsigned size){
-
-// 	if((current-size) < BEGIN_MEM)
-// 		return NULL;
-
-
-// 	current-=size;
-
-// 	return current;
-// }
-
 void free(void * ptr){
     int debug = 0;
     if(debug)

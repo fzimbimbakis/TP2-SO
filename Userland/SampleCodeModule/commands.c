@@ -16,12 +16,10 @@
 #define MONTH 8
 #define YEAR 9
 
-int isCommand(char* command, char* buffer){ //1 si son iguales, 0 si no
-	int comLen=strlen(command);
-//command:date
-//buffer: date
-    if(comLen > strlen(buffer))
-		return 0;
+int isCommand(char *command, char *buffer) {
+    int comLen = strlen(command);
+    if (comLen > strlen(buffer))
+        return 0;
 
     int i;
     for (i = 0; i < comLen; i++) {
@@ -33,8 +31,8 @@ int isCommand(char* command, char* buffer){ //1 si son iguales, 0 si no
     return 0;
 }
 
-int isCommandWithArg(char* command, char* buffer){ //1 si son iguales, 0 si no
-	int comLen=strlen(command);
+int isCommandWithArg(char *command, char *buffer) {
+    int comLen = strlen(command);
 
     if (comLen > strlen(buffer))
         return 0;
