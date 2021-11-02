@@ -14,16 +14,23 @@ void phyloCommand() {
 //    printerPID = newP(&printerProcess);
     while (currentPhylos < INITIAL_PHYLO) {
 //        wait_sem("PhyloTable");
-        addPhylo(newBufferProcess((uint64_t)&phyloCycle, 0, aux[currentPhylos]));
+        uint32_t pid = newBufferProcess((uint64_t)&phyloCycle, 1, semForksIds[currentPhylos]);
+        addPhylo(pid);
 //        post_sem("PhyloTable");
     }
     char c;
     while (1) {
         c=getChar();
         if (c == 'a') {
-//            wait_sem("PhyloTable");
-            addPhylo(newBufferProcess((uint64_t)&phyloCycle, 0, aux[currentPhylos]));
-//            post_sem("PhyloTable");
+//            wait_sem("PhyloMutex");
+            if (currentPhylos<MAX_PHYLO){
+                uint32_t pid = newBufferProcess((uint64_t)&phyloCycle, 0, semForksIds[currentPhylos]);
+                addPhylo(pid);
+            }
+            else{
+                printf("Can't add more Phylosofers\n");
+            }
+//            post_sem("PhyloMutex");
 
         } else if (c == 'r') {
 //            wait_sem("PhyloTable");
@@ -53,6 +60,7 @@ void phyloCycle(char* id){
         takeFork(phylos[idx]);
         putFork(phylos[idx]);
     }*/
+    id+=5;
     int idx = strToNum(id);
 //    printf("idx en cycle: %d ", idx);
     //    for (int i = 0; i < currentPhylos; ++i) {

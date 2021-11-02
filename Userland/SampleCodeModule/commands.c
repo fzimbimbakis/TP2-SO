@@ -347,9 +347,18 @@ void filterCommand(){
 }
 void catCommand(){
     char c;
+    char* buffer = alloc(256 * sizeof(char ));
+    int index=0;
 
         while((c=getChar())!=';'){
+            buffer[index++]=c;
             putChar(c);
+            if(c=='\n'){
+//                buffer[index++]=c;
+                buffer[index++]=0;
+                index=0;
+                printf(buffer);
+            }
         }
     putChar(';');
         printf("\nEnd cat.\n");
