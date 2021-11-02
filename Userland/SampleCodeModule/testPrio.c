@@ -1,8 +1,7 @@
 #include <stdint.h>
 #include "lib.h"
 
-#define MINOR_WAIT 1000000                               // TODO: To prevent a process from flooding the screen
-#define WAIT      10000000                              // TODO: Long enough to see theese processes beeing run at least twice
+#define MINOR_WAIT 4000000
 
 uint32_t _getpid(){
   return getpid();
@@ -51,26 +50,29 @@ void test_prio(){
   for(i = 0; i < TOTAL_PROCESSES; i++)
     pids[i] = _create_process(&_endless_loop);
 
-  bussy_wait(WAIT);
+  //bussy_wait(WAIT);
+  yield();
   printf("\nCHANGING PRIORITIES...\n");
 
   for(i = 0; i < TOTAL_PROCESSES; i++){
     switch (i % 3){
       case 0:
-        _nice(pids[i], 0); //lowest priority 
+        _nice(pids[i], 0); //lowest priority
+        //printf("Pid %d prio 0\n",pids[i]);
         break;
       case 1:
         _nice(pids[i], 1); //medium priority
+        //printf("Pid %d prio 1\n",pids[i]);
         break;
       case 2:
         _nice(pids[i], 2); //highest priority
+        //printf("Pid %d prio 2\n",pids[i]);
         break;
     }
   }
 
   //bussy_wait(WAIT);
   yield();
-  
   printf("\nBLOCKING...\n");
 
   for(i = 0; i < TOTAL_PROCESSES; i++)
