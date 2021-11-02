@@ -1,141 +1,13 @@
-//int n
+//
 // Created by bruno on 10/18/21.
 //
 #include <stddef.h>
 #include "lib.h"
 #include "testMM.h"
-void testmm0(){
-    int nroA = END_MEM - (BEGIN_MEM) + 1;
-    char * ptrA = (char *)alloc(nroA);
-    if(alloc(nroA) != NULL){
-        printf("ERROR: alloc sin espacio no dio null.\n");
-        free(ptrA);
-        return;
-    }
-//    printf("nroA = %d", nroA);
-    printf("ptr del alloc: ");
-    printHex(ptrA);
-    printf("\n");
-    for (int i = 0; i < nroA; ++i) {
-        ptrA[i] = 'A';
-    }
-    printf("BeginMem: ");
-    printHex(BEGIN_MEM);
-    printf("\n");
-    ptrA = (char *)BEGIN_MEM;
-    for (int i = 0; i < nroA; ++i) {
-        if(ptrA[i]!='A'){
-            printf("ERROR: Set all memory and check it. %d\n", i);
-            return;
-        }
-    }
-    printf("Test passed.\n");
-    free(ptrA);
-}
-void testmm1(){
-    int nro = END_MEM - (BEGIN_MEM) + 1;
-    char * ptr = (char *)alloc(nro);
-    if(alloc(nro) != NULL){
-        printf("ERROR: alloc sin espacio no dio null.\n");
-        free(ptr);
-        return;
-    }
-    free(ptr);
-    ptr = (char *)alloc(nro);
-    if(ptr==NULL){
-        printf("ERROR: alloc con espacio dio null.\n");
-    }
-    printf("Test passed.\n");
-    free(ptr);
-}
-void testmm2(){
-    char * ptrsA[10];
-    for (int i = 0; i < 10; ++i) {
-        ptrsA[i] = alloc(1000);
-//                printHex((int)ptrs[i]);
-//                printf("\n");
-        for (int j = 0; j < 1000; ++j) {
-            ptrsA[i][j] = 'a'+i;
-        }
-    }
-    for (int i = 0; i < 10; ++i) {
-        for (int j = 0; j < 1000; ++j) {
-            if(ptrsA[i][j]!=('a'+i)){
-                printf("ERROR: Blocks check. Block nro: %d", i);
-                for (int k = 0; k < 10; ++k) {
-                    free(ptrsA[k]);
-                }
-                return;
-            }
-        }
-    }
-
-    for (int k = 0; k < 10; ++k) {
-        free(ptrsA[k]);
-    }
-    printf("Test passed.\n");
-    return;
-}
-void testmm3(){
-
-    char * ptrs[10];
-    for (int i = 0; i < 10; ++i) {
-        ptrs[i] = alloc(1000);
-//                printHex((int)ptrs[i]);
-//                printf("\n");
-        for (int j = 0; j < 1000; ++j) {
-            ptrs[i][j] = 'a'+i;
-        }
-    }
-
-    for (int i = 0; i < 10; ++i) {
-        for (int j = 0; j < 1000; ++j) {
-            if(ptrs[i][j]!=('a'+i)){
-                printf("ERROR: Blocks check. Block nro: %d", i);
-                for (int k = 0; k < 10; ++k) {
-                    free(ptrs[k]);
-                }
-                return;
-            }
-        }
-    }
-
-    free(ptrs[0]);
-    free(ptrs[2]);
-    free(ptrs[4]);
-    free(ptrs[6]);
-    free(ptrs[8]);
-
-    for (int i = 8; i >= 0; i=i-2) {
-        ptrs[i] = alloc(1000);
-        for (int j = 0; j < 1000; ++j) {
-            ptrs[i][j] = 'a'+i;
-        }
-    }
-
-    for (int i = 0; i < 10; ++i) {
-        for (int j = 0; j < 1000; ++j) {
-            if(ptrs[i][j]!=('a'+i)){
-                printf("ERROR: Blocks check. Block nro: %d", i);
-                for (int k = 0; k < 10; ++k) {
-                    free(ptrs[k]);
-                }
-                return;
-            }
-        }
-    }
-
-    for (int k = 0; k < 10; ++k) {
-        free(ptrs[k]);
-    }
-    printf("Test passed.\n");
-    return;
-}
-
 #include "test_util.h"
 
 #define MAX_BLOCKS 64
-#define MAX_MEMORY 500000 //Should be around 80% of memory managed by the MM  buddy=6710886
+#define MAX_MEMORY 500000 //Should be around 80% of memory managed by the MM
 
 typedef struct MM_rq{
     void *address;
@@ -174,6 +46,7 @@ void test_mm(){
     }
 
     // Set
+      sleep(1);
       printf("SET\n");
     uint32_t i;
 
@@ -183,6 +56,7 @@ void test_mm(){
             // TODO: Chequear. No se que memset esta usando. Pero si lo defino arriba salta un error de redefinicion
 
     // Check
+      sleep(1);
       printf("CHECK\n");
     for (i = 0; i < rq; i++)
         if (mm_rqs[i].address != NULL)
@@ -190,10 +64,10 @@ void test_mm(){
                 printf("ERROR!\n");
 
     // Free
+      sleep(1);
       printf("FREE\n");
     for (i = 0; i < rq; i++)
         if (mm_rqs[i].address != NULL)
             free(mm_rqs[i].address);
   }
-    printf("Test passed.\n");
 }

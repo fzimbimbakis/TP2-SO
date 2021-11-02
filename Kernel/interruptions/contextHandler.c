@@ -16,7 +16,6 @@ static PCB* halt=NULL;
 void printProcesses(){ //TODO: agregar nombre a los procesos y background/foreground
     PCB* aux=firstP;
     while(aux != NULL){
-
         ncPrint(aux->name);
         ncPrint("  ");
 
@@ -331,44 +330,9 @@ uint64_t * firstProcess(uint64_t fPtr){ //deberia ser void????
 uint64_t * getCurrentSP(){
     return currentProcess->rsp;
 }
-char getCurrentPID(){
-    return currentProcess->pid;
-}
+
 
 PCB * getCurrentPCB(){
     return currentProcess;
 }
 
-  /*  uint64_t* bp = alloc(1000 * sizeof(uint64_t));
-    uint64_t * sp = _createStack((uint64_t)&sp[999], fPtr);
-    PCB newP;
-    newP.rsp = sp;
-    newP.state=0;
-    newP.pid=pCount++;
-    rr[pCount++]=newP;
-    pCount=pCount%256;
-    return newP.rsp;*/
-
-
-//void exit(int n){
-//
-//}
-
-/*
-
- fork(){
-    crearProceso(&hijo);
-    padre: devuelve 0;
-    hijo: devuelve index++;
-
- }
- hijo(){
- }
-
-
- syscallCrearProceso(new IP){
-    pushstate-ip;
-    push newIP;
-    newProcess
- }
- */
