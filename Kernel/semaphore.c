@@ -192,7 +192,9 @@ int alterSem(char *sem_id, uint16_t value) {
     if (semaphore_ptr == NULL) {
         return -1;
     }
+    acquire(&(semaphore_ptr->lock)); // spinlock
     semaphore_ptr->value = value;
+    release(&(semaphore_ptr->lock)); // spinlock
     return 0;
 }
 
